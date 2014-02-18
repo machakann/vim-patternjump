@@ -1,0 +1,474 @@
+*patternjump.txt*	Last change:18-Feb-2014.
+
+Move cursor as you like.
+
+Author  : machakann <mckn@outlook.com>
+License : NYSL license
+          Japanese <http://www.kmonos.net/nysl/>
+          English (Unofficial) <http://www.kmonos.net/nysl/index.en.html>
+
+==============================================================================
+CONTENTS					*patternjump-contents*
+
+INTRODUCTION		|patternjump-introduction|
+CONFIGURATION		|patternjump-configuration|
+KEYMAPPINGS		|patternjump-keymappings|
+COMMANDS		|patternjump-commands|
+FUNCTIONS		|patternjump-functions|
+
+==============================================================================
+INTRODUCTION					*patternjump-introduction*
+
+Patternjump give you a effective way to move cursor in various modes. The
+rules to move cursor can be easily optimized by using regular expression. In
+this help those rules defined by regular expression are called patterns.
+Please note it. Numbers of patterns can be registered and cursor would be
+moved to the closest candidate in them. This plugin serves two keymappings.
+One searches candidates for forward direction, and the other searches them for
+backward direction.
+
+At first you need to prepare patterns and then you can use these keymappings.
+But, OK, don't afraid about the preparation, if there is no pattern which you
+defined, keymappings uses default patterns. I suggest that use it first and
+learn how it works, after that you can optimize patterns as you like.
+Following descriptions explain how these keymappings work briefly.
+
+Suppose that your cursor is on the first character of a line like this:
+>
+	let foo = "bar"
+<
+If you define a pattern "bar", of course, it matches with "bar". Thus using
+the keymapping which searches candidates in forward direction, cursor will
+move on a word "bar". Here I should say there are two types of patterns,
+head-patterns and tail-patterns. All the patterns should belong to either head
+or tail patterns, you can choose which when you register a new pattern. If
+"bar" belongs to head-patterns, cursor will move on 'b' of "bar". And if "bar"
+belongs to tail-patterns, cursor will move on 'r' of "bar".
+>
+	---------->#    head-pattern
+	let foo = "bar"                         '#' represents cursor position
+	------------>#  tail-pattern
+<
+I guess you have found that the pattern "bar" seems like not useful. So "bar"
+is not included in default, I am not included in foo. Alternatively, a pattern
+'\<\h\k*\>' is included in default pattern. This pattern matches with a
+independent word determined by the option 'iskeyword' in source code.
+Therefore cursor will stop at "let", "foo", "bar". I think they are the very
+what we want to correct when we review a source code in many cases.
+>
+	#   #      #    head-pattern
+	let foo = "bar"                         '#' represents cursor position
+	  #   #      #  tail-pattern
+<
+Additionally, these patterns can be switched according to |vim-modes|. With
+default patterns, '\<\h\k*\>' is belongs to head-patterns in normal mode,
+meanwhile it belongs to tail-patterns in insert mode. Because |text-objects|
+and {motion} gives us a excellent environment for editing in normal mode, if
+you want to cut a word and substitute to a correct word, press |c||iw| or just
+|c||w| in this case. On the other hand, we can not use |text-objects| in
+insert mode, however we can do some easy work also in insert mode. If you want
+to delete a word in front of cursor, you can use |i_CTRL-w|. That is why the
+reason I defined the default patterns like this. If you are interested in the
+customization of patterns, please refer |patternjump-configuration|.
+
+==============================================================================
+CONFIGURATION					*patternjump-configuration*
+
+You can use the variable named |g:patternjump_patterns| to tell your
+preferable rules to this plugin. At first I introduce the equivalent setting
+with the default.
+>
+	let g:patternjump_patterns = {
+		\ '_' : {
+		\   'ci' : {
+		\     'head' : [',', ')', ']', '}'],
+		\     'tail' : ['\<\h\k*\>', '$'],
+		\     },
+		\   'nxo' : {
+		\     'head' : ['\<\h\k*\>'],
+		\     'tail' : ['$'],
+		\     },
+		\   },
+		\ 'vim' : {
+		\   'include' : '_',
+		\   'nxo'     : {
+		\     'head' : ['\<[abglstvw]:\k\+'],
+		\     },
+		\   },
+		\ }
+<
+
+						*g:patternjump_patterns*
+As you can see, |g:patternjump_patterns| is a dictionary and it has keys which
+is corresponded to each |filetype| at the first level. For example, the
+default patterns has a specific pattern for vimscript. This key name should
+equal to the value &filetype of each filetypes, that is to say, it should same
+as the filetype name which is set by |ftdetect|. The key '_' is used for the
+case there is no specified patterns for the current filetype. Each filetype
+settings have a dictionary as a value. This dictionary has keys like "ci",
+"nxo". These keys represent the mode specified patterns. "ci" represents the
+patterns which is available only in command-line mode and insert mode. "nxo"
+represents the patterns which is available only in normal mode, visual mode,
+and, operator-pending mode.
+
+	'n' : normal mode
+	'x' : visual mode
+	'o' : operator-pending mode
+	'c' : command-line mode
+	'i' : insert mode
+
+These five characters can be used for assignment of a
+mode and if a character is included in the key it is valid, you do not need to
+mind about the order. Both "ci" and "ic" are OK. If you want to separate the
+patterns for command-line mode and insert mode, then make each keys and set a
+dictionary which includes head- and/or tail- patterns.
+>
+	let g:patternjump_patterns = {
+		\ '_' : {
+		\   'c' : {
+		\     'head' : [',', ')', ']', '}'],
+		\     'tail' : ['\<\h\k*\>', '$'],
+		\     },
+		\   'i' : {
+		\     'tail' : ['\<\h\k*\>', '$'],
+		\     }
+		\   'nxo' : {
+		\     'head' : ['\<\h\k*\>'],
+		\     'tail' : ['$'],
+		\     },
+		\   },
+		\ 'vim' : {
+		\   'include' : '_',
+		\   'nxo'     : {
+		\     'head' : ['\<[abglstvw]:\k\+'],
+		\     },
+		\   },
+		\ }
+<
+If you use this |g:patternjump_patterns|, never responses for ',' and
+close-parenthesis in insert mode.
+
+If you see the filetype specific patterns for vim, you would find a special
+key named "include" and it has a value '_'. This means that the patterns in
+'_' are included when you edit vimscript. The value should be a string or a
+list. If you want to add much more other settings, use list for the value.
+>
+	let g:patternjump_patterns = {
+		\ '_' : {
+		\   'ci' : {
+		\     'head' : [',', ')', ']', '}'],
+		\     'tail' : ['\<\h\k*\>', '$'],
+		\     },
+		\   'nxo' : {
+		\     'head' : ['\<\h\k*\>'],
+		\     'tail' : ['$'],
+		\     },
+		\   },
+		\ 'vim' : {
+		\   'include' : ['_', 'SomeOtherFiletype'],
+		\   'nxo'     : {
+		\     'head' : ['\<[abglstvw]:\k\+'],
+		\     },
+		\   },
+		\ }
+<
+This "include" is only available in a unit of a whole filetype settings, you
+can not include mode specific or head-/tail-patterns separately. So if you
+want to use common patterns more finely, I suggest to write as following.
+>
+	let common_pattern = ['\<\h\k*\>']
+	let g:patternjump_patterns = {
+		\ '_' : {
+		\   'ci' : {
+		\     'head' : [',', ')', ']', '}'],
+		\     'tail' : ['$'] + common_pattern,
+		\     },
+		\   'nxo' : {
+		\     'head' : common_pattern,
+		\     'tail' : ['$'],
+		\     },
+		\   },
+		\ 'vim' : {
+		\   'include' : ['_', 'SomeOtherFiletype'],
+		\   'nxo'     : {
+		\     'head' : ['\<[abglstvw]:\k\+'],
+		\     },
+		\   },
+		\ }
+<
+If you add patterns to "common_pattern", they will valid as tail-patterns in
+command-line mode and insert mode and also as head-patterns in normal, visual,
+operator-pending mode.
+NOTE: "include" can not be nested!
+
+Actually it is possible to omit so many things from |g:patternjump_patterns|.
+For example, head-/tail- assignment can be omitted. In that case it is
+regarded as head-patterns.
+>
+	let g:patternjump_patterns = {
+		\ '_' : {
+		\   'ci'  : [',', ')', ']', '}'],
+		\   'nxo' : ['\<\h\k*\>'],
+		\   },
+		\ }
+<
+Or you can omit mode specification.
+>
+	let g:patternjump_patterns = {
+		\ '_' : ['\<\h\k*\>'],
+		\ }
+<
+It still works.
+
+There is one more thing I want to explain. This is somewhat tricky, but you
+can use different patterns for the forward directed keymapping and the
+backward one.
+>
+	let common_pattern = {
+		\    'head' : [',', ')', ']', '}'],
+		\    'tail' : ['\<\h\k*\>', '$'],
+		\  }
+	let g:patternjump_patterns = {
+		\ '_' : {
+		\   'nxo' : {
+		\     'head' : ['\<\h\k*\>'],
+		\     'tail' : ['$'],
+		\     },
+		\   'i' : {
+		\     'common' : common_pattern
+		\     },
+		\   'c' : {
+		\     'forward' : common_pattern
+		\     'backward' : {
+		\       'tail' : ['$'],
+		\       },
+		\     },
+		\   },
+		\ 'vim' : {
+		\   'include' : '_',
+		\   'nxo'     : {
+		\     'head' : ['\<[abglstvw]:\k\+'],
+		\     },
+		\   },
+		\ }
+<
+If you use this patterns, the forward directed keymapping always move cursor
+to at the end of line in command-line mode. There are three kinds of keys in
+the value of the key '_', I mean, "common", "forward", and, "backward".
+"common" patterns are used for both directions. "forward" and "backward"
+patterns are used only for each directed keymappings. "common" and direction
+specific patterns can be registered at the same time.
+
+There are so many types to assign your patterns, but there is a important
+rule, the order of assignment. The first level of |g:patternjump_patterns|
+should be filetype assignments, mode assignments would come next, and
+direction assignments might come, at last head-/tail- assignments come. Each
+step can be omitted except for the filetype assignments, but can not change
+the order of them. Do not remember that.
+
+
+------------------------------------------------------------------------------
+Other options~
+
+There are several variables to control the behavior of keymappings. You can
+use same variable name with different scopes, buffer local b:, window local
+w:, tab page local t:, global g:. If same variable name is defined in
+different scopes, b: is prior to w:, w: is prior to t:, t: is prior to g:.
+
+g:patternjump_caching				*g:patternjump_caching*
+	If the value is 1, patternjump makes caches for current buffer named
+	"b:patternjump_forward_cache" or "b:patternjump_backward_cache". They
+	are a dictionary including lists which has already rendered from
+	|g:patternjump_patterns|.
+	This makes patternjump faster, but the change of
+	|g:patternjump_patterns| do not apply until cache is refreshed. If you
+	felt your patterns has matured enough, then use this option.
+	If you want to change the situation about caching, you can use
+	commands, |:PatternjumpCachingOn|, |:PatternjumpCachingOff|,
+	|:PatternjumpCachingToggle|.
+
+g:patternjump_highlight				*g:patternjump_highlight*
+	If the value is 1, all the matched candidates are highlighted by
+	using |hl-IncSearch|. If the value is 0, the highlighting is tunred
+	off. Default value is 0.
+	NOTE: The highlighting is removed when cursor is moved.
+	NOTE: This option might make this plugin slightly slower since it try
+	      to collect all the candidates as possible and highlight numbers
+	      of positions.
+
+g:patternjump_debug_mode			*g:patternjump_debug_mode*
+	If the value is 1, do not move cursor, all the matched candidates are
+	highlighted by using |hl-IncSearch|, and, echo matched columns,
+	matched patterns, and, head or tail. You can check them with
+	|:message| command. This option would be useful when you found your
+	patterns stopping cursor at unwanted position. You can use this option
+	to search which pattern cause the problem. Or you can use the commands
+	|PatternjumpDebugModeOn|, |PatternjumpDebugModeOff|,
+	|PatternjumpDebugModeToggle|, |:PatternjumpCachingDelete|.
+	Default value is 0.
+	NOTE: The highlighting is removed when cursor is moved.
+	NOTE: This option might make this plugin slightly slower since it try
+	      to collect all the candidates as possible and highlight numbers
+	      of positions.
+
+==============================================================================
+KEYMAPPINGS					*patternjump-keymappings*
+
+This plugin serves following keymappings.
+
+direction		keymappings			default keymappings
+--------------------------------------------------------------------------
+forward			<Plug>(patternjump-forward)	<M-l>
+backward		<Plug>(patternjump-backward)	<M-h>
+--------------------------------------------------------------------------
+
+If you do not need default keymappings, define a variable named
+|g:patternjump_no_default_key_mappings| in your vimrc.
+>
+	let g:patternjump_no_default_key_mappings = 1
+<
+Then default mappings are never applied. And map them again as you like.
+
+These keymappings can accept {count} assignment. If {count} is assigned,
+cursor will go to the {count}th candidate.
+
+These keymappings are available with |nmap|, |xmap|, |omap|, |imap|, |cmap|.
+
+
+------------------------------------------------------------------------------
+keymappings~
+<Plug>(patternjump-forward)				*patternjump-forward*
+	This keymapping moves cursor to the closest candidate which is matched
+	with patterns in forward direction. You may use as follows (It is
+	the default setting, do not need to write in your vimrc if the default
+	mapping is acceptable for you. Just for an example.)
+>
+	nmap <M-l> <Plug>(patternjump-forward)
+<
+
+<Plug>(patternjump-backward)				*patternjump-backward*
+	This keymapping moves cursor to the closest candidate which is matched
+	with patterns in backward direction. You may use as follows. (It is
+	the default setting, do not need to write in your vimrc if the default
+	mapping is acceptable for you. Just for an example.)
+>
+	nmap <M-h> <Plug>(patternjump-backward)
+<
+
+==============================================================================
+COMMANDS					*patternjump-commands*
+
+:PatternjumpCachingOn				*:PatternjumpCachingOn*
+	If you use this command, patternjump start to use caching feature.
+	Please refer also |g:patternjump_caching|.
+	NOTE: The cache is not made immediately, it will be generated when you
+	      type a keymapping next time.
+
+:PatternjumpCachingOff				*:PatternjumpCachingOff*
+	This command deletes current cache and disables caching feature.
+
+:PatternjumpCachingToggle			*:PatternjumpCachingToggle*
+	This command toggles the situation of caching feature. When the
+	feature is turned off, the current cache are discarded.
+
+PatternjumpCachingDelete			*:PatternjumpCachingDelete*
+	This command deletes the current cache. If caching is still turned on,
+	then new cache would be generated next time.
+
+:PatternjumpDebugModeOn				*:PatternjumpDebugModeOn*
+	This command starts the debug mode. Please refer
+	|g:patternjump_debug_mode|.
+
+:PatternjumpDebugModeOff			*:PatternjumpDebugModeOff*
+	This command stops the debug mode. Please refer
+	|g:patternjump_debug_mode|.
+
+:PatternjumpDebugModeToggle			*:PatternjumpDebugModeToggle*
+	This command toggles the situation of the debug mode. Please refer
+	|g:patternjump_debug_mode|.
+
+==============================================================================
+FUNCTIONS					*patternjump-functions*
+
+Patternjump keymappings have correspondent functions. They have similar
+interface as following:
+
+patternjump#xxx(mode[, patternjump_patterns[, count[, options_dictionary]]])
+
+The part filled by "xxx" is forward or backward.
+
+The first argument "mode" is always required, it is a character to represent a
+kind of mapping modes. Since each commands can be mapped for |nmap|, |xmap|,
+|omap|, |imap|, and, |cmap| thus you can assgin 'n', 'x', 'o', 'i', and, 'c'
+to notice it which mode you want to map.
+
+The second argument "patternjump_patterns" is a dictionary which has same
+structure as |g:patternjump_patterns|. If this argument is assigned,
+keymappings ignore |g:patternjump_patterns| and use the assigned one.
+
+The third argument "count" is a number. If a positive number is assigned,
+functions would always ignore {count} and use the assigned number. If zero or
+a negative number are assigned, functions refer {count} as usual.
+
+The fourth argument "options_dict" is a dictionary which can force to use
+given values of configuration variables. The key names are the name of
+configuration variables removing first "g:patternjump_". Thus you can use
+"highlight", "debug_mode".
+>
+	nmap <silent> <M-l> :<C-u>call patternjump#forward(
+		\				'n',
+		\				g:patternjump_patterns,
+		\				0,
+		\				{'highlight' : 1})<CR>
+<
+This mapping always highlight candidates.
+If you want to use with |imap|, use like this:
+>
+	imap <silent> <M-l> <C-r>=patternjump#forward(
+		\				'i',
+		\				g:patternjump_patterns,
+		\				0,
+		\				{'highlight' : 1})<CR>
+<
+If you want to use with |cmap|, you should not use <silent>. Otherwise
+command-line would be not updated appropriately and you will see that it seems
+like not moving cursor.
+>
+	cmap <M-l> <C-r>=patternjump#forward(
+		\				'c',
+		\				g:patternjump_patterns,
+		\				0,
+		\				{'highlight' : 1})<CR>
+<
+Please refer |verticalmove-configuration|.
+
+Besides, a special key "raw" can be also used. If the value is 1, these
+functions do not move cursor and return a dictionary which has three
+information. First one is the key "column", the value is the column number of
+destination. Another is the key "candidates", the value is a list including
+matched column number of candidates. The last one is the key "patterns", the
+value is a list including matched patterns of candidates. The value of
+"candidates" and "patterns" have a correspondence each other.
+>
+	let output = patternjump#forward(
+		\			'n',
+		\			g:patternjump_patterns,
+		\			1,
+		\			{'raw' : 1})
+
+	" the column number of the destination
+	" e.g. 10
+	echo output.column
+
+	" matched positions of candidates
+	" e.g. [10, 20]
+	echo output.candidates
+
+	" matched patterns of candidates
+	" e.g. [['\<\h\k*\>', 'head'], ['$', 'tail']]
+	echo output.patterns
+<
+
+
+==============================================================================
+vim:tw=78:ts=8:ft=help:norl:noet:
