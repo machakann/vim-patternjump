@@ -42,6 +42,7 @@ let s:Sl = s:V.import('Data.List')
 unlet s:V
 
 function! patternjump#forward(mode, ...) "{{{
+  
   " count assignment
   let l:count = (a:0 > 1 && a:2 > 0) ? a:2 : v:count1
 
@@ -185,7 +186,7 @@ function! patternjump#forward(mode, ...) "{{{
   endif
 
   " highlighting candidates (if necessary)
-  if opt_debug_mode || opt_highlight
+  if (opt_debug_mode || opt_highlight) && a:mode =~# '[nxoi]'
     call s:highlighter(candidate_positions, matched_patterns, opt_debug_mode)
   endif
 
@@ -334,15 +335,16 @@ function! patternjump#cleaner() "{{{
 
   if s:hp < 0
     " delete highlighting
-    call map(s:id_list, "s:highlight_del(v:val)")
-    let s:id_list = []
+    call filter(map(s:id_list, "s:highlight_del(v:val)"), 'v:val > 0')
     redraw
 
-    let s:hp = 0
+    if s:id_list == []
+      let s:hp = 0
 
-    augroup patternjump:cleaner
-      au!
-    augroup END
+      augroup patternjump:cleaner
+        au!
+      augroup END
+    endif
   endif
 endfunction
 "}}}
@@ -489,6 +491,7 @@ endfunction
 "}}}
 function! s:highlighter(candidate_positions, matched_patterns, opt_debug_mode) "{{{
   if !empty(s:id_list)
+    let s:hp = 0
     call patternjump#cleaner()
   endif
 
@@ -524,9 +527,10 @@ function! s:highlight_add(row, col) "{{{
 endfunction
 "}}}
 function! s:highlight_del(id) "{{{
-  call matchdelete(a:id)
+  let result = matchdelete(a:id)
 
-  return
+  let output = (result == 0) ? result : a:id
+  return output
 endfunction
 "}}}
 
