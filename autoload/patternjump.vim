@@ -42,7 +42,6 @@ let s:Sl = s:V.import('Data.List')
 unlet s:V
 
 function! patternjump#forward(mode, ...) "{{{
-  
   " count assignment
   let l:count = (a:0 > 1 && a:2 > 0) ? a:2 : v:count1
 
@@ -53,16 +52,27 @@ function! patternjump#forward(mode, ...) "{{{
 
   " searching for user configurations
   let options_dict   = (a:0 > 2) ? a:3 : {}
-  let opt_caching    = s:user_conf(   'caching', options_dict, 0)
-  let opt_debug_mode = s:user_conf('debug_mode', options_dict, 0)
-  let opt_highlight  = s:user_conf( 'highlight', options_dict, 0)
+  let opt_caching    = patternjump#user_conf(   'caching', options_dict, 0)
+  let opt_debug_mode = patternjump#user_conf('debug_mode', options_dict, 0)
+  let opt_highlight  = patternjump#user_conf( 'highlight', options_dict, 0)
+  let opt_cache_name = patternjump#user_conf('cache_name', options_dict, 'b:patternjump_cache')
   let opt_raw        = s:check_raw(options_dict)
+
+  " check and modify cache name
+  if opt_cache_name =~# '^\h[0-9a-zA-Z_#]*$'
+    let cache_name = 'b:' . opt_cache_name
+  elseif opt_cache_name =~# '^[^bgtw]:\h[0-9a-zA-Z_#]*$'
+    let cache_name = 'b:' . opt_cache_name[2:]
+  else
+    let cache_name = opt_cache_name
+  endif
 
   " resolve given patterns
   let pattern_lists = []
 
-  if a:0 > 0
-    let patternjump_patterns = a:1
+  if !opt_caching
+    " do not use cache
+    let patternjump_patterns = (a:0 > 0) ? a:1 : (exists('g:patternjump_patterns') ? g:patternjump_patterns : s:patternjump_patterns)
 
     if type(patternjump_patterns) == s:type_list
       let pattern_lists[0] = get(patternjump_patterns, 0, [])
@@ -70,23 +80,39 @@ function! patternjump#forward(mode, ...) "{{{
     elseif type(patternjump_patterns) == s:type_dict
       let pattern_lists = s:resolve_pattern_dictionary(a:mode, 'forward', patternjump_patterns)
     endif
-  elseif !exists('b:patternjump_forward_cache')
-    let patternjump_patterns = exists('g:patternjump_patterns') ? g:patternjump_patterns : s:patternjump_patterns
-    let pattern_lists = s:resolve_pattern_dictionary(a:mode, 'forward', patternjump_patterns)
-
-    if opt_caching
-      let b:patternjump_forward_cache = {}
-      let b:patternjump_forward_cache[a:mode] = pattern_lists
-    endif
-  elseif !has_key(b:patternjump_forward_cache, a:mode)
-    let patternjump_patterns = (a:0 > 0) ? a:1 : (exists('g:patternjump_patterns') ? g:patternjump_patterns : s:patternjump_patterns)
-    let pattern_lists = s:resolve_pattern_dictionary(a:mode, 'forward', patternjump_patterns)
-
-    if opt_caching
-      let b:patternjump_forward_cache[a:mode] = pattern_lists
-    endif
   else
-    let pattern_lists = b:patternjump_forward_cache[a:mode]
+    " use cache
+    if !exists(cache_name)
+      " cache do not exist
+      let patternjump_patterns = (a:0 > 0) ? a:1 : (exists('g:patternjump_patterns') ? g:patternjump_patterns : s:patternjump_patterns)
+
+      if type(patternjump_patterns) == s:type_list
+        let pattern_lists[0] = get(patternjump_patterns, 0, [])
+        let pattern_lists[1] = get(patternjump_patterns, 1, [])
+      elseif type(patternjump_patterns) == s:type_dict
+        let pattern_lists = s:resolve_pattern_dictionary(a:mode, 'forward', patternjump_patterns)
+      endif
+
+      " make cache
+      execute 'let ' . cache_name . ' = [{}, {}]'
+      execute 'let ' . cache_name . '[0][a:mode] = pattern_lists'
+    elseif !has_key(eval(eval('cache_name'))[0], a:mode)
+      " cache for the current mode do not exist
+      let patternjump_patterns = (a:0 > 0) ? a:1 : (exists('g:patternjump_patterns') ? g:patternjump_patterns : s:patternjump_patterns)
+
+      if type(patternjump_patterns) == s:type_list
+        let pattern_lists[0] = get(patternjump_patterns, 0, [])
+        let pattern_lists[1] = get(patternjump_patterns, 1, [])
+      elseif type(patternjump_patterns) == s:type_dict
+        let pattern_lists = s:resolve_pattern_dictionary(a:mode, 'forward', patternjump_patterns)
+      endif
+
+      " add cache
+      execute 'let ' . cache_name . '[0][a:mode] = pattern_lists'
+    else
+      " cache exists
+      execute 'let pattern_lists = ' . cache_name . '[0][a:mode]'
+    endif
   endif
 
   " split into head and tail patterns
@@ -204,16 +230,27 @@ function! patternjump#backward(mode, ...) "{{{
 
   " searching for user configurations
   let options_dict   = (a:0 > 2) ? a:3 : {}
-  let opt_caching    = s:user_conf(   'caching', options_dict, 0)
-  let opt_debug_mode = s:user_conf('debug_mode', options_dict, 0)
-  let opt_highlight  = s:user_conf( 'highlight', options_dict, 0)
+  let opt_caching    = patternjump#user_conf(   'caching', options_dict, 0)
+  let opt_debug_mode = patternjump#user_conf('debug_mode', options_dict, 0)
+  let opt_highlight  = patternjump#user_conf( 'highlight', options_dict, 0)
+  let opt_cache_name = patternjump#user_conf('cache_name', options_dict, 'b:patternjump_cache')
   let opt_raw        = s:check_raw(options_dict)
+
+  " check and modify cache name
+  if opt_cache_name =~# '^\h[0-9a-zA-Z_#]*$'
+    let cache_name = 'b:' . opt_cache_name
+  elseif opt_cache_name =~# '^[^bgtw]:\h[0-9a-zA-Z_#]*$'
+    let cache_name = 'b:' . opt_cache_name[2:]
+  else
+    let cache_name = opt_cache_name
+  endif
 
   " resolve given patterns
   let pattern_lists = []
 
-  if a:0 > 0
-    let patternjump_patterns = a:1
+  if !opt_caching
+    " do not use cache
+    let patternjump_patterns = (a:0 > 0) ? a:1 : (exists('g:patternjump_patterns') ? g:patternjump_patterns : s:patternjump_patterns)
 
     if type(patternjump_patterns) == s:type_list
       let pattern_lists[0] = get(patternjump_patterns, 0, [])
@@ -221,23 +258,39 @@ function! patternjump#backward(mode, ...) "{{{
     elseif type(patternjump_patterns) == s:type_dict
       let pattern_lists = s:resolve_pattern_dictionary(a:mode, 'backward', patternjump_patterns)
     endif
-  elseif !exists('b:patternjump_backward_cache')
-    let patternjump_patterns = exists('g:patternjump_patterns') ? g:patternjump_patterns : s:patternjump_patterns
-    let pattern_lists = s:resolve_pattern_dictionary(a:mode, 'backward', patternjump_patterns)
-
-    if opt_caching
-      let b:patternjump_backward_cache = {}
-      let b:patternjump_backward_cache[a:mode] = pattern_lists
-    endif
-  elseif !has_key(b:patternjump_backward_cache, a:mode)
-    let patternjump_patterns = (a:0 > 0) ? a:1 : (exists('g:patternjump_patterns') ? g:patternjump_patterns : s:patternjump_patterns)
-    let pattern_lists = s:resolve_pattern_dictionary(a:mode, 'backward', patternjump_patterns)
-
-    if opt_caching
-      let b:patternjump_backward_cache[a:mode] = pattern_lists
-    endif
   else
-    let pattern_lists = b:patternjump_backward_cache[a:mode]
+    " use cache
+    if !exists(cache_name)
+      " cache do not exist
+      let patternjump_patterns = (a:0 > 0) ? a:1 : (exists('g:patternjump_patterns') ? g:patternjump_patterns : s:patternjump_patterns)
+
+      if type(patternjump_patterns) == s:type_list
+        let pattern_lists[0] = get(patternjump_patterns, 0, [])
+        let pattern_lists[1] = get(patternjump_patterns, 1, [])
+      elseif type(patternjump_patterns) == s:type_dict
+        let pattern_lists = s:resolve_pattern_dictionary(a:mode, 'backward', patternjump_patterns)
+      endif
+
+      " make cache
+      execute 'let ' . cache_name . ' = [{}, {}]'
+      execute 'let ' . cache_name . '[0][a:mode] = pattern_lists'
+    elseif !has_key(eval(eval('cache_name'))[0], a:mode)
+      " cache for the current mode do not exist
+      let patternjump_patterns = (a:0 > 0) ? a:1 : (exists('g:patternjump_patterns') ? g:patternjump_patterns : s:patternjump_patterns)
+
+      if type(patternjump_patterns) == s:type_list
+        let pattern_lists[0] = get(patternjump_patterns, 0, [])
+        let pattern_lists[1] = get(patternjump_patterns, 1, [])
+      elseif type(patternjump_patterns) == s:type_dict
+        let pattern_lists = s:resolve_pattern_dictionary(a:mode, 'backward', patternjump_patterns)
+      endif
+
+      " add cache
+      execute 'let ' . cache_name . '[0][a:mode] = pattern_lists'
+    else
+      " cache exists
+      execute 'let pattern_lists = ' . cache_name . '[0][a:mode]'
+    endif
   endif
 
   " split into head and tail patterns
@@ -328,6 +381,32 @@ function! patternjump#backward(mode, ...) "{{{
   endif
 
   return output
+endfunction
+"}}}
+function! patternjump#user_conf(name, arg, default)    "{{{
+  let user_conf = a:default
+
+  if has_key(a:arg, a:name)
+    return a:arg[a:name]
+  endif
+
+  if exists('g:patternjump_' . a:name)
+    let user_conf = g:patternjump_{a:name}
+  endif
+
+  if exists('t:patternjump_' . a:name)
+    let user_conf = t:patternjump_{a:name}
+  endif
+
+  if exists('w:patternjump_' . a:name)
+    let user_conf = w:patternjump_{a:name}
+  endif
+
+  if exists('b:patternjump_' . a:name)
+    let user_conf = b:patternjump_{a:name}
+  endif
+
+  return user_conf
 endfunction
 "}}}
 function! patternjump#cleaner() "{{{
@@ -453,32 +532,6 @@ endfunction
 "}}}
 function! s:compare(i1, i2) "{{{
   return a:i1 - a:i2
-endfunction
-"}}}
-function! s:user_conf(name, arg, default)    "{{{
-  let user_conf = a:default
-
-  if has_key(a:arg, a:name)
-    return a:arg[a:name]
-  endif
-
-  if exists('g:patternjump_' . a:name)
-    let user_conf = g:patternjump_{a:name}
-  endif
-
-  if exists('t:patternjump_' . a:name)
-    let user_conf = t:patternjump_{a:name}
-  endif
-
-  if exists('w:patternjump_' . a:name)
-    let user_conf = w:patternjump_{a:name}
-  endif
-
-  if exists('b:patternjump_' . a:name)
-    let user_conf = b:patternjump_{a:name}
-  endif
-
-  return user_conf
 endfunction
 "}}}
 function! s:check_raw(arg)    "{{{

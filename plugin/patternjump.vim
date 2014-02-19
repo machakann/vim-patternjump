@@ -1,5 +1,5 @@
 " Vim global plugin for moving cursor by assigned patterns
-" Last Change: 17-Feb-2014.
+" Last Change: 20-Feb-2014.
 " Maintainer : Masaaki Nakamura <mckn@outlook.com>
 
 " License    : NYSL
@@ -18,9 +18,9 @@ command! -nargs=0 PatternjumpDebugModeToggle call s:debug_mode_toggle()
 command! -nargs=0 PatternjumpCachingOn       call s:caching_on()
 command! -nargs=0 PatternjumpCachingOff      call s:caching_off()
 command! -nargs=0 PatternjumpCachingToggle   call s:caching_toggle()
-command! -nargs=0 PatternjumpCachingDelete   unlet! b:patternjump_forward_cache | unlet! b:patternjump_backward_cache
+command! -nargs=0 PatternjumpDeleteCache     call s:delete_cache()
 
-function! s:debug_mode_on()
+function! s:debug_mode_on() "{{{
   if exists('b:patternjump_debug_mode')
     let b:patternjump_debug_mode = 1
     return
@@ -38,8 +38,8 @@ function! s:debug_mode_on()
 
   let g:patternjump_debug_mode = 1
 endfunction
-
-function! s:debug_mode_off()
+"}}}
+function! s:debug_mode_off()  "{{{
   if exists('g:patternjump_debug_mode')
     let g:patternjump_debug_mode = 0
   endif
@@ -56,8 +56,8 @@ function! s:debug_mode_off()
     let b:patternjump_debug_mode = 0
   endif
 endfunction
-
-function! s:debug_mode_toggle()
+"}}}
+function! s:debug_mode_toggle() "{{{
   if exists('b:patternjump_debug_mode')
     let b:patternjump_debug_mode = !b:patternjump_debug_mode
     return
@@ -80,8 +80,8 @@ function! s:debug_mode_toggle()
 
   let g:patternjump_debug_mode = 1
 endfunction
-
-function! s:caching_on()
+"}}}
+function! s:caching_on()  "{{{
   if exists('b:patternjump_caching')
     let b:patternjump_caching = 1
     return
@@ -99,8 +99,8 @@ function! s:caching_on()
 
   let g:patternjump_caching = 1
 endfunction
-
-function! s:caching_off()
+"}}}
+function! s:caching_off() "{{{
   if exists('g:patternjump_caching')
     let g:patternjump_caching = 0
   endif
@@ -116,17 +116,12 @@ function! s:caching_off()
   if exists('b:patternjump_caching')
     let b:patternjump_caching = 0
   endif
-
-  unlet! b:patternjump_forward_cache
-  unlet! b:patternjump_backward_cache
 endfunction
-
-function! s:caching_toggle()
+"}}}
+function! s:caching_toggle()  "{{{
   if exists('b:patternjump_caching')
     if b:patternjump_caching
       let b:patternjump_caching = 0
-      unlet! b:patternjump_forward_cache
-      unlet! b:patternjump_backward_cache
     else
       let b:patternjump_caching = 1
     endif
@@ -137,8 +132,6 @@ function! s:caching_toggle()
   if exists('w:patternjump_caching')
     if w:patternjump_caching
       let w:patternjump_caching = 0
-      unlet! b:patternjump_forward_cache
-      unlet! b:patternjump_backward_cache
     else
       let b:patternjump_caching = 1
     endif
@@ -149,8 +142,6 @@ function! s:caching_toggle()
   if exists('t:patternjump_caching')
     if t:patternjump_caching
       let t:patternjump_caching = 0
-      unlet! b:patternjump_forward_cache
-      unlet! b:patternjump_backward_cache
     else
       let b:patternjump_caching = 1
     endif
@@ -161,8 +152,6 @@ function! s:caching_toggle()
   if exists('g:patternjump_caching')
     if g:patternjump_caching
       let g:patternjump_caching = 0
-      unlet! b:patternjump_forward_cache
-      unlet! b:patternjump_backward_cache
     else
       let g:patternjump_caching = 1
     endif
@@ -172,6 +161,12 @@ function! s:caching_toggle()
 
   let g:patternjump_caching = 1
 endfunction
+"}}}
+function! s:delete_cache()  "{{{
+  let opt_cache_name = patternjump#user_conf('cache_name', {}, 'b:patternjump_cache')
+  execute 'unlet! ' . opt_cache_name
+endfunction
+"}}}
 
 """ keymappings
 " forward
@@ -211,3 +206,5 @@ if !hasmapto('<Plug>(patternjump-backward)')
 endif
 
 
+" vim:set foldmethod=marker:
+" vim:set commentstring="%s:

@@ -1,4 +1,4 @@
-*patternjump.txt*	Last change:18-Feb-2014.
+*patternjump.txt*	Last change:20-Feb-2014.
 
 Move cursor as you like.
 
@@ -277,15 +277,31 @@ different scopes, b: is prior to w:, w: is prior to t:, t: is prior to g:.
 
 g:patternjump_caching				*g:patternjump_caching*
 	If the value is 1, patternjump makes caches for current buffer named
-	"b:patternjump_forward_cache" or "b:patternjump_backward_cache". They
-	are a dictionary including lists which has already rendered from
+	"b:patternjump_cache" in default. If you want to change the name,
+	please check |g:patternjump_cach_name|. This cache is actually a list
+	which has two dictionaries for forward and backward keymappings. Each
+	dictionary includes lists which has already rendered from
 	|g:patternjump_patterns|.
 	This makes patternjump faster, but the change of
 	|g:patternjump_patterns| do not apply until cache is refreshed. If you
 	felt your patterns has matured enough, then use this option.
 	If you want to change the situation about caching, you can use
 	commands, |:PatternjumpCachingOn|, |:PatternjumpCachingOff|,
-	|:PatternjumpCachingToggle|.
+	|:PatternjumpCachingToggle|. If you want to just clear the current
+	cache, then use |:PatternjumpDeleteCache|.
+	NOTE: In the case you want to use more than one keymapping for either
+	      forward or backward function, caching feature might not works
+	      correctly. This problem can be avoided by using other options.
+	      Please check NOTE on |patternjump-functions|.
+
+g:patternjump_cach_name				*g:patternjump_cach_name*
+	This option allows you to change the variable name of cache. You can
+	use buffer local "b:", window local "w:", tabpage local "t:", global
+	"g:" scope for the name. If the scope assginment is improper or not
+	assigned, buffer local scope is used automatically. Because buffer
+	local scope is strongly recommended to use, since the cache does not
+	have an information about filetype. Default value is
+	"b:patternjump_cache".
 
 g:patternjump_highlight				*g:patternjump_highlight*
 	If the value is 1, all the matched candidates are highlighted by
@@ -365,13 +381,12 @@ COMMANDS					*patternjump-commands*
 	      type a keymapping next time.
 
 :PatternjumpCachingOff				*:PatternjumpCachingOff*
-	This command deletes current cache and disables caching feature.
+	This command disables caching feature.
 
 :PatternjumpCachingToggle			*:PatternjumpCachingToggle*
-	This command toggles the situation of caching feature. When the
-	feature is turned off, the current cache are discarded.
+	This command toggles the situation of caching feature.
 
-PatternjumpCachingDelete			*:PatternjumpCachingDelete*
+PatternjumpDeleteCache				*:PatternjumpDeleteCache*
 	This command deletes the current cache. If caching is still turned on,
 	then new cache would be generated next time.
 
@@ -404,7 +419,13 @@ to notice it which mode you want to map.
 
 The second argument "patternjump_patterns" is a dictionary which has same
 structure as |g:patternjump_patterns|. If this argument is assigned,
-keymappings ignore |g:patternjump_patterns| and use the assigned one.
+keymappings ignore |g:patternjump_patterns| and use the assigned one. Or you
+can assign just a list like this:
+>
+	[['head-patterns'], ['tail-patterns']]
+<
+If the pattern which you want is simple, this description might be enough.
+This assignment works as fast as cache.
 
 The third argument "count" is a number. If a positive number is assigned,
 functions would always ignore {count} and use the assigned number. If zero or
@@ -468,6 +489,40 @@ value is a list including matched patterns of candidates. The value of
 	" e.g. [['\<\h\k*\>', 'head'], ['$', 'tail']]
 	echo output.patterns
 <
+
+NOTE: If you want to use the mapping other than the default with caching
+      feature, do not forget to manage names of cache by
+      |g:patternjump_cach_name|. Without any configuration, both default
+      keymapping and the other try to use same variable "g:patternjump_cache".
+      Therefore, one of them might not works as you expected. To avoid this
+      problem, you need to assign different name for one of them.
+
+      For example, assume you want to use default keymapping and the
+      additional keymapping which searchs parentheses. Define the latter
+      keymapping as following.
+>
+	nmap <silent> <M-p> :<C-u>call patternjump#forward(
+		\		'n',
+		\		{'_' : ['(', '[', '{', ')', ']', '}']},
+		\		0,
+		\		{
+		\		'cashing'    : 1,
+		\		'cache_name' : 'b:patternjump_cache_alt'
+		\		}
+		\	)
+<
+      Or, in this case the pattern set is very simple, so following
+      description would be better.
+>
+	nmap <silent> <M-p> :<C-u>call patternjump#forward(
+		\		'n',
+		\		[['(', '[', '{', ')', ']', '}'], []]
+		\		0
+		\	)
+<
+      This keymapping does not use cache but it works as fast as the one using
+      cache. In the case the patterns are simple enough, you could choose this
+      description.
 
 
 ==============================================================================

@@ -1,4 +1,4 @@
-*patternjump.jax*	Last change:18-Feb-2014.
+*patternjump.jax*	Last change:20-Feb-2014.
 
 カーソル移動をお望みのままに！
 
@@ -284,25 +284,41 @@ head-/tail- の指定は省略しても構いません。この場合、一律で head-pattern と解釈
 
 g:patternjump_caching				*g:patternjump_caching*
 	値に1が指定された場合、 patternjump はバッファにキャッシュを生成し、二
-	回目以降の動作が高速になります。キャッシュは
-	b:patternjump_forward_cache および b:patternjump_backward_cache という
-	名前でその正体は |g:patternjump_patterns| を解釈して生成されたパターン
-	のリストを含む辞書です。
+	回目以降の動作が高速になります。キャッシュはデフォルトでは
+	"b:patternjump_cache" という名前で生成されます。名前を変更したければ、
+	|g:patternjump_cach_name| の項をご覧ください。これは前方検索と後方検索
+	それぞれのためのキャッシュを収めた辞書をまとめた二要素のリストです。そ
+	れぞれの辞書には |g:patternjump_patterns| を解釈して生成したリストが収
+	められています。
 	この機能は動作をより軽快にしますが、 |g:patternjump_patterns| の変更が
 	キャッシュを作り直すまで反映されなくなります。設定したパターンに十分満
 	足したらキャッシュ機能を使うとよいでしょう。
 	このキャッシュに関する状況はいくつかのコマンドによってうまく変更するこ
 	とができます。編集中に変更したくなったらコマンドを使うのがよいでしょう
-	。|:PatternjumpCachingOn|, |:PatternjumpCachingOff|,
-	|:PatternjumpCachingToggle|, |:PatternjumpCachingDelete|.
-	デフォルト値は0でオフになっています。
+	。|:PatternjumpCachingOn| 、 |:PatternjumpCachingOff|、
+	|:PatternjumpCachingToggle|。あるいはただ現在のキャッシュを削除したけ
+	れば|:PatternjumpCachingDelete| を使うとよいでしょう。デフォルト値は0
+	でオフになっています。
+	NOTE: 前方検索を、あるいは後方検索マッピングを複数定義したい場合、キャ
+	      ッシュ機能はうまく働かない恐れがあります。これはほかのオプション
+	      を適切に設定することで回避できます。詳しくは
+	      |g:patternjump-functions| の項の NOTE を参照してください。
+
+g:patternjump_cach_name				*g:patternjump_cach_name*
+	この変数を使用するとキャッシュを保存する変数の名前が指定できます。変数
+	にはバッファローカル "b:" 、ウィンドウローカル "w:" 、タブページローカ
+	ル "t:" 、グローバル "g:" スコープが使用できます。もしそれ以外のスコー
+	プが使用されていたり、指定されていなかった場合は自動的にバッファローカ
+	ルスコープが使用されます。これはキャッシュがファイルタイプの情報を含ま
+	ないので、バッファローカルスコープの使用が推奨されるためです。デフォル
+	ト値は "b:patternjump_cache" です。
 
 g:patternjump_highlight				*g:patternjump_highlight*
 	値が1の場合、すべての移動先候補を |hl-IncSearch| を使ってハイライトし
 	ます。0の場合はハイライトしません。デフォルト値は0です。
 	NOTE: カーソルが移動したタイミングでハイライトは消去されます。
 	NOTE: この機能はできるだけ多くの移動先をすべて列挙するために{count}の
-	　　　関係上スキップできる候補もすべて列挙します。さらにハイライトも行
+	　　　関係上スキップできる候補もすべて検索します。さらにハイライトも行
 	　　　うために少しだけ動作が遅くなるかもしれません。
 
 g:patternjump_debug_mode			*g:patternjump_debug_mode*
@@ -318,7 +334,7 @@ g:patternjump_debug_mode			*g:patternjump_debug_mode*
 	デフォルト値は0です。
 	NOTE: カーソルが移動したタイミングでハイライトは消去されます。
 	NOTE: この機能はできるだけ多くの移動先をすべて列挙するために{count}の
-	　　　関係上スキップできる候補もすべて列挙します。さらにハイライトも行
+	　　　関係上スキップできる候補もすべて検索します。さらにハイライトも行
 	　　　うために少しだけ動作が遅くなるかもしれません。
 
 ==============================================================================
@@ -371,23 +387,21 @@ backward		<Plug>(patternjump-backward)	<M-h>
 COMMANDS					*patternjump-commands*
 
 :PatternjumpCachingOn				*:PatternjumpCachingOn*
-	このコマンドを使用すると patternjump はキャッシュを作り、その動作を高
-	速化します。 |g:patternjump_caching| の項もご確認ください。
+	このコマンドを使用すると patternjump はキャッシュ機能を有効化し、その
+	動作を高速化します。 |g:patternjump_caching| の項もご確認ください。
 	NOTE: コマンドを使用してもすぐにはキャッシュは生成されません。次回のキ
 	      ーイベント発生時に生成されます。
 
 :PatternjumpCachingOff				*:PatternjumpCachingOff*
-	このコマンドを使用すると現在のキャッシュを破棄し、キャッシュ機能の使用
-	を中止します。
+	このコマンドを使用するとキャッシュ機能の使用を中止します。
 
 :PatternjumpCachingToggle			*:PatternjumpCachingToggle*
-	キャッシュ機能のオン・オフを切り替えます。オフ時には現在のキャッシュは
-	破棄されます。
+	キャッシュ機能のオン・オフを切り替えます。
 
-PatternjumpCachingDelete			*:PatternjumpCachingDelete*
+PatternjumpDeleteCache				*:PatternjumpDeleteCache*
 	このコマンドを使用すると現在のキャッシュを破棄します。キャッシュ機能の
-	停止はしないので次回のキーイベント発生時に新しいキャッシュが生成される
-	でしょう。
+	停止はなされないので、次回のキーイベント発生時に新しいキャッシュが生成
+	されるでしょう。
 
 :PatternjumpDebugModeOn				*:PatternjumpDebugModeOn*
 	このコマンドを使用すると、デバッグモードに入ります。詳しくは
@@ -418,7 +432,13 @@ xxx と書いてある部分は forward もしくは backward です。
 
 二つ目の引数 "patternjump_patterns" には |g:patternjump_patterns| と同じ構造の
 辞書が指定されます。この引数が指定された場合、関数は |g:patternjump_patterns|
-を無視し、引数に指定されたパターンを使用します。
+を無視し、引数に指定されたパターンを使用します。あるいはより簡単に次のようなパ
+ターンのリストを渡すこともできます。
+>
+	[['head-patterns'], ['tail-patterns']]
+<
+もしあなたの望むパターンが十分にシンプルならこの記法で十分でしょう。またこの記
+法だとキャッシュ使用時と同等の速度で動作します。
 
 三つめの引数 "count" には数字が使えます。もし正の数が指定された場合、関数は常
 に {count} 指定を無視し、引数に与えられた数字を使います。もしゼロおよび負数が
@@ -479,6 +499,39 @@ xxx と書いてある部分は forward もしくは backward です。
 	" マッチしたパターン     :   例 [['\<\h\k*\>', 'head'], ['$', 'tail']]
 	echo output.patterns
 <
+
+NOTE: デフォルト以外のキーマッピングを定義してキャッシュ機能を使いたい場合、
+      |g:patternjump_cach_name| を使ってキャッシュの名前を適切に管理するように
+      してください。もし何も設定しなければ、デフォルトのキーマッピングと追加し
+      たキーマッピングは同じ変数 "b:patternjump_cache" を使おうとするのでどち
+      らか一方は望む動作をしないでしょう。これを避けるために別のキャッシュ名を
+      片方に指定してください。
+
+      例えば、デフォルトのほかに最寄りの括弧を探すキーマッピングを探すキーマッ
+      ピングを定義したいとします。その場合、後者をこのように定義します。
+>
+	nmap <silent> <M-p> :<C-u>call patternjump#forward(
+		\		'n',
+		\		{'_' : ['(', '[', '{', ')', ']', '}']},
+		\		0,
+		\		{
+		\		'cashing'    : 1,
+		\		'cache_name' : 'b:patternjump_cache_alt'
+		\		}
+		\	)
+<
+      あるいは、この場合パターンはとても単純であるため、次の記述でも十分でしょ
+      う。
+>
+	nmap <silent> <M-p> :<C-u>call patternjump#forward(
+		\		'n',
+		\		[['(', '[', '{', ')', ']', '}'], []]
+		\		0
+		\	)
+<
+      このキーマッピングはキャッシュを使用しませんが、キャッシュを使用した場合
+      と同等の速度で動作します。パターンがシンプルな場合はこちらを選ぶとよいで
+      しょう。
 
 
 ==============================================================================
