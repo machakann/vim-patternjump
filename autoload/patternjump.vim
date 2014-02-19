@@ -58,8 +58,19 @@ function! patternjump#forward(mode, ...) "{{{
   let opt_raw        = s:check_raw(options_dict)
 
   " resolve given patterns
-  if !exists('b:patternjump_forward_cache')
-    let patternjump_patterns = (a:0 > 0) ? a:1 : (exists('g:patternjump_patterns') ? g:patternjump_patterns : s:patternjump_patterns)
+  let pattern_lists = []
+
+  if a:0 > 0
+    let patternjump_patterns = a:1
+
+    if type(patternjump_patterns) == s:type_list
+      let pattern_lists[0] = get(patternjump_patterns, 0, [])
+      let pattern_lists[1] = get(patternjump_patterns, 1, [])
+    elseif type(patternjump_patterns) == s:type_dict
+      let pattern_lists = s:resolve_pattern_dictionary(a:mode, 'forward', patternjump_patterns)
+    endif
+  elseif !exists('b:patternjump_forward_cache')
+    let patternjump_patterns = exists('g:patternjump_patterns') ? g:patternjump_patterns : s:patternjump_patterns
     let pattern_lists = s:resolve_pattern_dictionary(a:mode, 'forward', patternjump_patterns)
 
     if opt_caching
@@ -69,7 +80,10 @@ function! patternjump#forward(mode, ...) "{{{
   elseif !has_key(b:patternjump_forward_cache, a:mode)
     let patternjump_patterns = (a:0 > 0) ? a:1 : (exists('g:patternjump_patterns') ? g:patternjump_patterns : s:patternjump_patterns)
     let pattern_lists = s:resolve_pattern_dictionary(a:mode, 'forward', patternjump_patterns)
-    let b:patternjump_forward_cache[a:mode] = pattern_lists
+
+    if opt_caching
+      let b:patternjump_forward_cache[a:mode] = pattern_lists
+    endif
   else
     let pattern_lists = b:patternjump_forward_cache[a:mode]
   endif
@@ -195,8 +209,19 @@ function! patternjump#backward(mode, ...) "{{{
   let opt_raw        = s:check_raw(options_dict)
 
   " resolve given patterns
-  if !exists('b:patternjump_backward_cache')
-    let patternjump_patterns = (a:0 > 0) ? a:1 : (exists('g:patternjump_patterns') ? g:patternjump_patterns : s:patternjump_patterns)
+  let pattern_lists = []
+
+  if a:0 > 0
+    let patternjump_patterns = a:1
+
+    if type(patternjump_patterns) == s:type_list
+      let pattern_lists[0] = get(patternjump_patterns, 0, [])
+      let pattern_lists[1] = get(patternjump_patterns, 1, [])
+    elseif type(patternjump_patterns) == s:type_dict
+      let pattern_lists = s:resolve_pattern_dictionary(a:mode, 'backward', patternjump_patterns)
+    endif
+  elseif !exists('b:patternjump_backward_cache')
+    let patternjump_patterns = exists('g:patternjump_patterns') ? g:patternjump_patterns : s:patternjump_patterns
     let pattern_lists = s:resolve_pattern_dictionary(a:mode, 'backward', patternjump_patterns)
 
     if opt_caching
@@ -206,7 +231,10 @@ function! patternjump#backward(mode, ...) "{{{
   elseif !has_key(b:patternjump_backward_cache, a:mode)
     let patternjump_patterns = (a:0 > 0) ? a:1 : (exists('g:patternjump_patterns') ? g:patternjump_patterns : s:patternjump_patterns)
     let pattern_lists = s:resolve_pattern_dictionary(a:mode, 'backward', patternjump_patterns)
-    let b:patternjump_backward_cache[a:mode] = pattern_lists
+
+    if opt_caching
+      let b:patternjump_backward_cache[a:mode] = pattern_lists
+    endif
   else
     let pattern_lists = b:patternjump_backward_cache[a:mode]
   endif
