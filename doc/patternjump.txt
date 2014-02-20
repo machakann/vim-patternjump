@@ -387,8 +387,9 @@ COMMANDS					*patternjump-commands*
 	This command toggles the situation of caching feature.
 
 PatternjumpDeleteCache				*:PatternjumpDeleteCache*
-	This command deletes the current cache. If caching is still turned on,
-	then new cache would be generated next time.
+	This command deletes the cache which is assigned by
+	|g:patternjump_cach_name|. If caching is still turned on, then new
+	cache would be generated next time.
 
 :PatternjumpDebugModeOn				*:PatternjumpDebugModeOn*
 	This command starts the debug mode. Please refer

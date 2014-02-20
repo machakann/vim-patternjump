@@ -399,9 +399,9 @@ COMMANDS					*patternjump-commands*
 	キャッシュ機能のオン・オフを切り替えます。
 
 PatternjumpDeleteCache				*:PatternjumpDeleteCache*
-	このコマンドを使用すると現在のキャッシュを破棄します。キャッシュ機能の
-	停止はなされないので、次回のキーイベント発生時に新しいキャッシュが生成
-	されるでしょう。
+	このコマンドを使用すると |g:patternjump_cach_name| に指定されているキ
+	ャッシュを破棄します。キャッシュ機能の停止はなされないので、次回のキー
+	イベント発生時に新しいキャッシュが生成されるでしょう。
 
 :PatternjumpDebugModeOn				*:PatternjumpDebugModeOn*
 	このコマンドを使用すると、デバッグモードに入ります。詳しくは
