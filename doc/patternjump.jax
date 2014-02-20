@@ -1,4 +1,4 @@
-*patternjump.jax*	Last change:20-Feb-2014.
+*patternjump.jax*	Last change:21-Feb-2014.
 
 カーソル移動をお望みのままに！
 
@@ -317,6 +317,7 @@ g:patternjump_highlight				*g:patternjump_highlight*
 	値が1の場合、すべての移動先候補を |hl-IncSearch| を使ってハイライトし
 	ます。0の場合はハイライトしません。デフォルト値は0です。
 	NOTE: カーソルが移動したタイミングでハイライトは消去されます。
+	NOTE: この機能はノーマル、挿入、ビジュアルモードでのみ有効です。
 	NOTE: この機能はできるだけ多くの移動先をすべて列挙するために{count}の
 	　　　関係上スキップできる候補もすべて検索します。さらにハイライトも行
 	　　　うために少しだけ動作が遅くなるかもしれません。

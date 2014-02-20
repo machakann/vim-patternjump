@@ -212,7 +212,7 @@ function! patternjump#forward(mode, ...) "{{{
   endif
 
   " highlighting candidates (if necessary)
-  if (opt_debug_mode || opt_highlight) && a:mode =~# '[nxoi]'
+  if (opt_debug_mode || opt_highlight) && a:mode =~# '[nxi]'
     call s:highlighter(candidate_positions, matched_patterns, opt_debug_mode)
   endif
 
@@ -376,7 +376,7 @@ function! patternjump#backward(mode, ...) "{{{
   endif
 
   " highlighting candidates (if necessary)
-  if opt_debug_mode || opt_highlight
+  if (opt_debug_mode || opt_highlight) && a:mode =~# '[nxi]'
     call s:highlighter(candidate_positions, matched_patterns, opt_debug_mode)
   endif
 

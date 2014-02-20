@@ -1,4 +1,4 @@
-*patternjump.txt*	Last change:20-Feb-2014.
+*patternjump.txt*	Last change:21-Feb-2014.
 
 Move cursor as you like.
 
@@ -308,6 +308,7 @@ g:patternjump_highlight				*g:patternjump_highlight*
 	using |hl-IncSearch|. If the value is 0, the highlighting is tunred
 	off. Default value is 0.
 	NOTE: The highlighting is removed when cursor is moved.
+	NOTE: This feature is valid only in normal, insert, visual mode.
 	NOTE: This option might make this plugin slightly slower since it try
 	      to collect all the candidates as possible and highlight numbers
 	      of positions.
