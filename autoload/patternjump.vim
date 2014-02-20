@@ -1,4 +1,4 @@
-" patternjump.vim - move cursor as you like
+﻿" patternjump.vim - move cursor as you like
 
 " I assumed that several dozen patterns are used usually, so I optimized for the use case.
 " If defined patterns are too much, following algorithm might be slow.
