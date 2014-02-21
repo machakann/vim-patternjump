@@ -446,6 +446,11 @@ function! s:resolve_pattern_dictionary(mode, direction, patternjump_patterns) "{
     let include_list = ['_']
   endif
 
+  " always include '*' key if it exists
+  if has_key(a:patternjump_patterns, '*')
+    let include_list += ['*']
+  endif
+
   let head_pattern_list = []
   let tail_pattern_list = []
   for key in include_list

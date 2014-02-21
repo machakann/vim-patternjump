@@ -1,4 +1,4 @@
-﻿*patternjump.txt*	Last change:21-Feb-2014.
+﻿*patternjump.txt*	Last change:22-Feb-2014.
 
 Move cursor as you like.
 
@@ -200,6 +200,38 @@ If you add patterns to "common_pattern", they will valid as tail-patterns in
 command-line mode and insert mode and also as head-patterns in normal, visual,
 operator-pending mode.
 NOTE: "include" can not be nested!
+
+There is one more special key name '*'. If this key exists, it is always
+included. Command-line mode configuration is probably common for all
+filetypes. Thus using '*' key might be a good way to share command-line mode
+patterns. However, because of this characteristic, this key might cause
+unwanted effect for other scenes. Please use it carefully.
+>
+	let g:patternjump_patterns = {
+		\ '_' : {
+		\   'i' : {
+		\     'head' : [',', ')', ']', '}'],
+		\     'tail' : ['\<\h\k*\>', '$'],
+		\     },
+		\   'nxo' : {
+		\     'head' : ['\<\h\k*\>'],
+		\     'tail' : ['$'],
+		\     },
+		\   },
+		\ '*' : {
+		\   'c' : {
+		\     'head' : [',', ')', ']', '}'],
+		\     'tail' : ['\<\h\k*\>', '$'],
+		\     },
+		\   },
+		\ 'vim' : {
+		\   'include' : '_',
+		\   'nxo'     : {
+		\     'head' : ['\<[abglstvw]:\k\+'],
+		\     },
+		\   },
+		\ }
+<
 
 Actually it is possible to omit so many things from |g:patternjump_patterns|.
 For example, head-/tail- assignment can be omitted. In that case it is
