@@ -37,7 +37,7 @@ let s:id_list   = []
 let s:hp        = 0
 
 " load vital
-let s:V  = vital#of('verticalmove')
+let s:V  = vital#of('patternjump')
 let s:Sl = s:V.import('Data.List')
 unlet s:V
 
