@@ -1,4 +1,4 @@
-*patternjump.jax*	Last change:01-Mar-2014.
+*patternjump.jax*	Last change:02-Mar-2014.
 
 カーソル移動をお望みのままに！
 
@@ -132,7 +132,7 @@ CONFIGURATION					*patternjump-configuration*
 		\     },
 		\   'i' : {
 		\     'tail' : ['\<\h\k\+\>', '$'],
-		\     }
+		\     },
 		\   'nxo' : {
 		\     'head' : ['\<\h\k\+\>'],
 		\     'tail' : ['$'],
@@ -166,6 +166,12 @@ vimscript のパターン指定を見てみるとモード指定のキーのほ�
 		\     'tail' : ['$'],
 		\     },
 		\   },
+		\ 'Someotherfiletype' : {
+		\   'nxo' : {
+		\     'head' : ['foo'],
+		\     'tail' : ['bar'],
+		\     },
+		\   },
 		\ 'vim' : {
 		\   'include' : ['_', 'SomeOtherFiletype'],
 		\   'nxo'     : {
@@ -191,7 +197,7 @@ vimscript のパターン指定を見てみるとモード指定のキーのほ�
 		\     },
 		\   },
 		\ 'vim' : {
-		\   'include' : ['_', 'SomeOtherFiletype'],
+		\   'include' : '_',
 		\   'nxo'     : {
 		\     'head' : ['\<[abglstvw]:\k\+'],
 		\     },
@@ -269,13 +275,11 @@ head-/tail- の指定は省略しても構いません。この場合、一律�
 		\     'tail' : ['$'],
 		\     },
 		\   'i' : {
-		\     'common' : common_pattern
+		\     'common' : common_pattern,
 		\     },
 		\   'c' : {
-		\     'forward' : common_pattern
-		\     'backward' : {
-		\       'tail' : ['$'],
-		\       },
+		\     'forward'  : {'tail' : ['$']},
+		\     'backward' : common_pattern,
 		\     },
 		\   },
 		\ 'vim' : {

@@ -1,4 +1,4 @@
-﻿*patternjump.txt*	Last change:01-Mar-2014.
+﻿*patternjump.txt*	Last change:02-Mar-2014.
 
 Move cursor as you like.
 
@@ -131,7 +131,7 @@ dictionary which includes head- and/or tail- patterns.
 		\     },
 		\   'i' : {
 		\     'tail' : ['\<\h\k\+\>', '$'],
-		\     }
+		\     },
 		\   'nxo' : {
 		\     'head' : ['\<\h\k\+\>'],
 		\     'tail' : ['$'],
@@ -164,6 +164,12 @@ list. If you want to add much more other settings, use list for the value.
 		\     'tail' : ['$'],
 		\     },
 		\   },
+		\ 'Someotherfiletype' : {
+		\   'nxo' : {
+		\     'head' : ['foo'],
+		\     'tail' : ['bar'],
+		\     },
+		\   },
 		\ 'vim' : {
 		\   'include' : ['_', 'SomeOtherFiletype'],
 		\   'nxo'     : {
@@ -189,7 +195,7 @@ want to use common patterns more finely, I suggest to write as following.
 		\     },
 		\   },
 		\ 'vim' : {
-		\   'include' : ['_', 'SomeOtherFiletype'],
+		\   'include' : '_',
 		\   'nxo'     : {
 		\     'head' : ['\<[abglstvw]:\k\+'],
 		\     },
@@ -267,13 +273,11 @@ backward one.
 		\     'tail' : ['$'],
 		\     },
 		\   'i' : {
-		\     'common' : common_pattern
+		\     'common' : common_pattern,
 		\     },
 		\   'c' : {
-		\     'forward' : common_pattern
-		\     'backward' : {
-		\       'tail' : ['$'],
-		\       },
+		\     'forward'  : {'tail' : ['$']},
+		\     'backward' : common_pattern,
 		\     },
 		\   },
 		\ 'vim' : {
