@@ -330,7 +330,7 @@ g:patternjump_caching				*g:patternjump_caching*
 	とができます。編集中に変更したくなったらコマンドを使うのがよいでしょう
 	。|:PatternjumpCachingOn| 、 |:PatternjumpCachingOff|、
 	|:PatternjumpCachingToggle| が使用できます。あるいはただ現在のキャッシ
-	ュを削除したければ|:PatternjumpCachingDelete| を使うとよいでしょう。
+	ュを削除したければ|:PatternjumpDeleteCache| を使うとよいでしょう。
 	NOTE: 前方検索を、あるいは後方検索マッピングを複数定義したい場合、キャ
 	      ッシュ機能はうまく働かない恐れがあります。これはほかのオプション
 	      を適切に設定することで回避できます。詳しくは
