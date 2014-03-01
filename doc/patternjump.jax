@@ -1,4 +1,4 @@
-*patternjump.jax*	Last change:22-Feb-2014.
+*patternjump.jax*	Last change:01-Mar-2014.
 
 カーソル移動をお望みのままに！
 
@@ -53,7 +53,7 @@ head-pattern に属していた場合、カーソルはマッチ範囲の頭 (he
 <
 さて、お気づきになりましたか？どうにも "bar" というパターンはあまり役に立ちそ
 うにありませんね。なのでこれはデフォルトのパターンに収録しないことにしました。
-賢い選択ですね。かわりに '\<\h\k*\>' というパターンがデフォルトパターンに含ま
+賢い選択ですね。かわりに '\<\h\k\+\>' というパターンがデフォルトパターンに含ま
 れています。これは 'iskeyword' オプションによって判定される、独立した単語にマ
 ッチします。なので上のコードの場合は "let"、 "foo" 、 "bar" の上で止まるでしょ
 う。そしてまさにそれは、多くの場合、レビューの際に修正したい箇所ではないでしょ
@@ -64,7 +64,7 @@ head-pattern に属していた場合、カーソルはマッチ範囲の頭 (he
 	  #   #      #  tail-pattern
 <
 さらに、これらのパターンは |vim-modes| に従って切り替えることができます。たと
-えば、先ほど紹介した '\<\h\k*\>' というパターンはノーマルモードでは
+えば、先ほど紹介した '\<\h\k\+\>' というパターンはノーマルモードでは
 head-pattern に属している一方で、挿入モードでは tail-pattern に属しています。
 ノーマルモードでは |text-objects| や {motion} によって素晴らしい編集環境が得ら
 れます。この場合、単語を修正したければ |c||iw| あるいは、単に、 |c||w| で事足
@@ -83,10 +83,10 @@ CONFIGURATION					*patternjump-configuration*
 		\ '_' : {
 		\   'ci' : {
 		\     'head' : [',', ')', ']', '}'],
-		\     'tail' : ['\<\h\k*\>', '$'],
+		\     'tail' : ['\<\h\k\+\>', '$'],
 		\     },
 		\   'nxo' : {
-		\     'head' : ['\<\h\k*\>'],
+		\     'head' : ['\<\h\k\+\>'],
 		\     'tail' : ['$'],
 		\     },
 		\   },
@@ -128,13 +128,13 @@ CONFIGURATION					*patternjump-configuration*
 		\ '_' : {
 		\   'c' : {
 		\     'head' : [',', ')', ']', '}'],
-		\     'tail' : ['\<\h\k*\>', '$'],
+		\     'tail' : ['\<\h\k\+\>', '$'],
 		\     },
 		\   'i' : {
-		\     'tail' : ['\<\h\k*\>', '$'],
+		\     'tail' : ['\<\h\k\+\>', '$'],
 		\     }
 		\   'nxo' : {
-		\     'head' : ['\<\h\k*\>'],
+		\     'head' : ['\<\h\k\+\>'],
 		\     'tail' : ['$'],
 		\     },
 		\   },
@@ -159,10 +159,10 @@ vimscript のパターン指定を見てみるとモード指定のキーのほ�
 		\ '_' : {
 		\   'ci' : {
 		\     'head' : [',', ')', ']', '}'],
-		\     'tail' : ['\<\h\k*\>', '$'],
+		\     'tail' : ['\<\h\k\+\>', '$'],
 		\     },
 		\   'nxo' : {
-		\     'head' : ['\<\h\k*\>'],
+		\     'head' : ['\<\h\k\+\>'],
 		\     'tail' : ['$'],
 		\     },
 		\   },
@@ -178,7 +178,7 @@ vimscript のパターン指定を見てみるとモード指定のキーのほ�
 りも細かい単位でのパターンの共有の仕組みは用意されていません。なので、少し工夫
 して次のように書くとよいでしょう。
 >
-	let common_pattern = ['\<\h\k*\>']
+	let common_pattern = ['\<\h\k\+\>']
 	let g:patternjump_patterns = {
 		\ '_' : {
 		\   'ci' : {
@@ -213,17 +213,17 @@ NOTE: "include" はネストしません！
 		\ '_' : {
 		\   'i' : {
 		\     'head' : [',', ')', ']', '}'],
-		\     'tail' : ['\<\h\k*\>', '$'],
+		\     'tail' : ['\<\h\k\+\>', '$'],
 		\     },
 		\   'nxo' : {
-		\     'head' : ['\<\h\k*\>'],
+		\     'head' : ['\<\h\k\+\>'],
 		\     'tail' : ['$'],
 		\     },
 		\   },
 		\ '*' : {
 		\   'c' : {
 		\     'head' : [',', ')', ']', '}'],
-		\     'tail' : ['\<\h\k*\>', '$'],
+		\     'tail' : ['\<\h\k\+\>', '$'],
 		\     },
 		\   },
 		\ 'vim' : {
@@ -243,14 +243,14 @@ head-/tail- の指定は省略しても構いません。この場合、一律�
 	let g:patternjump_patterns = {
 		\ '_' : {
 		\   'ci'  : [',', ')', ']', '}'],
-		\   'nxo' : ['\<\h\k*\>'],
+		\   'nxo' : ['\<\h\k\+\>'],
 		\   },
 		\ }
 <
 さらに、モード指定も省略できます。
 >
 	let g:patternjump_patterns = {
-		\ '_' : ['\<\h\k*\>'],
+		\ '_' : ['\<\h\k\+\>'],
 		\ }
 <
 これでも有効です。
@@ -260,12 +260,12 @@ head-/tail- の指定は省略しても構いません。この場合、一律�
 >
 	let common_pattern = {
 		\    'head' : [',', ')', ']', '}'],
-		\    'tail' : ['\<\h\k*\>', '$'],
+		\    'tail' : ['\<\h\k\+\>', '$'],
 		\  }
 	let g:patternjump_patterns = {
 		\ '_' : {
 		\   'nxo' : {
-		\     'head' : ['\<\h\k*\>'],
+		\     'head' : ['\<\h\k\+\>'],
 		\     'tail' : ['$'],
 		\     },
 		\   'i' : {
@@ -324,13 +324,13 @@ g:patternjump_caching				*g:patternjump_caching*
 	められています。
 	この機能は動作をより軽快にしますが、 |g:patternjump_patterns| の変更が
 	キャッシュを作り直すまで反映されなくなります。設定したパターンに十分満
-	足したらキャッシュ機能を使うとよいでしょう。
+	足したらキャッシュ機能を使うとよいでしょう。デフォルト値は0でオフにな
+	っています。
 	このキャッシュに関する状況はいくつかのコマンドによってうまく変更するこ
 	とができます。編集中に変更したくなったらコマンドを使うのがよいでしょう
 	。|:PatternjumpCachingOn| 、 |:PatternjumpCachingOff|、
-	|:PatternjumpCachingToggle|。あるいはただ現在のキャッシュを削除したけ
-	れば|:PatternjumpCachingDelete| を使うとよいでしょう。デフォルト値は0
-	でオフになっています。
+	|:PatternjumpCachingToggle| が使用できます。あるいはただ現在のキャッシ
+	ュを削除したければ|:PatternjumpCachingDelete| を使うとよいでしょう。
 	NOTE: 前方検索を、あるいは後方検索マッピングを複数定義したい場合、キャ
 	      ッシュ機能はうまく働かない恐れがあります。これはほかのオプション
 	      を適切に設定することで回避できます。詳しくは
@@ -431,7 +431,7 @@ COMMANDS					*patternjump-commands*
 :PatternjumpCachingToggle			*:PatternjumpCachingToggle*
 	キャッシュ機能のオン・オフを切り替えます。
 
-PatternjumpDeleteCache				*:PatternjumpDeleteCache*
+:PatternjumpDeleteCache				*:PatternjumpDeleteCache*
 	このコマンドを使用すると |g:patternjump_cach_name| に指定されているキ
 	ャッシュを破棄します。キャッシュ機能の停止はなされないので、次回のキー
 	イベント発生時に新しいキャッシュが生成されるでしょう。
@@ -529,7 +529,7 @@ xxx と書いてある部分は forward もしくは backward です。
 	" 移動先桁番号のリスト   :   例 [10, 20]
 	echo output.candidates
 
-	" マッチしたパターン     :   例 [['\<\h\k*\>', 'head'], ['$', 'tail']]
+	" マッチしたパターン     :   例 [['\<\h\k\+\>', 'head'], ['$', 'tail']]
 	echo output.patterns
 <
 
