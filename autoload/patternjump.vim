@@ -136,10 +136,11 @@ function! patternjump#forward(mode, ...) "{{{
     while 1
       let Nth += 1
       let matched_pos = match(string, pattern, 0, Nth)
-      let matched_pos = (a:mode =~# '[nxo]') ? ((matched_pos < 0) ? matched_pos : (matched_pos + 1)) : matched_pos
+      let matched_pos = ((a:mode =~# '[nxo]') && (matched_pos >= 0) && !(matched_pos == len)) ? (matched_pos + 1) : matched_pos
       if matched_pos < 0 | break | endif
 
       " counter measure for special patterns like '$'
+      " patched! : Vim 7.4.184
       if matched_pos > len | break | endif
 
       if matched_pos > col
@@ -165,6 +166,7 @@ function! patternjump#forward(mode, ...) "{{{
       if matched_pos < 0 | break | endif
 
       " counter measure for special patterns like '$'
+      " patched! : Vim 7.4.184
       if matched_pos > len | break | endif
 
       if matched_pos > col
@@ -314,7 +316,6 @@ function! patternjump#backward(mode, ...) "{{{
       let Nth += 1
       let matched_pos = match(string, pattern, 0, Nth)
       let matched_pos = (a:mode =~# '[nxo]') ? ((matched_pos < 0) ? matched_pos : (matched_pos + 1)) : matched_pos
-      if matched_pos < 0 | break | endif
 
       if matched_pos < 0 || matched_pos >= col
         break
@@ -333,6 +334,7 @@ function! patternjump#backward(mode, ...) "{{{
     while 1
       let Nth += 1
       let matched_pos = matchend(string, pattern, 0, Nth)
+      let matched_pos = ((a:mode =~# '[nxo]') && (matched_pos == 0)) ? 1 : matched_pos
 
       if matched_pos < 0 || matched_pos >= col
         break
