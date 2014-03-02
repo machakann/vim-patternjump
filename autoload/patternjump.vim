@@ -68,7 +68,7 @@ function! patternjump#forward(mode, ...) "{{{
   endif
 
   " resolve given patterns
-  let pattern_lists = []
+  let pattern_lists = [[], []]
 
   if !opt_caching
     " do not use cache
@@ -246,7 +246,7 @@ function! patternjump#backward(mode, ...) "{{{
   endif
 
   " resolve given patterns
-  let pattern_lists = []
+  let pattern_lists = [[], []]
 
   if !opt_caching
     " do not use cache
