@@ -348,6 +348,9 @@ g:patternjump_cach_name				*g:patternjump_cach_name*
 	ルスコープが使用されます。これはキャッシュがファイルタイプの情報を含ま
 	ないので、バッファローカルスコープの使用が推奨されるためです。デフォル
 	ト値は "b:patternjump_cache" です。
+	NOTE: 'b:patternjump' という名前は使わないようにしてください。この名前
+	      はプラグインによって使われていますので、上書きすると問題が発生し
+	      ます。
 
 g:patternjump_highlight				*g:patternjump_highlight*
 	値が1の場合、すべての移動先候補を |hl-IncSearch| を使ってハイライトし

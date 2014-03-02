@@ -338,6 +338,8 @@ g:patternjump_cach_name				*g:patternjump_cach_name*
 	local scope is strongly recommended to use, since the cache does not
 	have an information about filetype. Default value is
 	"b:patternjump_cache".
+	NOTE: Please do not use the name 'b:patternjump', this name is used
+	      internally. If you re-write it, it might cause problem.
 
 g:patternjump_highlight				*g:patternjump_highlight*
 	If the value is 1, all the matched candidates are highlighted by
