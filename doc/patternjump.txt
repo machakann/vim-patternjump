@@ -51,8 +51,8 @@ belongs to tail-patterns, cursor will move on 'r' of "bar".
 <
 I guess you have found that the pattern "bar" seems like not useful. So "bar"
 is not included in default, I am not included in foo. Alternatively, a pattern
-'\<\h\k\+\>' is included in default pattern. This pattern matches with a
-independent word determined by the option 'iskeyword' in source code.
+'\<\h\k\+\>' is included in default patterns. This pattern matches with a
+independent word determined by the option 'iskeyword' in a source code.
 Therefore cursor will stop at "let", "foo", "bar". I think they are the very
 what we want to correct when we review a source code in many cases.
 >
