@@ -1,5 +1,5 @@
 ﻿" Vim global plugin for moving cursor by assigned patterns
-" Last Change: 02-Mar-2014.
+" Last Change: 05-Mar-2014.
 " Maintainer : Masaaki Nakamura <mckn@outlook.com>
 
 " License    : NYSL

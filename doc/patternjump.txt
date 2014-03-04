@@ -1,4 +1,4 @@
-﻿*patternjump.txt*	Last change:02-Mar-2014.
+﻿*patternjump.txt*	Last change:05-Mar-2014.
 
 Move cursor as you like.
 
@@ -164,7 +164,7 @@ list. If you want to add much more other settings, use list for the value.
 		\     'tail' : ['$'],
 		\     },
 		\   },
-		\ 'Someotherfiletype' : {
+		\ 'SomeOtherFiletype' : {
 		\   'nxo' : {
 		\     'head' : ['foo'],
 		\     'tail' : ['bar'],

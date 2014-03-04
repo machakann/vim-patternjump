@@ -33,9 +33,6 @@ let s:type_str  = type('')
 let s:type_list = type([])
 let s:type_dict = type({})
 
-let s:id_list   = []
-let s:hp        = 0
-
 " load vital
 let s:V  = vital#of('patternjump')
 let s:Sl = s:V.import('Data.List')
@@ -412,18 +409,18 @@ function! patternjump#user_conf(name, arg, default)    "{{{
 endfunction
 "}}}
 function! patternjump#cleaner() "{{{
-  let s:hp -= 1
-
-  if s:hp < 0
+  if b:patternjump.state == 1
+    let b:patternjump.state = 2
+  else
     " delete highlighting
-    call filter(map(s:id_list, "s:highlight_del(v:val)"), 'v:val > 0')
+    call filter(map(b:patternjump.id, "s:highlight_del(v:val)"), 'v:val > 0')
     redraw
 
-    if s:id_list == []
-      let s:hp = 0
+    if b:patternjump.id == []
+      let b:patternjump.state = 0
 
       augroup patternjump:cleaner
-        au!
+        au! CursorMoved,CursorMovedI <buffer>
       augroup END
     endif
   endif
@@ -550,33 +547,39 @@ function! s:check_raw(arg)    "{{{
 endfunction
 "}}}
 function! s:highlighter(candidate_positions, matched_patterns, opt_debug_mode) "{{{
-  if !empty(s:id_list)
-    let s:hp = 0
+  if !exists('b:patternjump')
+    let b:patternjump       = {}
+    let b:patternjump.state = 0
+    let b:patternjump.id    = []
+  endif
+
+  if !empty(b:patternjump.id)
+    let b:patternjump.state = 2
     call patternjump#cleaner()
   endif
 
-  " highlighting candidates
-  let line      = line('.')
-  let s:id_list = map(copy(a:candidate_positions), "s:highlight_add(line, v:val)")
-  redraw
+  if a:candidate_positions != []
+    " highlighting candidates
+    let line = line('.')
+    let b:patternjump.id = map(copy(a:candidate_positions), "s:highlight_add(line, v:val)")
+    redraw
 
-  " echo information
-  if a:opt_debug_mode
-    echomsg 'patternjump debug mode'
-    for idx in range(len(a:candidate_positions))
-      echomsg printf('%d, ''%s'', %s', a:candidate_positions[idx], a:matched_patterns[idx][0], a:matched_patterns[idx][1])
-    endfor
-    echomsg ''
-  endif
+    " echo information
+    if a:opt_debug_mode
+      echomsg 'patternjump debug mode'
+      for idx in range(len(a:candidate_positions))
+        echomsg printf('%d, ''%s'', %s', a:candidate_positions[idx], a:matched_patterns[idx][0], a:matched_patterns[idx][1])
+      endfor
+      echomsg ''
+    endif
 
-  " reserving cleaner
-  augroup patternjump:cleaner
-    au!
-    au CursorMoved,CursorMovedI <buffer> call patternjump#cleaner()
-  augroup END
+    let b:patternjump.state = a:opt_debug_mode ? 2 : 1
 
-  if !a:opt_debug_mode
-    let s:hp = 1
+    " reserving cleaner
+    augroup patternjump:cleaner
+      au! CursorMoved,CursorMovedI <buffer>
+      au CursorMoved,CursorMovedI <buffer> call patternjump#cleaner()
+    augroup END
   endif
 endfunction
 "}}}
