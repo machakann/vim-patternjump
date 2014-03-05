@@ -577,8 +577,8 @@ function! s:highlighter(candidate_positions, matched_patterns, opt_debug_mode) "
 
     " reserving cleaner
     augroup patternjump:cleaner
-      au! CursorMoved,CursorMovedI <buffer>
-      au CursorMoved,CursorMovedI <buffer> call patternjump#cleaner()
+      au! CursorMoved,CursorMovedI,WinLeave <buffer>
+      au CursorMoved,CursorMovedI,WinLeave <buffer> call patternjump#cleaner()
     augroup END
   endif
 endfunction
