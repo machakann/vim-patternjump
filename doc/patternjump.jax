@@ -1,4 +1,4 @@
-*patternjump.jax*	Last change:05-Mar-2014.
+*patternjump.jax*	Last change:07-Mar-2014.
 
 カーソル移動をお望みのままに！
 
@@ -512,8 +512,7 @@ xxx と書いてある部分は forward もしくは backward です。
 	cmap <M-l> <C-r>=patternjump#forward(
 		\				'c',
 		\				g:patternjump_patterns,
-		\				0,
-		\				{'highlight' : 1})<CR>
+		\				0)<CR>
 <
 |patternjump-configuration| の項も合わせてご覧ください。
 

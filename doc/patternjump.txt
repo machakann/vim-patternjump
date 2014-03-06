@@ -345,7 +345,7 @@ g:patternjump_highlight				*g:patternjump_highlight*
 	If the value is 1, all the matched candidates are highlighted by
 	using |hl-IncSearch|. If the value is 0, the highlighting is tunred
 	off. Default value is 0.
-	NOTE: The highlighting is removed when cursor is moved.
+	NOTE: The highlighting will be removed when cursor is moved next time.
 	NOTE: This feature is valid only in normal, insert, visual mode.
 	NOTE: This option might make this plugin slightly slower since it try
 	      to collect all the candidates as possible and highlight numbers
@@ -359,9 +359,9 @@ g:patternjump_debug_mode			*g:patternjump_debug_mode*
 	patterns stopping cursor at unwanted position. You can use this option
 	to search which pattern cause the problem. Or you can use the commands
 	|PatternjumpDebugModeOn|, |PatternjumpDebugModeOff|,
-	|PatternjumpDebugModeToggle|, |:PatternjumpCachingDelete|.
+	|PatternjumpDebugModeToggle|.
 	Default value is 0.
-	NOTE: The highlighting is removed when cursor is moved.
+	NOTE: The highlighting will be removed when cursor is moved next time.
 	NOTE: This option might make this plugin slightly slower since it try
 	      to collect all the candidates as possible and highlight numbers
 	      of positions.
@@ -498,8 +498,7 @@ like not moving cursor.
 	cmap <M-l> <C-r>=patternjump#forward(
 		\				'c',
 		\				g:patternjump_patterns,
-		\				0,
-		\				{'highlight' : 1})<CR>
+		\				0)<CR>
 <
 Please refer |verticalmove-configuration|.
 
