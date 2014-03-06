@@ -1,4 +1,4 @@
-﻿*patternjump.txt*	Last change:05-Mar-2014.
+﻿*patternjump.txt*	Last change:07-Mar-2014.
 
 Move cursor as you like.
 
@@ -117,11 +117,11 @@ and, operator-pending mode.
 	'c' : command-line mode
 	'i' : insert mode
 
-These five characters can be used for assignment of a
-mode and if a character is included in the key it is valid, you do not need to
-mind about the order. Both "ci" and "ic" are OK. If you want to separate the
-patterns for command-line mode and insert mode, then make each keys and set a
-dictionary which includes head- and/or tail- patterns.
+These five characters can be used for assignment of a mode and if a character
+is included in the key it is valid, you do not need to mind about the order.
+Both "ci" and "ic" are OK. If you want to separate the patterns for
+command-line mode and insert mode, then make each keys and set a dictionary
+which includes head- and/or tail- patterns.
 >
 	let g:patternjump_patterns = {
 		\ '_' : {
@@ -300,7 +300,7 @@ rule, the order of assignment. The first level of |g:patternjump_patterns|
 should be filetype assignments, mode assignments would come next, and
 direction assignments might come, at last head-/tail- assignments come. Each
 step can be omitted except for the filetype assignments, but can not change
-the order of them. Do not remember that.
+the order of them.
 
 
 ------------------------------------------------------------------------------
