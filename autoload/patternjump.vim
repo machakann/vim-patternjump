@@ -6,7 +6,7 @@
 
 " Actually if using searchpos() function, the descriptions would be easier and simpler.
 " But I found that the present methods are faster.
-" Anyway I want it to make responsive also in command-line mode. Thus I used followings.
+" Anyway I want to make it responsive also in command-line mode. Thus I used followings.
 
 " default patterns
 let s:patternjump_patterns = {
@@ -43,7 +43,7 @@ function! patternjump#forward(mode, ...) "{{{
   let l:count = (a:0 > 1 && a:2 > 0) ? a:2 : v:count1
 
   " re-entering to the visual mode (if necessary)
-  if a:mode ==# 'x'
+  if (a:mode ==# 'x')
     normal! gv
   endif
 
@@ -182,7 +182,7 @@ function! patternjump#forward(mode, ...) "{{{
   " determine output and move cursor
   let output = ''
   if !empty(candidate_positions)
-    if !opt_raw
+    if opt_raw != 1
       if !opt_debug_mode
         if a:mode =~# '[nxo]'
           if v:count == 0
@@ -200,18 +200,20 @@ function! patternjump#forward(mode, ...) "{{{
           call setcmdpos(min(candidate_positions) + 1)
         endif
       endif
-    else
-      " raw mode
-      unlet output
-      let output = {}
-      let output.column = [get(sort(s:Sl.uniq_by(copy(candidate_positions), 'v:val'), "s:compare"), l:count-1, -1)]
-      let output.candidates = candidate_positions
-      let output.patterns   = matched_patterns
     endif
   endif
 
+  if opt_raw
+    " raw mode
+    unlet output
+    let output = {}
+    let output.column = [get(sort(s:Sl.uniq_by(copy(candidate_positions), 'v:val'), "s:compare"), l:count-1, -1)]
+    let output.candidates = candidate_positions
+    let output.patterns   = matched_patterns
+  endif
+
   " highlighting candidates (if necessary)
-  if (opt_debug_mode || opt_highlight) && a:mode =~# '[nxi]'
+  if (opt_debug_mode || opt_highlight) && (a:mode =~# '[nxi]')
     call s:highlighter(candidate_positions, matched_patterns, opt_debug_mode)
   endif
 
@@ -223,7 +225,7 @@ function! patternjump#backward(mode, ...) "{{{
   let l:count = (a:0 > 1 && a:2 > 0) ? a:2 : v:count1
 
   " re-entering to the visual mode (if necessary)
-  if a:mode ==# 'x'
+  if (a:mode ==# 'x')
     normal! gv
   endif
 
@@ -346,7 +348,7 @@ function! patternjump#backward(mode, ...) "{{{
   " determine output or move cursor
   let output = ''
   if !empty(candidate_positions)
-    if !opt_raw
+    if opt_raw != 1
       if !opt_debug_mode
         if a:mode =~# '[nxo]'
           if v:count == 0
@@ -364,18 +366,20 @@ function! patternjump#backward(mode, ...) "{{{
           call setcmdpos(max(candidate_positions) + 1)
         endif
       endif
-    else
-      " raw mode
-      unlet output
-      let output = {}
-      let output.column = [get(sort(s:Sl.uniq_by(copy(candidate_positions), 'v:val'), "s:compare"), l:count-1, -1)]
-      let output.candidates = [candidate_positions]
-      let output.patterns   = [matched_patterns]
     endif
   endif
 
+  if opt_raw
+    " raw mode
+    unlet output
+    let output = {}
+    let output.column = [get(sort(s:Sl.uniq_by(copy(candidate_positions), 'v:val'), "s:compare"), l:count-1, -1)]
+    let output.candidates = [candidate_positions]
+    let output.patterns   = [matched_patterns]
+  endif
+
   " highlighting candidates (if necessary)
-  if (opt_debug_mode || opt_highlight) && a:mode =~# '[nxi]'
+  if (opt_debug_mode || opt_highlight) && (a:mode =~# '[nxi]')
     call s:highlighter(candidate_positions, matched_patterns, opt_debug_mode)
   endif
 
