@@ -30,6 +30,7 @@ let foo = "bar"                         '#' represents cursor position
 
 Additionally, these patterns can be switched according to modes. In the default patterns, `\<\h\k\+\>` is belongs to head-patterns in normal mode, meanwhile it belongs to tail-patterns in insert mode. Because text-objects and {motion} gives us a excellent environment for editing in normal mode, if you want to cut a word and substitute to a correct word, press `ciw` or just `cw` in this case. On the other hand, we can not use text-objects in insert mode, however we can do some easy work also in insert mode. If you want to delete a word in front of cursor, you can use `<C-w>`. That is why the reason I defined the default patterns like this.
 
+#customization
 The patterns can be defined to use a dictionary like this:
 
 ```vim

@@ -531,13 +531,15 @@ like not moving cursor.
 <
 Please refer |verticalmove-configuration|.
 
-Besides, a special key "raw" can be also used. If the value is 1, these
-functions do not move cursor and return a dictionary which has three
-information. First one is the key "column", the value is the column number of
-destination. Another is the key "candidates", the value is a list including
-matched column number of candidates. The last one is the key "patterns", the
-value is a list including matched patterns of candidates. The value of
-"candidates" and "patterns" have a correspondence each other.
+Besides, a special key "raw" can be also used. If the value is 1 or 2 return a
+dictionary which has three information. First one is the key "column", the
+value is the column number of destination. Another is the key "candidates",
+the value is a list including matched column number of candidates. The last
+one is the key "patterns", the value is a list including matched patterns of
+candidates. The value of "candidates" and "patterns" have a correspondence
+each other.
+If the value is 1, these functions do not move cursor. But if the value is 2,
+these functions do.
 >
 	let output = patternjump#forward(
 		\			'n',
