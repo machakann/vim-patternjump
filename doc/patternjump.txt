@@ -1,4 +1,4 @@
-﻿*patternjump.txt*	Last change:08-Mar-2014.
+﻿*patternjump.txt*	Last change:07-Mar-2014.
 
 Move cursor as you like.
 
@@ -81,22 +81,17 @@ with the default.
 	let g:patternjump_patterns = {
 		\ '_' : {
 		\   'ci' : {
-		\     'head' : [',', ')', ']', '}', '$'],
-		\     'tail' : ['\<\h\k\+\>'],
-		\     },
-		\   'n' : {
-		\     'head' : ['\<\h\k\+\>', '$'],
-		\     },
-		\   'x' : {
+		\     'head' : [',', ')', ']', '}'],
 		\     'tail' : ['\<\h\k\+\>', '$'],
 		\     },
-		\   'o' : {
-		\     'tail' : ['\<\h\k\+\>.'],
+		\   'nxo' : {
+		\     'head' : ['\<\h\k\+\>'],
+		\     'tail' : ['$'],
 		\     },
 		\   },
 		\ 'vim' : {
 		\   'include' : '_',
-		\   'n'     : {
+		\   'nxo'     : {
 		\     'head' : ['\<[abglstvw]:\k\+'],
 		\     },
 		\   },
@@ -111,9 +106,10 @@ equal to the value &filetype of each filetypes, that is to say, it should same
 as the filetype name which is set by |ftdetect|. The key '_' is used for the
 case there is no specified patterns for the current filetype. Each filetype
 settings have a dictionary as a value. This dictionary has keys like "ci",
-"n", "x", "o". These keys represent the mode specified patterns. "ci"
-represents the patterns which is available only in command-line mode and
-insert mode.
+"nxo". These keys represent the mode specified patterns. "ci" represents the
+patterns which is available only in command-line mode and insert mode. "nxo"
+represents the patterns which is available only in normal mode, visual mode,
+and, operator-pending mode.
 
 	'n' : normal mode
 	'x' : visual mode
@@ -130,25 +126,20 @@ which includes head- and/or tail- patterns.
 	let g:patternjump_patterns = {
 		\ '_' : {
 		\   'c' : {
-		\     'head' : [',', ')', ']', '}', '$'],
-		\     'tail' : ['\<\h\k\+\>'],
+		\     'head' : [',', ')', ']', '}'],
+		\     'tail' : ['\<\h\k\+\>', '$'],
 		\     },
 		\   'i' : {
 		\     'tail' : ['\<\h\k\+\>', '$'],
 		\     },
-		\   'n' : {
-		\     'head' : ['\<\h\k\+\>', '$'],
-		\     },
-		\   'x' : {
-		\     'tail' : ['\<\h\k\+\>', '$'],
-		\     },
-		\   'o' : {
-		\     'tail' : ['\<\h\k\+\>.'],
+		\   'nxo' : {
+		\     'head' : ['\<\h\k\+\>'],
+		\     'tail' : ['$'],
 		\     },
 		\   },
 		\ 'vim' : {
 		\   'include' : '_',
-		\   'n'     : {
+		\   'nxo'     : {
 		\     'head' : ['\<[abglstvw]:\k\+'],
 		\     },
 		\   },
@@ -168,14 +159,9 @@ list. If you want to add much more other settings, use list for the value.
 		\     'head' : [',', ')', ']', '}'],
 		\     'tail' : ['\<\h\k\+\>', '$'],
 		\     },
-		\   'n' : {
-		\     'head' : ['\<\h\k\+\>', '$'],
-		\     },
-		\   'x' : {
-		\     'tail' : ['\<\h\k\+\>', '$'],
-		\     },
-		\   'o' : {
-		\     'tail' : ['\<\h\k\+\>.'],
+		\   'nxo' : {
+		\     'head' : ['\<\h\k\+\>'],
+		\     'tail' : ['$'],
 		\     },
 		\   },
 		\ 'SomeOtherFiletype' : {
@@ -186,7 +172,7 @@ list. If you want to add much more other settings, use list for the value.
 		\   },
 		\ 'vim' : {
 		\   'include' : ['_', 'SomeOtherFiletype'],
-		\   'n'     : {
+		\   'nxo'     : {
 		\     'head' : ['\<[abglstvw]:\k\+'],
 		\     },
 		\   },
@@ -203,27 +189,22 @@ want to use common patterns more finely, I suggest to write as following.
 		\     'head' : [',', ')', ']', '}'],
 		\     'tail' : ['$'] + common_pattern,
 		\     },
-		\   'n' : {
-		\     'head' : ['$'] + common_pattern,
-		\     },
-		\   'x' : {
-		\     'tail' : ['$'] + common_pattern,
-		\     },
-		\   'o' : {
-		\     'tail' : ['\<\h\k\+\>.'],
+		\   'nxo' : {
+		\     'head' : common_pattern,
+		\     'tail' : ['$'],
 		\     },
 		\   },
 		\ 'vim' : {
 		\   'include' : '_',
-		\   'n'     : {
+		\   'nxo'     : {
 		\     'head' : ['\<[abglstvw]:\k\+'],
 		\     },
 		\   },
 		\ }
 <
 If you add patterns to "common_pattern", they will valid as tail-patterns in
-command-line mode and insert mode and also as head-patterns in normal mode, as
-tail-patterns in visual mode.
+command-line mode and insert mode and also as head-patterns in normal, visual,
+operator-pending mode.
 NOTE: "include" can not be nested!
 
 There is one more special key name '*'. If this key exists, it is always
@@ -238,14 +219,9 @@ unwanted effect for other scenes. Please use it carefully.
 		\     'head' : [',', ')', ']', '}'],
 		\     'tail' : ['\<\h\k\+\>', '$'],
 		\     },
-		\   'n' : {
-		\     'head' : ['\<\h\k\+\>', '$'],
-		\     },
-		\   'x' : {
-		\     'tail' : ['\<\h\k\+\>', '$'],
-		\     },
-		\   'o' : {
-		\     'tail' : ['\<\h\k\+\>.'],
+		\   'nxo' : {
+		\     'head' : ['\<\h\k\+\>'],
+		\     'tail' : ['$'],
 		\     },
 		\   },
 		\ '*' : {
@@ -256,7 +232,7 @@ unwanted effect for other scenes. Please use it carefully.
 		\   },
 		\ 'vim' : {
 		\   'include' : '_',
-		\   'n'     : {
+		\   'nxo'     : {
 		\     'head' : ['\<[abglstvw]:\k\+'],
 		\     },
 		\   },
@@ -292,14 +268,9 @@ backward one.
 		\  }
 	let g:patternjump_patterns = {
 		\ '_' : {
-		\   'n' : {
-		\     'head' : ['\<\h\k\+\>', '$'],
-		\     },
-		\   'x' : {
-		\     'tail' : ['\<\h\k\+\>', '$'],
-		\     },
-		\   'o' : {
-		\     'tail' : ['\<\h\k\+\>.'],
+		\   'nxo' : {
+		\     'head' : ['\<\h\k\+\>'],
+		\     'tail' : ['$'],
 		\     },
 		\   'i' : {
 		\     'common' : common_pattern,
@@ -311,7 +282,7 @@ backward one.
 		\   },
 		\ 'vim' : {
 		\   'include' : '_',
-		\   'n'     : {
+		\   'nxo'     : {
 		\     'head' : ['\<[abglstvw]:\k\+'],
 		\     },
 		\   },
