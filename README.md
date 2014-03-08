@@ -12,7 +12,7 @@ Suppose that your cursor is on the first character of a line like this:
 let foo = "bar"
 ```
 
-If you define a pattern "bar", of course, it matches with "bar". Thus using the keymapping which searches candidates in forward direction, cursor will move on a word "bar". Here I should say there are two types of patterns, head-patterns and tail-patterns. All the patterns should belong to either head or tail patterns, you can choose which when you register a new pattern. If "bar" belongs to head-patterns, cursor will move on 'b' of "bar". And if "bar" belongs to tail-patterns, cursor will move on 'r' of "bar".
+If you define a pattern `bar`, of course, it matches with `bar`. Thus using the keymapping which searches candidates in forward direction, cursor will move on a word `bar`. Here I should say there are two types of patterns, head-patterns and tail-patterns. All the patterns should belong to either head or tail patterns, you can choose which when you register a new pattern. If `bar` belongs to head-patterns, cursor will move on `b` of `bar`. And if `bar` belongs to tail-patterns, cursor will move on `r` of `bar`.
 
 ```vim
 ---------->#    head-pattern
@@ -20,7 +20,7 @@ let foo = "bar"                         '#' represents cursor position
 ------------>#  tail-pattern
 ```
 
-I guess you have found that the pattern "bar" seems like not useful. Alternatively, a pattern '\<\h\k\+\>' is included in default patterns. This pattern matches with a independent word determined by the option 'iskeyword' in a source code.  Therefore cursor will stop at "let", "foo", "bar". I think they are the very what we want to correct when we review a source code in many cases.
+I guess you have found that the pattern `bar` seems like not useful. Alternatively, a pattern `\<\h\k\+\>` is included in default patterns. This pattern matches with a independent word determined by the option 'iskeyword' in a source code.  Therefore cursor will stop at `let`, `foo`, `bar`. I think they are the very what we want to correct when we review a source code in many cases.
 
 ```vim
 #   #      #    head-pattern
@@ -28,7 +28,7 @@ let foo = "bar"                         '#' represents cursor position
   #   #      #  tail-pattern
 ```
 
-Additionally, these patterns can be switched according to modes. In the default patterns, '\<\h\k\+\>' is belongs to head-patterns in normal mode, meanwhile it belongs to tail-patterns in insert mode. Because text-objects and {motion} gives us a excellent environment for editing in normal mode, if you want to cut a word and substitute to a correct word, press ciw or just cw in this case. On the other hand, we can not use text-objects in insert mode, however we can do some easy work also in insert mode. If you want to delete a word in front of cursor, you can use <C-w>. That is why the reason I defined the default patterns like this.
+Additionally, these patterns can be switched according to modes. In the default patterns, `\<\h\k\+\>` is belongs to head-patterns in normal mode, meanwhile it belongs to tail-patterns in insert mode. Because text-objects and {motion} gives us a excellent environment for editing in normal mode, if you want to cut a word and substitute to a correct word, press `ciw` or just `cw` in this case. On the other hand, we can not use text-objects in insert mode, however we can do some easy work also in insert mode. If you want to delete a word in front of cursor, you can use `<C-w>`. That is why the reason I defined the default patterns like this.
 
 The patterns can be defined to use a dictionary like this:
 
