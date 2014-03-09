@@ -541,8 +541,7 @@ xxx と書いてある部分は forward もしくは backward です。
 	cmap <M-l> <C-r>=patternjump#forward(
 		\				'c',
 		\				g:patternjump_patterns,
-		\				0,
-		\				{'highlight' : 1})<CR>
+		\				0)<CR>
 <
 |patternjump-configuration| の項も合わせてご覧ください。
 
