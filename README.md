@@ -59,4 +59,4 @@ let g:patternjump_patterns = {
     \ }
 ```
 
-This example is the default patterns which is used in the case any patterns assignment exists. You can use independent patterns in different filetypes, modes (normal/visual/operator-pending/insert/command-line), direction (forward/backward). If you are interested in the customization of patterns, please refer doc/patternjump.txt. You would find detailed information about the customization of patterns.
+This example is the default patterns which is used in the case any patterns assignment does not exist. You can use independent patterns in different filetypes, modes (normal/visual/operator-pending/insert/command-line), direction (forward/backward). If you are interested in the customization of patterns, please refer doc/patternjump.txt. You would find detailed information about the customization of patterns.
