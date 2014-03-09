@@ -1,4 +1,4 @@
-﻿*patternjump.txt*	Last change:08-Mar-2014.
+﻿*patternjump.txt*	Last change:09-Mar-2014.
 
 Move cursor as you like.
 
@@ -359,7 +359,7 @@ g:patternjump_caching				*g:patternjump_caching*
 	      correctly. This problem can be avoided by using other options.
 	      Please check NOTE on |patternjump-functions|.
 
-g:patternjump_cach_name				*g:patternjump_cach_name*
+g:patternjump_cache_name			*g:patternjump_cache_name*
 	This option allows you to change the variable name of cache. You can
 	use buffer local "b:", window local "w:", tabpage local "t:", global
 	"g:" scope for the name. If the scope assginment is improper or not

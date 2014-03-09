@@ -1,4 +1,4 @@
-﻿*patternjump.jax*	Last change:08-Mar-2014.
+﻿*patternjump.jax*	Last change:09-Mar-2014.
 
 カーソル移動をお望みのままに！
 
@@ -369,7 +369,7 @@ g:patternjump_caching				*g:patternjump_caching*
 	      を適切に設定することで回避できます。詳しくは
 	      |g:patternjump-functions| の項の NOTE を参照してください。
 
-g:patternjump_cach_name				*g:patternjump_cach_name*
+g:patternjump_cache_name			*g:patternjump_cache_name*
 	この変数を使用するとキャッシュを保存する変数の名前が指定できます。変数
 	にはバッファローカル "b:" 、ウィンドウローカル "w:" 、タブページローカ
 	ル "t:" 、グローバル "g:" スコープが使用できます。もしそれ以外のスコー
