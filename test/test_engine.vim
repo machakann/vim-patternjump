@@ -1,6 +1,6 @@
 " vim:set foldmethod=marker:
 " vim:set commentstring="%s:
-" Last Change: 02-Mar-2014.
+" Last Change: 10-Mar-2014.
 
 " なぜnormal!ではなくマクロを使ったのかというとそっちの方がちらちらして好きだ
 " からです！

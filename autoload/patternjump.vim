@@ -429,7 +429,7 @@ function! patternjump#cleaner() "{{{
       let b:patternjump.state = 0
 
       augroup patternjump:cleaner
-        au! CursorMoved,CursorMovedI <buffer>
+        au! CursorMoved,CursorMovedI,WinLeave <buffer>
       augroup END
     endif
   endif
