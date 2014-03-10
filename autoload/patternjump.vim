@@ -191,12 +191,12 @@ function! patternjump#forward(mode, ...) "{{{
       if !opt_debug_mode
         if a:mode =~# '[nxo]'
           if v:count == 0
-            execute 'normal! ' . (min(candidate_positions) - col) . 'l'
+            call cursor(0, min(candidate_positions))
           else
             let pos = get(sort(s:Sl.uniq_by(candidate_positions, 'v:val'), "s:compare"), l:count-1, -1)
 
             if pos > 0
-              execute 'normal! ' . (pos - col) . 'l'
+              call cursor(0, min(candidate_positions))
             endif
           endif
         elseif a:mode ==# 'i'
@@ -357,12 +357,12 @@ function! patternjump#backward(mode, ...) "{{{
       if !opt_debug_mode
         if a:mode =~# '[nxo]'
           if v:count == 0
-            execute 'normal! ' . (col - max(candidate_positions)) . 'h'
+            call cursor(0, max(candidate_positions))
           else
             let pos = get(reverse(sort(s:Sl.uniq_by(candidate_positions, 'v:val'), "s:compare")), l:count-1, -1)
 
             if pos > 0
-              execute 'normal! ' . (col - pos) . 'h'
+              call cursor(0, pos)
             endif
           endif
         elseif a:mode ==# 'i'
