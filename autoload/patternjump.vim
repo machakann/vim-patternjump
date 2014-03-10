@@ -466,7 +466,7 @@ function! s:resolve_pattern_dictionary(mode, direction, patternjump_patterns) "{
 
     " checking whether there are mode specific patterns or not
     if type(temp) == s:type_dict
-      let keys = filter(keys(temp), 'v:val !~# ''\%(common\|forward\|backward\|head\|tail\)''')
+      let keys = filter(keys(temp), 'v:val !~# ''\%(common\|forward\|backward\|head\|tail\|include\)''')
       let idx  = match(keys, '.*' . a:mode . '.*')
       if idx >= 0
         let pattern_info = temp[keys[idx]]
