@@ -1,4 +1,4 @@
-﻿*patternjump.txt*	Last change:09-Mar-2014.
+*patternjump.txt*	Last change:11-Mar-2014.
 
 Move cursor as you like.
 
