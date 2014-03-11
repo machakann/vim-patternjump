@@ -212,7 +212,7 @@ function! patternjump#forward(mode, ...) "{{{
     " raw mode
     unlet output
     let output = {}
-    let output.column = [get(sort(s:Sl.uniq_by(copy(candidate_positions), 'v:val'), "s:compare"), l:count-1, -1)]
+    let output.column = get(sort(s:Sl.uniq_by(copy(candidate_positions), 'v:val'), "s:compare"), l:count-1, -1)
     let output.candidates = candidate_positions
     let output.patterns   = matched_patterns
   endif
@@ -378,7 +378,7 @@ function! patternjump#backward(mode, ...) "{{{
     " raw mode
     unlet output
     let output = {}
-    let output.column = [get(sort(s:Sl.uniq_by(copy(candidate_positions), 'v:val'), "s:compare"), l:count-1, -1)]
+    let output.column = get(sort(s:Sl.uniq_by(copy(candidate_positions), 'v:val'), "s:compare"), l:count-1, -1)
     let output.candidates = [candidate_positions]
     let output.patterns   = [matched_patterns]
   endif
