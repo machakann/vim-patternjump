@@ -114,7 +114,18 @@ function! patternjump#forward(mode, ...) "{{{
       execute 'let ' . cache_name . '[0][a:mode] = pattern_lists'
     else
       " cache exists
-      execute 'let pattern_lists = ' . cache_name . '[0][a:mode]'
+      if a:0 > 0
+        let patternjump_patterns = a:1
+
+        if type(patternjump_patterns) == s:type_list
+          let pattern_lists[0] = get(patternjump_patterns, 0, [])
+          let pattern_lists[1] = get(patternjump_patterns, 1, [])
+        elseif type(patternjump_patterns) == s:type_dict
+          let pattern_lists = s:resolve_pattern_dictionary(a:mode, 'forward', patternjump_patterns)
+        endif
+      else
+        execute 'let pattern_lists = ' . cache_name . '[0][a:mode]'
+      endif
     endif
   endif
 
@@ -311,7 +322,18 @@ function! patternjump#backward(mode, ...) "{{{
       execute 'let ' . cache_name . '[0][a:mode] = pattern_lists'
     else
       " cache exists
-      execute 'let pattern_lists = ' . cache_name . '[0][a:mode]'
+      if a:0 > 0
+        let patternjump_patterns = a:1
+
+        if type(patternjump_patterns) == s:type_list
+          let pattern_lists[0] = get(patternjump_patterns, 0, [])
+          let pattern_lists[1] = get(patternjump_patterns, 1, [])
+        elseif type(patternjump_patterns) == s:type_dict
+          let pattern_lists = s:resolve_pattern_dictionary(a:mode, 'forward', patternjump_patterns)
+        endif
+      else
+        execute 'let pattern_lists = ' . cache_name . '[0][a:mode]'
+      endif
     endif
   endif
 
