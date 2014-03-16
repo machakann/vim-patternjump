@@ -53,12 +53,13 @@ function! patternjump#forward(mode, ...) "{{{
   endif
 
   " searching for user configurations
-  let options_dict   = (a:0 > 2) ? a:3 : {}
-  let opt_caching    = patternjump#user_conf(   'caching', options_dict, 0)
-  let opt_debug_mode = patternjump#user_conf('debug_mode', options_dict, 0)
-  let opt_highlight  = patternjump#user_conf( 'highlight', options_dict, 0)
-  let opt_cache_name = patternjump#user_conf('cache_name', options_dict, 'b:patternjump_cache')
-  let opt_raw        = s:check_raw(options_dict)
+  let options_dict      = (a:0 > 2) ? a:3 : {}
+  let opt_caching       = patternjump#user_conf(   'caching', options_dict, 0)
+  let opt_debug_mode    = patternjump#user_conf('debug_mode', options_dict, 0)
+  let opt_highlight     = patternjump#user_conf( 'highlight', options_dict, 0)
+  let opt_cache_name    = patternjump#user_conf('cache_name', options_dict, 'b:patternjump_cache')
+  let opt_headtail_swap = patternjump#user_conf('headtail_swap', options_dict, 0)
+  let opt_raw           = s:check_raw(options_dict)
 
   " check and modify cache name
   if opt_cache_name =~# '^\h[0-9a-zA-Z_#]*$'
@@ -129,6 +130,20 @@ function! patternjump#forward(mode, ...) "{{{
   else
     let string = getline('.')
     let col    = (a:mode == 'i') ? (col('.') - 1) : col('.')
+  endif
+
+  " pattern swapping (only in visual mode)
+  if (a:mode ==# 'x') && opt_headtail_swap
+    if ((current_mode !=? 'v') && (current_mode != "\<C-v>"))
+      normal! o
+      let counter_edge = col('.')
+      normal! o
+
+      if col <= counter_edge
+        let head_pattern_list = pattern_lists[1]
+        let tail_pattern_list = pattern_lists[0]
+      endif
+    endif
   endif
 
   " scan head patterns
@@ -235,12 +250,13 @@ function! patternjump#backward(mode, ...) "{{{
   endif
 
   " searching for user configurations
-  let options_dict   = (a:0 > 2) ? a:3 : {}
-  let opt_caching    = patternjump#user_conf(   'caching', options_dict, 0)
-  let opt_debug_mode = patternjump#user_conf('debug_mode', options_dict, 0)
-  let opt_highlight  = patternjump#user_conf( 'highlight', options_dict, 0)
-  let opt_cache_name = patternjump#user_conf('cache_name', options_dict, 'b:patternjump_cache')
-  let opt_raw        = s:check_raw(options_dict)
+  let options_dict      = (a:0 > 2) ? a:3 : {}
+  let opt_caching       = patternjump#user_conf(   'caching', options_dict, 0)
+  let opt_debug_mode    = patternjump#user_conf('debug_mode', options_dict, 0)
+  let opt_highlight     = patternjump#user_conf( 'highlight', options_dict, 0)
+  let opt_cache_name    = patternjump#user_conf('cache_name', options_dict, 'b:patternjump_cache')
+  let opt_headtail_swap = patternjump#user_conf('headtail_swap', options_dict, 0)
+  let opt_raw           = s:check_raw(options_dict)
 
   " check and modify cache name
   if opt_cache_name =~# '^\h[0-9a-zA-Z_#]*$'
@@ -311,6 +327,20 @@ function! patternjump#backward(mode, ...) "{{{
   else
     let string = getline('.')
     let col    = (a:mode == 'i') ? (col('.') - 1) : col('.')
+  endif
+
+  " pattern swapping (only in visual mode)
+  if (a:mode ==# 'x') && opt_headtail_swap
+    if ((current_mode !=? 'v') && (current_mode != "\<C-v>"))
+      normal! o
+      let counter_edge = col('.')
+      normal! o
+
+      if col <= counter_edge
+        let head_pattern_list = pattern_lists[1]
+        let tail_pattern_list = pattern_lists[0]
+      endif
+    endif
   endif
 
   " scan head patterns
