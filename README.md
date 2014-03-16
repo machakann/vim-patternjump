@@ -4,7 +4,7 @@ vim-patternjump
 Move cursor as you like.
 
 #introduction
-Patternjump give you a effective way to move cursor in various modes. The rules to move cursor can be easily optimized by using regular expression. In this introduction those rules defined by regular expression are called patterns. Numbers of patterns can be registered and cursor would be moved to the closest candidate in them. This plugin serves two keymappings.  One searches candidates for forward direction, and the other searches them for backward direction.
+Patternjump gives you a effective way to move cursor in various modes. The rules to move cursor can be easily optimized by using regular expression. In this introduction those rules defined by regular expression are called patterns. Numbers of patterns can be registered and cursor would be moved to the closest candidate in them. This plugin serves two keymappings.  One searches candidates for forward direction, and the other searches them for backward direction.
 
 Suppose that your cursor is on the first character of a line like this:
 
