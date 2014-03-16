@@ -447,24 +447,6 @@ function! patternjump#user_conf(name, arg, default)    "{{{
   return user_conf
 endfunction
 "}}}
-function! patternjump#cleaner() "{{{
-  if b:patternjump.state == 1
-    let b:patternjump.state = 2
-  else
-    " delete highlighting
-    call filter(map(b:patternjump.id, "s:highlight_del(v:val)"), 'v:val > 0')
-    redraw
-
-    if b:patternjump.id == []
-      let b:patternjump.state = 0
-
-      augroup patternjump:cleaner
-        au!
-      augroup END
-    endif
-  endif
-endfunction
-"}}}
 function! s:resolve_pattern_dictionary(mode, direction, patternjump_patterns) "{{{
   " resolving patternjump_patterns and extracting requred patterns
   let keys = keys(a:patternjump_patterns)
@@ -594,7 +576,7 @@ function! s:highlighter(candidate_positions, matched_patterns, opt_debug_mode) "
 
   if !empty(b:patternjump.id)
     let b:patternjump.state = 2
-    call patternjump#cleaner()
+    call s:cleaner()
   endif
 
   if a:candidate_positions != []
@@ -616,8 +598,8 @@ function! s:highlighter(candidate_positions, matched_patterns, opt_debug_mode) "
 
     " reserving cleaner
     augroup patternjump:cleaner
-      au! CursorMoved,CursorMovedI,WinLeave <buffer>
-      au CursorMoved,CursorMovedI,WinLeave <buffer> call patternjump#cleaner()
+      au!
+      au CursorMoved,CursorMovedI,WinLeave <buffer> call s:cleaner()
     augroup END
   endif
 endfunction
@@ -626,6 +608,24 @@ function! s:highlight_add(row, col) "{{{
   let pattern   = '\%' . a:row . 'l\%' . a:col . 'c.'
   let id = matchadd("IncSearch", pattern)
   return id
+endfunction
+"}}}
+function! s:cleaner() "{{{
+  if b:patternjump.state == 1
+    let b:patternjump.state = 2
+  else
+    " delete highlighting
+    call filter(map(b:patternjump.id, "s:highlight_del(v:val)"), 'v:val > 0')
+    redraw
+
+    if b:patternjump.id == []
+      let b:patternjump.state = 0
+
+      augroup patternjump:cleaner
+        au!
+      augroup END
+    endif
+  endif
 endfunction
 "}}}
 function! s:highlight_del(id) "{{{
