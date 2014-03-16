@@ -157,58 +157,8 @@ function! patternjump#forward(mode, ...) "{{{
     endif
   endif
 
-  " scan head patterns
-  for pattern in head_pattern_list
-    let Nth = 0
-    let len = len(string)
-    while 1
-      let Nth += 1
-      let matched_pos = match(string, pattern, 0, Nth)
-      let matched_pos = ((a:mode =~# '[nxo]') && (matched_pos >= 0) && !(matched_pos == len)) ? (matched_pos + 1) : matched_pos
-      if matched_pos < 0 | break | endif
-
-      " counter measure for special patterns like '$'
-      " patched! : Vim 7.4.184
-      if matched_pos > len | break | endif
-
-      if matched_pos > col
-        let candidate_positions += [matched_pos]
-        let matched_patterns    += [[pattern, 'head']]
-
-        if (l:count == 1) && !opt_debug_mode && !opt_highlight
-          break
-        else
-          continue
-        endif
-      endif
-    endwhile
-  endfor
-
-  " scan tail patterns
-  for pattern in tail_pattern_list
-    let Nth = 0
-    let len = len(string)
-    while 1
-      let Nth += 1
-      let matched_pos = matchend(string, pattern, 0, Nth)
-      if matched_pos < 0 | break | endif
-
-      " counter measure for special patterns like '$'
-      " patched! : Vim 7.4.184
-      if matched_pos > len | break | endif
-
-      if matched_pos > col
-        let candidate_positions += [matched_pos]
-        let matched_patterns    += [[pattern, 'tail']]
-
-        if (l:count == 1) && !opt_debug_mode && !opt_highlight
-          break
-        else
-          continue
-        endif
-      endif
-    endwhile
-  endfor
+  " searching candidate positions
+  [candidate_positions, matched_patterns] = s:forward_search(string, col, head_pattern_list, tail_pattern_list, opt_debug_mode, opt_highlight)
 
   " determine output and move cursor
   let output = ''
@@ -249,6 +199,63 @@ function! patternjump#forward(mode, ...) "{{{
   endif
 
   return output
+endfunction
+"}}}
+function! s:forward_search(string, col, head_pattern_list, tail_pattern_list, opt_debug_mode, opt_highlight) "{{{
+  " scan head patterns
+  for pattern in a:head_pattern_list
+    let Nth = 0
+    let len = len(a:string)
+    while 1
+      let Nth += 1
+      let matched_pos = match(a:string, pattern, 0, Nth)
+      let matched_pos = ((a:mode =~# '[nxo]') && (matched_pos >= 0) && !(matched_pos == len)) ? (matched_pos + 1) : matched_pos
+      if matched_pos < 0 | break | endif
+
+      " counter measure for special patterns like '$'
+      " patched! : Vim 7.4.184
+      if matched_pos > len | break | endif
+
+      if matched_pos > a:col
+        let candidate_positions += [matched_pos]
+        let matched_patterns    += [[pattern, 'head']]
+
+        if (l:count == 1) && !opt_debug_mode && !opt_highlight
+          break
+        else
+          continue
+        endif
+      endif
+    endwhile
+  endfor
+
+  " scan tail patterns
+  for pattern in a:tail_pattern_list
+    let Nth = 0
+    let len = len(a:string)
+    while 1
+      let Nth += 1
+      let matched_pos = matchend(a:string, pattern, 0, Nth)
+      if matched_pos < 0 | break | endif
+
+      " counter measure for special patterns like '$'
+      " patched! : Vim 7.4.184
+      if matched_pos > len | break | endif
+
+      if matched_pos > a:col
+        let candidate_positions += [matched_pos]
+        let matched_patterns    += [[pattern, 'tail']]
+
+        if (l:count == 1) && !opt_debug_mode && !opt_highlight
+          break
+        else
+          continue
+        endif
+      endif
+    endwhile
+  endfor
+
+  return [candidate_positions, matched_patterns]
 endfunction
 "}}}
 function! patternjump#backward(mode, ...) "{{{
@@ -361,46 +368,15 @@ function! patternjump#backward(mode, ...) "{{{
       if col <= counter_edge
         let head_pattern_list = pattern_lists[1]
         let tail_pattern_list = pattern_lists[0]
+        let swap_state = 0
+      else
+        let swap_state = 1
       endif
     endif
   endif
 
-  " scan head patterns
-  for pattern in head_pattern_list
-    let Nth = 0
-    while 1
-      let Nth += 1
-      let matched_pos = match(string, pattern, 0, Nth)
-      let matched_pos = (a:mode =~# '[nxo]') ? ((matched_pos < 0) ? matched_pos : (matched_pos + 1)) : matched_pos
-
-      if matched_pos < 0 || matched_pos >= col
-        break
-      else
-        let candidate_positions += [matched_pos]
-        let matched_patterns    += [[pattern, 'head']]
-        continue
-      endif
-    endwhile
-  endfor
-
-  " scan tail patterns
-  for pattern in tail_pattern_list
-    let Nth = 0
-    let len = len(string)
-    while 1
-      let Nth += 1
-      let matched_pos = matchend(string, pattern, 0, Nth)
-      let matched_pos = ((a:mode =~# '[nxo]') && (matched_pos == 0)) ? 1 : matched_pos
-
-      if matched_pos < 0 || matched_pos >= col
-        break
-      else
-        let candidate_positions += [matched_pos]
-        let matched_patterns    += [[pattern, 'tail']]
-        continue
-      endif
-    endwhile
-  endfor
+  " searching candidate positions
+  [candidate_positions, matched_patterns] = s:backward_search(string, col, head_pattern_list, tail_pattern_list)
 
   " determine output or move cursor
   let output = ''
@@ -441,6 +417,47 @@ function! patternjump#backward(mode, ...) "{{{
   endif
 
   return output
+endfunction
+"}}}
+function! s:backward_search(string, col, head_pattern_list, tail_pattern_list)  "{{{
+  " scan head patterns
+  for pattern in a:head_pattern_list
+    let Nth = 0
+    while 1
+      let Nth += 1
+      let matched_pos = match(a:string, pattern, 0, Nth)
+      let matched_pos = (a:mode =~# '[nxo]') ? ((matched_pos < 0) ? matched_pos : (matched_pos + 1)) : matched_pos
+
+      if matched_pos < 0 || matched_pos >= a:col
+        break
+      else
+        let candidate_positions += [matched_pos]
+        let matched_patterns    += [[pattern, 'head']]
+        continue
+      endif
+    endwhile
+  endfor
+
+  " scan tail patterns
+  for pattern in a:tail_pattern_list
+    let Nth = 0
+    let len = len(a:string)
+    while 1
+      let Nth += 1
+      let matched_pos = matchend(a:string, pattern, 0, Nth)
+      let matched_pos = ((a:mode =~# '[nxo]') && (matched_pos == 0)) ? 1 : matched_pos
+
+      if matched_pos < 0 || matched_pos >= a:col
+        break
+      else
+        let candidate_positions += [matched_pos]
+        let matched_patterns    += [[pattern, 'tail']]
+        continue
+      endif
+    endwhile
+  endfor
+
+  return [candidate_positions, matched_patterns]
 endfunction
 "}}}
 function! patternjump#user_conf(name, arg, default)    "{{{
