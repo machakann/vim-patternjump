@@ -133,8 +133,6 @@ function! patternjump#forward(mode, ...) "{{{
   let head_pattern_list = pattern_lists[0]
   let tail_pattern_list = pattern_lists[1]
 
-  let candidate_positions = []
-  let matched_patterns    = []
   if a:mode == 'c'
     let string = getcmdline()
     let col    = getcmdpos() - 1
@@ -158,7 +156,7 @@ function! patternjump#forward(mode, ...) "{{{
   endif
 
   " searching candidate positions
-  [candidate_positions, matched_patterns] = s:forward_search(string, col, head_pattern_list, tail_pattern_list, opt_debug_mode, opt_highlight)
+  let [candidate_positions, matched_patterns] = s:forward_search(a:mode, l:count, string, col, head_pattern_list, tail_pattern_list, opt_debug_mode, opt_highlight)
 
   " determine output and move cursor
   let output = ''
@@ -172,7 +170,7 @@ function! patternjump#forward(mode, ...) "{{{
             let pos = get(sort(s:Sl.uniq_by(candidate_positions, 'v:val'), "s:compare"), l:count-1, -1)
 
             if pos > 0
-              call cursor(0, min(candidate_positions))
+              call cursor(0, pos)
             endif
           endif
         elseif a:mode ==# 'i'
@@ -201,7 +199,10 @@ function! patternjump#forward(mode, ...) "{{{
   return output
 endfunction
 "}}}
-function! s:forward_search(string, col, head_pattern_list, tail_pattern_list, opt_debug_mode, opt_highlight) "{{{
+function! s:forward_search(mode, count, string, col, head_pattern_list, tail_pattern_list, opt_debug_mode, opt_highlight) "{{{
+  let candidate_positions = []
+  let matched_patterns    = []
+
   " scan head patterns
   for pattern in a:head_pattern_list
     let Nth = 0
@@ -220,7 +221,7 @@ function! s:forward_search(string, col, head_pattern_list, tail_pattern_list, op
         let candidate_positions += [matched_pos]
         let matched_patterns    += [[pattern, 'head']]
 
-        if (l:count == 1) && !opt_debug_mode && !opt_highlight
+        if (a:count == 1) && !a:opt_debug_mode && !a:opt_highlight
           break
         else
           continue
@@ -246,7 +247,7 @@ function! s:forward_search(string, col, head_pattern_list, tail_pattern_list, op
         let candidate_positions += [matched_pos]
         let matched_patterns    += [[pattern, 'tail']]
 
-        if (l:count == 1) && !opt_debug_mode && !opt_highlight
+        if (a:count == 1) && !a:opt_debug_mode && !a:opt_highlight
           break
         else
           continue
@@ -348,8 +349,6 @@ function! patternjump#backward(mode, ...) "{{{
   let head_pattern_list = pattern_lists[0]
   let tail_pattern_list = pattern_lists[1]
 
-  let candidate_positions = []
-  let matched_patterns    = []
   if a:mode == 'c'
     let string = getcmdline()
     let col    = getcmdpos() - 1
@@ -376,7 +375,7 @@ function! patternjump#backward(mode, ...) "{{{
   endif
 
   " searching candidate positions
-  [candidate_positions, matched_patterns] = s:backward_search(string, col, head_pattern_list, tail_pattern_list)
+  let [candidate_positions, matched_patterns] = s:backward_search(a:mode, string, col, head_pattern_list, tail_pattern_list)
 
   " determine output or move cursor
   let output = ''
@@ -419,7 +418,10 @@ function! patternjump#backward(mode, ...) "{{{
   return output
 endfunction
 "}}}
-function! s:backward_search(string, col, head_pattern_list, tail_pattern_list)  "{{{
+function! s:backward_search(mode, string, col, head_pattern_list, tail_pattern_list)  "{{{
+  let candidate_positions = []
+  let matched_patterns    = []
+
   " scan head patterns
   for pattern in a:head_pattern_list
     let Nth = 0
