@@ -211,7 +211,7 @@ function! patternjump#forward(mode, ...) "{{{
             let pos = get(sort(s:Sl.uniq_by(candidate_positions, 'v:val'), "s:compare"), l:count-1, -1)
 
             if pos > 0
-              call cursor(0, min(candidate_positions))
+              call cursor(0, pos)
             endif
           endif
         elseif a:mode ==# 'i'
