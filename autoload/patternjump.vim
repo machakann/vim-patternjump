@@ -189,9 +189,9 @@ function! patternjump#forward(mode, ...) "{{{
   if !empty(candidate_positions)
     if opt_raw != 1
       if !opt_debug_mode
-        if a:mode =~# '[nxo]'
+        if a:mode =~# '[nx]'
           call cursor(0, dest)
-        elseif a:mode ==# 'i'
+        elseif a:mode =~# '[io]'
           call cursor(0, dest + 1)
         elseif a:mode ==# 'c'
           call setcmdpos(dest + 1)
@@ -423,9 +423,9 @@ function! patternjump#backward(mode, ...) "{{{
   if !empty(candidate_positions)
     if opt_raw != 1
       if !opt_debug_mode
-        if a:mode =~# '[nxo]'
+        if a:mode =~# '[nx]'
           call cursor(0, dest)
-        elseif a:mode ==# 'i'
+        elseif a:mode =~# '[io]'
           call cursor(0, dest + 1)
         elseif a:mode ==# 'c'
           call setcmdpos(dest + 1)
@@ -519,6 +519,14 @@ function! patternjump#user_conf(name, arg, default)    "{{{
   endif
 
   return user_conf
+endfunction
+"}}}
+function! s:check_raw(arg)    "{{{
+  if has_key(a:arg, 'raw')
+    return a:arg['raw']
+  endif
+
+  return 0
 endfunction
 "}}}
 function! s:resolve_pattern_dictionary(mode, direction, patternjump_patterns) "{{{
@@ -631,14 +639,6 @@ endfunction
 "}}}
 function! s:compare(i1, i2) "{{{
   return a:i1 - a:i2
-endfunction
-"}}}
-function! s:check_raw(arg)    "{{{
-  if has_key(a:arg, 'raw')
-    return a:arg['raw']
-  endif
-
-  return 0
 endfunction
 "}}}
 function! s:highlighter(candidate_positions, matched_patterns, opt_debug_mode) "{{{
