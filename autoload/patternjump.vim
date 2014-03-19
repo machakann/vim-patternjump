@@ -1,4 +1,4 @@
-﻿" patternjump.vim - move cursor as you like
+" patternjump.vim - move cursor as you like
 
 " I assumed that several dozen patterns are used usually, so I optimized for the use case.
 " If defined patterns are too much, following algorithm might be slow.
@@ -53,13 +53,13 @@ function! patternjump#forward(mode, ...) "{{{
   endif
 
   " searching for user configurations
-  let options_dict      = (a:0 > 2) ? a:3 : {}
-  let opt_caching       = patternjump#user_conf(   'caching', options_dict, 0)
-  let opt_debug_mode    = patternjump#user_conf('debug_mode', options_dict, 0)
-  let opt_highlight     = patternjump#user_conf( 'highlight', options_dict, 0)
-  let opt_cache_name    = patternjump#user_conf('cache_name', options_dict, 'b:patternjump_cache')
-  let opt_headtail_swap = patternjump#user_conf('headtail_swap', options_dict, 0)
-  let opt_raw           = s:check_raw(options_dict)
+  let options_dict       = (a:0 > 2) ? a:3 : {}
+  let opt_caching        = patternjump#user_conf(       'caching', options_dict, 0)
+  let opt_debug_mode     = patternjump#user_conf(    'debug_mode', options_dict, 0)
+  let opt_highlight      = patternjump#user_conf(     'highlight', options_dict, 0)
+  let opt_cache_name     = patternjump#user_conf(    'cache_name', options_dict, 'b:patternjump_cache')
+  let opt_swap_head_tail = patternjump#user_conf('swap_head_tail', options_dict, 0)
+  let opt_raw            = s:check_raw(options_dict)
 
   " check and modify cache name
   if opt_cache_name =~# '^\h[0-9a-zA-Z_#]*$'
@@ -142,8 +142,10 @@ function! patternjump#forward(mode, ...) "{{{
   endif
 
   " pattern swapping (only in visual mode)
-  if (a:mode ==# 'x') && opt_headtail_swap
-    if ((current_mode !=? 'v') && (current_mode != "\<C-v>"))
+  if (a:mode ==# 'x') && opt_swap_head_tail
+    let current_mode = mode()
+
+    if (current_mode ==# 'v') || (current_mode == "\<C-v>")
       normal! o
       let counter_edge = col('.')
       normal! o
@@ -151,12 +153,36 @@ function! patternjump#forward(mode, ...) "{{{
       if col <= counter_edge
         let head_pattern_list = pattern_lists[1]
         let tail_pattern_list = pattern_lists[0]
+
+        let swapped = 1
+      else
+        let swapped = 0
       endif
     endif
   endif
 
   " searching candidate positions
-  let [candidate_positions, matched_patterns] = s:forward_search(a:mode, l:count, string, col, head_pattern_list, tail_pattern_list, opt_debug_mode, opt_highlight)
+  let candidate_positions = []
+  let matched_patterns    = []
+
+  while 1
+    let [candidate_positions, matched_patterns] += s:forward_search(a:mode, l:count, string, col, head_pattern_list, tail_pattern_list, opt_debug_mode, opt_highlight)
+
+    if v:count == 0
+      let dest = min(candidate_positions)
+    else
+      let dest = get(sort(s:Sl.uniq_by(copy(candidate_positions), 'v:val'), "s:compare"), l:count-1, -1)
+    endif
+
+    if exists('swapped') && swapped && (dest > counter_edge)
+      let head_pattern_list = pattern_lists[0]
+      let tail_pattern_list = pattern_lists[1]
+
+      let swapped = 0
+    else
+      break
+    endif
+  endwhile
 
   " determine output and move cursor
   let output = ''
@@ -164,19 +190,11 @@ function! patternjump#forward(mode, ...) "{{{
     if opt_raw != 1
       if !opt_debug_mode
         if a:mode =~# '[nxo]'
-          if v:count == 0
-            call cursor(0, min(candidate_positions))
-          else
-            let pos = get(sort(s:Sl.uniq_by(candidate_positions, 'v:val'), "s:compare"), l:count-1, -1)
-
-            if pos > 0
-              call cursor(0, pos)
-            endif
-          endif
+          call cursor(0, dest)
         elseif a:mode ==# 'i'
-          call cursor(0, min(candidate_positions) + 1)
+          call cursor(0, dest + 1)
         elseif a:mode ==# 'c'
-          call setcmdpos(min(candidate_positions) + 1)
+          call setcmdpos(dest + 1)
         endif
       endif
     endif
@@ -186,7 +204,7 @@ function! patternjump#forward(mode, ...) "{{{
     " raw mode
     unlet output
     let output = {}
-    let output.column = get(sort(s:Sl.uniq_by(copy(candidate_positions), 'v:val'), "s:compare"), l:count-1, -1)
+    let output.column     = dest
     let output.candidates = candidate_positions
     let output.patterns   = matched_patterns
   endif
@@ -269,13 +287,13 @@ function! patternjump#backward(mode, ...) "{{{
   endif
 
   " searching for user configurations
-  let options_dict      = (a:0 > 2) ? a:3 : {}
-  let opt_caching       = patternjump#user_conf(   'caching', options_dict, 0)
-  let opt_debug_mode    = patternjump#user_conf('debug_mode', options_dict, 0)
-  let opt_highlight     = patternjump#user_conf( 'highlight', options_dict, 0)
-  let opt_cache_name    = patternjump#user_conf('cache_name', options_dict, 'b:patternjump_cache')
-  let opt_headtail_swap = patternjump#user_conf('headtail_swap', options_dict, 0)
-  let opt_raw           = s:check_raw(options_dict)
+  let options_dict       = (a:0 > 2) ? a:3 : {}
+  let opt_caching        = patternjump#user_conf(       'caching', options_dict, 0)
+  let opt_debug_mode     = patternjump#user_conf(    'debug_mode', options_dict, 0)
+  let opt_highlight      = patternjump#user_conf(     'highlight', options_dict, 0)
+  let opt_cache_name     = patternjump#user_conf(    'cache_name', options_dict, 'b:patternjump_cache')
+  let opt_swap_head_tail = patternjump#user_conf('swap_head_tail', options_dict, 0)
+  let opt_raw            = s:check_raw(options_dict)
 
   " check and modify cache name
   if opt_cache_name =~# '^\h[0-9a-zA-Z_#]*$'
@@ -358,8 +376,10 @@ function! patternjump#backward(mode, ...) "{{{
   endif
 
   " pattern swapping (only in visual mode)
-  if (a:mode ==# 'x') && opt_headtail_swap
-    if ((current_mode !=? 'v') && (current_mode != "\<C-v>"))
+  if (a:mode ==# 'x') && opt_swap_head_tail
+    let current_mode = mode()
+
+    if (current_mode ==# 'v') || (current_mode == "\<C-v>")
       normal! o
       let counter_edge = col('.')
       normal! o
@@ -367,15 +387,36 @@ function! patternjump#backward(mode, ...) "{{{
       if col <= counter_edge
         let head_pattern_list = pattern_lists[1]
         let tail_pattern_list = pattern_lists[0]
-        let swap_state = 0
+
+        let swapped = 1
       else
-        let swap_state = 1
+        let swapped = 0
       endif
     endif
   endif
 
   " searching candidate positions
-  let [candidate_positions, matched_patterns] = s:backward_search(a:mode, string, col, head_pattern_list, tail_pattern_list)
+  let candidate_positions = []
+  let matched_patterns    = []
+
+  while 1
+    let [candidate_positions, matched_patterns] += s:backward_search(a:mode, string, col, head_pattern_list, tail_pattern_list)
+
+    if v:count == 0
+      let dest = max(candidate_positions)
+    else
+      let dest = get(reverse(sort(s:Sl.uniq_by(copy(candidate_positions), 'v:val'), "s:compare")), l:count-1, -1)
+    endif
+
+    if exists('swapped') && !swapped && (dest < counter_edge)
+      let head_pattern_list = pattern_lists[1]
+      let tail_pattern_list = pattern_lists[0]
+
+      let swapped = 1
+    else
+      break
+    endif
+  endwhile
 
   " determine output or move cursor
   let output = ''
@@ -383,19 +424,11 @@ function! patternjump#backward(mode, ...) "{{{
     if opt_raw != 1
       if !opt_debug_mode
         if a:mode =~# '[nxo]'
-          if v:count == 0
-            call cursor(0, max(candidate_positions))
-          else
-            let pos = get(reverse(sort(s:Sl.uniq_by(candidate_positions, 'v:val'), "s:compare")), l:count-1, -1)
-
-            if pos > 0
-              call cursor(0, pos)
-            endif
-          endif
+          call cursor(0, dest)
         elseif a:mode ==# 'i'
-          call cursor(0, max(candidate_positions) + 1)
+          call cursor(0, dest + 1)
         elseif a:mode ==# 'c'
-          call setcmdpos(max(candidate_positions) + 1)
+          call setcmdpos(dest + 1)
         endif
       endif
     endif
@@ -405,9 +438,9 @@ function! patternjump#backward(mode, ...) "{{{
     " raw mode
     unlet output
     let output = {}
-    let output.column = get(sort(s:Sl.uniq_by(copy(candidate_positions), 'v:val'), "s:compare"), l:count-1, -1)
-    let output.candidates = [candidate_positions]
-    let output.patterns   = [matched_patterns]
+    let output.column     = dest
+    let output.candidates = candidate_positions
+    let output.patterns   = matched_patterns
   endif
 
   " highlighting candidates (if necessary)

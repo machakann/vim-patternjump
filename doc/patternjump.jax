@@ -1,4 +1,4 @@
-﻿*patternjump.jax*	Last change:11-Mar-2014.
+﻿*patternjump.jax*	Last change:20-Mar-2014.
 
 カーソル移動をお望みのままに！
 
@@ -406,6 +406,28 @@ g:patternjump_debug_mode			*g:patternjump_debug_mode*
 	　　　関係上スキップできる候補もすべて検索します。さらにハイライトも行
 	　　　うために少しだけ動作が遅くなるかもしれません。
 
+g:patternjump_swap_head_tail			*g:patternjump_swap_head_tail*
+	このオプションはビジュアルモードでのカーソルの挙動を、選択範囲の二つの
+	端点の関係によって変化させます。値が1の時カーソルがもう一つの端よりも
+	前方へ来た時に head-patterns と tail-patterns を切り替えます。
+	例えば、次のような行と tail-pattern の '\<\h\k+\>' について考えましょ
+	う。カーソルが 'b' の上にあり、もう一つの端が '=' だとします。
+>
+	        -->#    選択領域
+	let foo = "bar"                               '#' はカーソル位置を表す
+<
+	もしここで後方検索のキーマッピングを使えば、通常カーソルは二つ目の 'o'
+	の上へ動くでしょう。
+>
+	      #<-       選択領域
+	let foo = "bar"                               '#' はカーソル位置を表す
+<
+	しかし、このオプションを有効にしていると tail-pattern は head-pattern
+	へ切り替えられるので、カーソルは 'f' の上へ動くようになります。
+>
+	    #<---       選択領域
+	let foo = "bar"                               '#' はカーソル位置を表す
+<
 ==============================================================================
 KEYMAPPINGS					*patternjump-keymappings*
 

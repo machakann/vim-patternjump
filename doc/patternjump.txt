@@ -1,4 +1,4 @@
-*patternjump.txt*	Last change:11-Mar-2014.
+*patternjump.txt*	Last change:20-Mar-2014.
 
 Move cursor as you like.
 
@@ -394,6 +394,31 @@ g:patternjump_debug_mode			*g:patternjump_debug_mode*
 	NOTE: This option might make this plugin slightly slower since it try
 	      to collect all the candidates as possible and highlight numbers
 	      of positions.
+
+g:patternjump_swap_head_tail			*g:patternjump_swap_head_tail*
+	This option changes the behavior in the visual mode depending on the
+	relationship of two edges of selection. When the cursor comes the
+	backside of the other edge, the head-patterns and tail-patterns are
+	switched if the value is 1.
+	For example, thinking about the following line with the tail-pattern
+	'\<\h\k+\>'. Assume that the cursor is on 'b' and the other edge of
+	selection is on '='.
+>
+	        -->#    selected area
+	let foo = "bar"                         '#' represents cursor position
+<
+	If the keymapping which searchs candidates for backward direction is
+	used, the cursor would be moved to the second 'o' usually.
+>
+	      #<-       selected area
+	let foo = "bar"                         '#' represents cursor position
+<
+	However if this option is valid, tail-patterns are switched to
+	head-patterns. Thus the cursor are moved to 'f'.
+>
+	    #<---       selected area
+	let foo = "bar"                         '#' represents cursor position
+<
 
 ==============================================================================
 KEYMAPPINGS					*patternjump-keymappings*
