@@ -48,21 +48,18 @@ function! patternjump#forward(mode, ...) "{{{
   let l:count = (a:0 > 1 && a:2 > 0) ? a:2 : v:count1
 
   " re-entering to the visual mode (if necessary)
-  if (a:mode ==# 'x')
-    let current_mode = mode()
-
-    if ((current_mode !=? 'v') && (current_mode != "\<C-v>"))
-      normal! gv
-    endif
+  if (a:mode ==# 'x') && ((mode() !=? 'v') && (mode() != "\<C-v>"))
+    normal! gv
   endif
 
   " searching for user configurations
-  let options_dict      = (a:0 > 2) ? a:3 : {}
-  let opt_caching       = patternjump#user_conf(      'caching', options_dict, 0)
-  let opt_debug_mode    = patternjump#user_conf(   'debug_mode', options_dict, 0)
-  let opt_highlight     = patternjump#user_conf(    'highlight', options_dict, 0)
-  let opt_cache_name    = patternjump#user_conf(   'cache_name', options_dict, 'b:patternjump_cache')
-  let opt_raw           = s:check_raw(options_dict)
+  let options_dict       = (a:0 > 2) ? a:3 : {}
+  let opt_caching        = patternjump#user_conf(       'caching', options_dict, 0)
+  let opt_debug_mode     = patternjump#user_conf(    'debug_mode', options_dict, 0)
+  let opt_highlight      = patternjump#user_conf(     'highlight', options_dict, 0)
+  let opt_cache_name     = patternjump#user_conf(    'cache_name', options_dict, 'b:patternjump_cache')
+  let opt_swap_head_tail = patternjump#user_conf('swap_head_tail', options_dict, 0)
+  let opt_raw            = s:check_raw(options_dict)
 
   " check and modify cache name
   if opt_cache_name =~# '^\h[0-9a-zA-Z_#]*$'
@@ -136,8 +133,6 @@ function! patternjump#forward(mode, ...) "{{{
   let head_pattern_list = pattern_lists[0]
   let tail_pattern_list = pattern_lists[1]
 
-  let candidate_positions = []
-  let matched_patterns    = []
   if a:mode == 'c'
     let string = getcmdline()
     let col    = getcmdpos() - 1
@@ -146,78 +141,78 @@ function! patternjump#forward(mode, ...) "{{{
     let col    = (a:mode == 'i') ? (col('.') - 1) : col('.')
   endif
 
-  " scan head patterns
-  for pattern in head_pattern_list
-    let Nth = 0
-    let len = len(string)
-    while 1
-      let Nth += 1
-      let matched_pos = match(string, pattern, 0, Nth)
-      let matched_pos = ((a:mode =~# '[nxo]') && (matched_pos >= 0) && !(matched_pos == len)) ? (matched_pos + 1) : matched_pos
-      if matched_pos < 0 | break | endif
+  " pattern swapping (only in visual mode)
+  if (a:mode ==# 'x') && opt_swap_head_tail
+    let current_mode = mode()
 
-      " counter measure for special patterns like '$'
-      " patched! : Vim 7.4.184
-      if matched_pos > len | break | endif
+    if (current_mode ==# 'v') || (current_mode == "\<C-v>")
+      normal! o
+      let counter_edge = col('.')
+      normal! o
 
-      if matched_pos > col
-        let candidate_positions += [matched_pos]
-        let matched_patterns    += [[pattern, 'head']]
+      if col <= counter_edge
+        let head_pattern_list = pattern_lists[1]
+        let tail_pattern_list = pattern_lists[0]
 
-        if (l:count == 1) && !opt_debug_mode && !opt_highlight
-          break
-        else
-          continue
-        endif
+        let swapped = 1
+      else
+        let swapped = 0
       endif
-    endwhile
-  endfor
+    endif
+  endif
 
-  " scan tail patterns
-  for pattern in tail_pattern_list
-    let Nth = 0
-    let len = len(string)
-    while 1
-      let Nth += 1
-      let matched_pos = matchend(string, pattern, 0, Nth)
-      if matched_pos < 0 | break | endif
+  " searching candidate positions
+  let candidates = []
 
-      " counter measure for special patterns like '$'
-      " patched! : Vim 7.4.184
-      if matched_pos > len | break | endif
+  while 1
+    if exists('swapped')
+      let candidates += s:forward_search(a:mode, l:count, string, col, head_pattern_list, tail_pattern_list, opt_debug_mode, opt_highlight, swapped)
+    else
+      let candidates += s:forward_search(a:mode, l:count, string, col, head_pattern_list, tail_pattern_list, opt_debug_mode, opt_highlight, -1)
+    endif
 
-      if matched_pos > col
-        let candidate_positions += [matched_pos]
-        let matched_patterns    += [[pattern, 'tail']]
-
-        if (l:count == 1) && !opt_debug_mode && !opt_highlight
-          break
-        else
-          continue
-        endif
+    if exists('swapped') && swapped
+      if l:count == 1
+        let dest = min(map(copy(candidates), 'v:val[0]'))
+      else
+        let dest = get(sort(s:Sl.uniq_by(map(copy(candidates), 'v:val[0]'), 'v:val'), "s:compare"), l:count-1, -1)
       endif
-    endwhile
-  endfor
+
+      if dest > counter_edge
+        let head_pattern_list = pattern_lists[0]
+        let tail_pattern_list = pattern_lists[1]
+
+        let swapped = 0
+      else
+        break
+      endif
+    else
+      break
+    endif
+  endwhile
+
+  " remove unnecessary matched_patterns and candidates
+  if exists('swapped')
+    call filter(map(candidates, '((v:val[3] == 1) && (v:val[0] > counter_edge) || ((v:val[3] == 0) && (v:val[0] < counter_edge))) ? [] : v:val'), 'v:val != []')
+  endif
 
   " determine output and move cursor
+  if l:count == 1
+    let dest = min(map(copy(candidates), 'v:val[0]'))
+  else
+    let dest = get(sort(s:Sl.uniq_by(map(copy(candidates), 'v:val[0]'), 'v:val'), "s:compare"), l:count-1, -1)
+  endif
+
   let output = ''
-  if !empty(candidate_positions)
+  if !empty(candidates)
     if opt_raw != 1
       if !opt_debug_mode
         if a:mode =~# '[nxo]'
-          if v:count == 0
-            call cursor(0, min(candidate_positions))
-          else
-            let pos = get(sort(s:Sl.uniq_by(candidate_positions, 'v:val'), "s:compare"), l:count-1, -1)
-
-            if pos > 0
-              call cursor(0, pos)
-            endif
-          endif
+          call cursor(0, dest)
         elseif a:mode ==# 'i'
-          call cursor(0, min(candidate_positions) + 1)
+          call cursor(0, dest + 1)
         elseif a:mode ==# 'c'
-          call setcmdpos(min(candidate_positions) + 1)
+          call setcmdpos(dest + 1)
         endif
       endif
     endif
@@ -227,17 +222,73 @@ function! patternjump#forward(mode, ...) "{{{
     " raw mode
     unlet output
     let output = {}
-    let output.column = get(sort(s:Sl.uniq_by(copy(candidate_positions), 'v:val'), "s:compare"), l:count-1, -1)
-    let output.candidates = candidate_positions
-    let output.patterns   = matched_patterns
+    let output.column     = dest
+    let output.candidates = candidates
   endif
 
   " highlighting candidates (if necessary)
   if (opt_debug_mode || opt_highlight) && (a:mode =~# '[nxi]')
-    call s:highlighter(candidate_positions, matched_patterns, opt_debug_mode)
+    call s:highlighter(candidates, opt_debug_mode)
   endif
 
   return output
+endfunction
+"}}}
+function! s:forward_search(mode, count, string, col, head_pattern_list, tail_pattern_list, opt_debug_mode, opt_highlight, swapped) "{{{
+  let candidates = []
+
+  " scan head patterns
+  for pattern in a:head_pattern_list
+    let Nth = 0
+    let len = len(a:string)
+    while 1
+      let Nth += 1
+      let matched_pos = match(a:string, pattern, 0, Nth)
+      let matched_pos = ((a:mode =~# '[nxo]') && (matched_pos >= 0) && !(matched_pos == len)) ? (matched_pos + 1) : matched_pos
+      if matched_pos < 0 | break | endif
+
+      " counter measure for special patterns like '$'
+      " patched! : Vim 7.4.184
+      if matched_pos > len | break | endif
+
+      if matched_pos > a:col
+        let candidates += [[matched_pos, pattern, 'head', a:swapped]]
+
+        if (a:count == 1) && !a:opt_debug_mode && !a:opt_highlight
+          break
+        else
+          continue
+        endif
+      endif
+    endwhile
+  endfor
+
+  " scan tail patterns
+  for pattern in a:tail_pattern_list
+    let Nth = 0
+    let len = len(a:string)
+    while 1
+      let Nth += 1
+      let matched_pos = matchend(a:string, pattern, 0, Nth)
+      if matched_pos < 0 | break | endif
+
+      " counter measure for special patterns like '$'
+      " patched! : Vim 7.4.184
+      if matched_pos > len | break | endif
+
+      if matched_pos > a:col
+        let candidates += [[matched_pos, pattern, 'tail', a:swapped]]
+
+        if (a:count == 1) && !a:opt_debug_mode && !a:opt_highlight
+          break
+        else
+          continue
+        endif
+      endif
+    endwhile
+  endfor
+
+  return candidates
 endfunction
 "}}}
 function! patternjump#backward(mode, ...) "{{{
@@ -245,21 +296,18 @@ function! patternjump#backward(mode, ...) "{{{
   let l:count = (a:0 > 1 && a:2 > 0) ? a:2 : v:count1
 
   " re-entering to the visual mode (if necessary)
-  if (a:mode ==# 'x')
-    let current_mode = mode()
-
-    if ((current_mode !=? 'v') && (current_mode != "\<C-v>"))
-      normal! gv
-    endif
+  if (a:mode ==# 'x') && ((mode() !=? 'v') && (mode() != "\<C-v>"))
+    normal! gv
   endif
 
   " searching for user configurations
-  let options_dict      = (a:0 > 2) ? a:3 : {}
-  let opt_caching       = patternjump#user_conf(      'caching', options_dict, 0)
-  let opt_debug_mode    = patternjump#user_conf(   'debug_mode', options_dict, 0)
-  let opt_highlight     = patternjump#user_conf(    'highlight', options_dict, 0)
-  let opt_cache_name    = patternjump#user_conf(   'cache_name', options_dict, 'b:patternjump_cache')
-  let opt_raw           = s:check_raw(options_dict)
+  let options_dict       = (a:0 > 2) ? a:3 : {}
+  let opt_caching        = patternjump#user_conf(       'caching', options_dict, 0)
+  let opt_debug_mode     = patternjump#user_conf(    'debug_mode', options_dict, 0)
+  let opt_highlight      = patternjump#user_conf(     'highlight', options_dict, 0)
+  let opt_cache_name     = patternjump#user_conf(    'cache_name', options_dict, 'b:patternjump_cache')
+  let opt_swap_head_tail = patternjump#user_conf('swap_head_tail', options_dict, 0)
+  let opt_raw            = s:check_raw(options_dict)
 
   " check and modify cache name
   if opt_cache_name =~# '^\h[0-9a-zA-Z_#]*$'
@@ -333,8 +381,6 @@ function! patternjump#backward(mode, ...) "{{{
   let head_pattern_list = pattern_lists[0]
   let tail_pattern_list = pattern_lists[1]
 
-  let candidate_positions = []
-  let matched_patterns    = []
   if a:mode == 'c'
     let string = getcmdline()
     let col    = getcmdpos() - 1
@@ -343,62 +389,78 @@ function! patternjump#backward(mode, ...) "{{{
     let col    = (a:mode == 'i') ? (col('.') - 1) : col('.')
   endif
 
-  " scan head patterns
-  for pattern in head_pattern_list
-    let Nth = 0
-    while 1
-      let Nth += 1
-      let matched_pos = match(string, pattern, 0, Nth)
-      let matched_pos = (a:mode =~# '[nxo]') ? ((matched_pos < 0) ? matched_pos : (matched_pos + 1)) : matched_pos
+  " pattern swapping (only in visual mode)
+  if (a:mode ==# 'x') && opt_swap_head_tail
+    let current_mode = mode()
 
-      if matched_pos < 0 || matched_pos >= col
-        break
+    if (current_mode ==# 'v') || (current_mode == "\<C-v>")
+      normal! o
+      let counter_edge = col('.')
+      normal! o
+
+      if col <= counter_edge
+        let head_pattern_list = pattern_lists[1]
+        let tail_pattern_list = pattern_lists[0]
+
+        let swapped = 1
       else
-        let candidate_positions += [matched_pos]
-        let matched_patterns    += [[pattern, 'head']]
-        continue
+        let swapped = 0
       endif
-    endwhile
-  endfor
+    endif
+  endif
 
-  " scan tail patterns
-  for pattern in tail_pattern_list
-    let Nth = 0
-    let len = len(string)
-    while 1
-      let Nth += 1
-      let matched_pos = matchend(string, pattern, 0, Nth)
-      let matched_pos = ((a:mode =~# '[nxo]') && (matched_pos == 0)) ? 1 : matched_pos
+  " searching candidate positions
+  let candidates = []
 
-      if matched_pos < 0 || matched_pos >= col
-        break
+  while 1
+    if exists('swapped')
+      let candidates += s:backward_search(a:mode, string, col, head_pattern_list, tail_pattern_list, swapped)
+    else
+      let candidates += s:backward_search(a:mode, string, col, head_pattern_list, tail_pattern_list, -1)
+    endif
+
+    if exists('swapped') && !swapped
+      if l:count == 1
+        let dest = max(map(copy(candidates), 'v:val[0]'))
       else
-        let candidate_positions += [matched_pos]
-        let matched_patterns    += [[pattern, 'tail']]
-        continue
+        let dest = get(reverse(sort(s:Sl.uniq_by(map(copy(candidates), 'v:val[0]'), 'v:val'), "s:compare")), l:count-1, -1)
       endif
-    endwhile
-  endfor
+
+      if dest < counter_edge
+        let head_pattern_list = pattern_lists[1]
+        let tail_pattern_list = pattern_lists[0]
+
+        let swapped = 1
+      else
+        break
+      endif
+    else
+      break
+    endif
+  endwhile
+
+  " remove unnecessary matched_patterns and candidates
+  if exists('swapped')
+    call filter(map(candidates, '((v:val[3] == 1) && (v:val[0] > counter_edge) || ((v:val[3] == 0) && (v:val[0] < counter_edge))) ? [] : v:val'), 'v:val != []')
+  endif
 
   " determine output or move cursor
+  if l:count == 1
+    let dest = max(map(copy(candidates), 'v:val[0]'))
+  else
+    let dest = get(reverse(sort(s:Sl.uniq_by(map(copy(candidates), 'v:val[0]'), 'v:val'), "s:compare")), l:count-1, -1)
+  endif
+
   let output = ''
-  if !empty(candidate_positions)
+  if !empty(candidates)
     if opt_raw != 1
       if !opt_debug_mode
         if a:mode =~# '[nxo]'
-          if v:count == 0
-            call cursor(0, max(candidate_positions))
-          else
-            let pos = get(reverse(sort(s:Sl.uniq_by(candidate_positions, 'v:val'), "s:compare")), l:count-1, -1)
-
-            if pos > 0
-              call cursor(0, pos)
-            endif
-          endif
+          call cursor(0, dest)
         elseif a:mode ==# 'i'
-          call cursor(0, max(candidate_positions) + 1)
+          call cursor(0, dest + 1)
         elseif a:mode ==# 'c'
-          call setcmdpos(max(candidate_positions) + 1)
+          call setcmdpos(dest + 1)
         endif
       endif
     endif
@@ -408,17 +470,57 @@ function! patternjump#backward(mode, ...) "{{{
     " raw mode
     unlet output
     let output = {}
-    let output.column = get(sort(s:Sl.uniq_by(copy(candidate_positions), 'v:val'), "s:compare"), l:count-1, -1)
-    let output.candidates = [candidate_positions]
-    let output.patterns   = [matched_patterns]
+    let output.column     = dest
+    let output.candidates = candidates
   endif
 
   " highlighting candidates (if necessary)
   if (opt_debug_mode || opt_highlight) && (a:mode =~# '[nxi]')
-    call s:highlighter(candidate_positions, matched_patterns, opt_debug_mode)
+    call s:highlighter(candidates, opt_debug_mode)
   endif
 
   return output
+endfunction
+"}}}
+function! s:backward_search(mode, string, col, head_pattern_list, tail_pattern_list, swapped)  "{{{
+  let candidates = []
+
+  " scan head patterns
+  for pattern in a:head_pattern_list
+    let Nth = 0
+    while 1
+      let Nth += 1
+      let matched_pos = match(a:string, pattern, 0, Nth)
+      let matched_pos = (a:mode =~# '[nxo]') ? ((matched_pos < 0) ? matched_pos : (matched_pos + 1)) : matched_pos
+
+      if matched_pos < 0 || matched_pos >= a:col
+        break
+      else
+        let candidates += [[matched_pos, pattern, 'head', a:swapped]]
+        continue
+      endif
+    endwhile
+  endfor
+
+  " scan tail patterns
+  for pattern in a:tail_pattern_list
+    let Nth = 0
+    let len = len(a:string)
+    while 1
+      let Nth += 1
+      let matched_pos = matchend(a:string, pattern, 0, Nth)
+      let matched_pos = ((a:mode =~# '[nxo]') && (matched_pos == 0)) ? 1 : matched_pos
+
+      if matched_pos < 0 || matched_pos >= a:col
+        break
+      else
+        let candidates += [[matched_pos, pattern, 'tail', a:swapped]]
+        continue
+      endif
+    endwhile
+  endfor
+
+  return candidates
 endfunction
 "}}}
 function! patternjump#user_conf(name, arg, default)    "{{{
@@ -447,22 +549,12 @@ function! patternjump#user_conf(name, arg, default)    "{{{
   return user_conf
 endfunction
 "}}}
-function! patternjump#cleaner() "{{{
-  if b:patternjump.state == 1
-    let b:patternjump.state = 2
-  else
-    " delete highlighting
-    call filter(map(b:patternjump.id, "s:highlight_del(v:val)"), 'v:val > 0')
-    redraw
-
-    if b:patternjump.id == []
-      let b:patternjump.state = 0
-
-      augroup patternjump:cleaner
-        au!
-      augroup END
-    endif
+function! s:check_raw(arg)    "{{{
+  if has_key(a:arg, 'raw')
+    return a:arg['raw']
   endif
+
+  return 0
 endfunction
 "}}}
 function! s:resolve_pattern_dictionary(mode, direction, patternjump_patterns) "{{{
@@ -577,15 +669,7 @@ function! s:compare(i1, i2) "{{{
   return a:i1 - a:i2
 endfunction
 "}}}
-function! s:check_raw(arg)    "{{{
-  if has_key(a:arg, 'raw')
-    return a:arg['raw']
-  endif
-
-  return 0
-endfunction
-"}}}
-function! s:highlighter(candidate_positions, matched_patterns, opt_debug_mode) "{{{
+function! s:highlighter(candidates, opt_debug_mode) "{{{
   if !exists('b:patternjump')
     let b:patternjump       = {}
     let b:patternjump.state = 0
@@ -594,20 +678,20 @@ function! s:highlighter(candidate_positions, matched_patterns, opt_debug_mode) "
 
   if !empty(b:patternjump.id)
     let b:patternjump.state = 2
-    call patternjump#cleaner()
+    call s:cleaner()
   endif
 
-  if a:candidate_positions != []
+  if a:candidates != []
     " highlighting candidates
     let line = line('.')
-    let b:patternjump.id = map(copy(a:candidate_positions), "s:highlight_add(line, v:val)")
+    let b:patternjump.id = map(copy(a:candidates), "s:highlight_add(line, v:val[0])")
     redraw
 
     " echo information
     if a:opt_debug_mode
       echomsg 'patternjump debug mode'
-      for idx in range(len(a:candidate_positions))
-        echomsg printf('%d, ''%s'', %s', a:candidate_positions[idx], a:matched_patterns[idx][0], a:matched_patterns[idx][1])
+      for idx in range(len(a:candidates))
+        echomsg printf('%d, ''%s'', %s, %s', a:candidates[idx][0], a:candidates[idx][1], a:candidates[idx][2], a:candidates[idx][3])
       endfor
       echomsg ''
     endif
@@ -616,8 +700,8 @@ function! s:highlighter(candidate_positions, matched_patterns, opt_debug_mode) "
 
     " reserving cleaner
     augroup patternjump:cleaner
-      au! CursorMoved,CursorMovedI,WinLeave <buffer>
-      au CursorMoved,CursorMovedI,WinLeave <buffer> call patternjump#cleaner()
+      au!
+      au CursorMoved,CursorMovedI,WinLeave <buffer> call s:cleaner()
     augroup END
   endif
 endfunction
@@ -626,6 +710,24 @@ function! s:highlight_add(row, col) "{{{
   let pattern   = '\%' . a:row . 'l\%' . a:col . 'c.'
   let id = matchadd("IncSearch", pattern)
   return id
+endfunction
+"}}}
+function! s:cleaner() "{{{
+  if b:patternjump.state == 1
+    let b:patternjump.state = 2
+  else
+    " delete highlighting
+    call filter(map(b:patternjump.id, "s:highlight_del(v:val)"), 'v:val > 0')
+    redraw
+
+    if b:patternjump.id == []
+      let b:patternjump.state = 0
+
+      augroup patternjump:cleaner
+        au!
+      augroup END
+    endif
+  endif
 endfunction
 "}}}
 function! s:highlight_del(id) "{{{
