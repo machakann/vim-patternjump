@@ -1,4 +1,4 @@
-" patternjump.vim - move cursor as you like
+﻿" patternjump.vim - move cursor as you like
 
 " I assumed that several dozen patterns are used usually, so I optimized for the use case.
 " If defined patterns are too much, following algorithm might be slow.
@@ -162,36 +162,54 @@ function! patternjump#forward(mode, ...) "{{{
   endif
 
   " searching candidate positions
-  let candidate_positions = []
-  let matched_patterns    = []
+  let candidates = []
 
   while 1
-    let [candidate_positions, matched_patterns] += s:forward_search(a:mode, l:count, string, col, head_pattern_list, tail_pattern_list, opt_debug_mode, opt_highlight)
-
-    if v:count == 0
-      let dest = min(candidate_positions)
+    if exists('swapped')
+      let candidates += s:forward_search(a:mode, l:count, string, col, head_pattern_list, tail_pattern_list, opt_debug_mode, opt_highlight, swapped)
     else
-      let dest = get(sort(s:Sl.uniq_by(copy(candidate_positions), 'v:val'), "s:compare"), l:count-1, -1)
+      let candidates += s:forward_search(a:mode, l:count, string, col, head_pattern_list, tail_pattern_list, opt_debug_mode, opt_highlight, -1)
     endif
 
-    if exists('swapped') && swapped && (dest > counter_edge)
-      let head_pattern_list = pattern_lists[0]
-      let tail_pattern_list = pattern_lists[1]
+    if exists('swapped') && swapped
+      if l:count == 1
+        let dest = min(map(copy(candidates), 'v:val[0]'))
+      else
+        let dest = get(sort(s:Sl.uniq_by(map(copy(candidates), 'v:val[0]'), 'v:val'), "s:compare"), l:count-1, -1)
+      endif
 
-      let swapped = 0
+      if dest > counter_edge
+        let head_pattern_list = pattern_lists[0]
+        let tail_pattern_list = pattern_lists[1]
+
+        let swapped = 0
+      else
+        break
+      endif
     else
       break
     endif
   endwhile
 
+  " remove unnecessary matched_patterns and candidates
+  if exists('swapped')
+    call filter(map(candidates, '((v:val[3] == 1) && (v:val[0] > counter_edge) || ((v:val[3] == 0) && (v:val[0] < counter_edge))) ? [] : v:val'), 'v:val != []')
+  endif
+
   " determine output and move cursor
+  if l:count == 1
+    let dest = min(map(copy(candidates), 'v:val[0]'))
+  else
+    let dest = get(sort(s:Sl.uniq_by(map(copy(candidates), 'v:val[0]'), 'v:val'), "s:compare"), l:count-1, -1)
+  endif
+
   let output = ''
-  if !empty(candidate_positions)
+  if !empty(candidates)
     if opt_raw != 1
       if !opt_debug_mode
-        if a:mode =~# '[nx]'
+        if a:mode =~# '[nxo]'
           call cursor(0, dest)
-        elseif a:mode =~# '[io]'
+        elseif a:mode ==# 'i'
           call cursor(0, dest + 1)
         elseif a:mode ==# 'c'
           call setcmdpos(dest + 1)
@@ -205,21 +223,19 @@ function! patternjump#forward(mode, ...) "{{{
     unlet output
     let output = {}
     let output.column     = dest
-    let output.candidates = candidate_positions
-    let output.patterns   = matched_patterns
+    let output.candidates = candidates
   endif
 
   " highlighting candidates (if necessary)
   if (opt_debug_mode || opt_highlight) && (a:mode =~# '[nxi]')
-    call s:highlighter(candidate_positions, matched_patterns, opt_debug_mode)
+    call s:highlighter(candidates, opt_debug_mode)
   endif
 
   return output
 endfunction
 "}}}
-function! s:forward_search(mode, count, string, col, head_pattern_list, tail_pattern_list, opt_debug_mode, opt_highlight) "{{{
-  let candidate_positions = []
-  let matched_patterns    = []
+function! s:forward_search(mode, count, string, col, head_pattern_list, tail_pattern_list, opt_debug_mode, opt_highlight, swapped) "{{{
+  let candidates = []
 
   " scan head patterns
   for pattern in a:head_pattern_list
@@ -236,8 +252,7 @@ function! s:forward_search(mode, count, string, col, head_pattern_list, tail_pat
       if matched_pos > len | break | endif
 
       if matched_pos > a:col
-        let candidate_positions += [matched_pos]
-        let matched_patterns    += [[pattern, 'head']]
+        let candidates += [[matched_pos, pattern, 'head', a:swapped]]
 
         if (a:count == 1) && !a:opt_debug_mode && !a:opt_highlight
           break
@@ -262,8 +277,7 @@ function! s:forward_search(mode, count, string, col, head_pattern_list, tail_pat
       if matched_pos > len | break | endif
 
       if matched_pos > a:col
-        let candidate_positions += [matched_pos]
-        let matched_patterns    += [[pattern, 'tail']]
+        let candidates += [[matched_pos, pattern, 'tail', a:swapped]]
 
         if (a:count == 1) && !a:opt_debug_mode && !a:opt_highlight
           break
@@ -274,7 +288,7 @@ function! s:forward_search(mode, count, string, col, head_pattern_list, tail_pat
     endwhile
   endfor
 
-  return [candidate_positions, matched_patterns]
+  return candidates
 endfunction
 "}}}
 function! patternjump#backward(mode, ...) "{{{
@@ -396,36 +410,54 @@ function! patternjump#backward(mode, ...) "{{{
   endif
 
   " searching candidate positions
-  let candidate_positions = []
-  let matched_patterns    = []
+  let candidates = []
 
   while 1
-    let [candidate_positions, matched_patterns] += s:backward_search(a:mode, string, col, head_pattern_list, tail_pattern_list)
-
-    if v:count == 0
-      let dest = max(candidate_positions)
+    if exists('swapped')
+      let candidates += s:backward_search(a:mode, string, col, head_pattern_list, tail_pattern_list, swapped)
     else
-      let dest = get(reverse(sort(s:Sl.uniq_by(copy(candidate_positions), 'v:val'), "s:compare")), l:count-1, -1)
+      let candidates += s:backward_search(a:mode, string, col, head_pattern_list, tail_pattern_list, -1)
     endif
 
-    if exists('swapped') && !swapped && (dest < counter_edge)
-      let head_pattern_list = pattern_lists[1]
-      let tail_pattern_list = pattern_lists[0]
+    if exists('swapped') && !swapped
+      if l:count == 1
+        let dest = max(map(copy(candidates), 'v:val[0]'))
+      else
+        let dest = get(reverse(sort(s:Sl.uniq_by(map(copy(candidates), 'v:val[0]'), 'v:val'), "s:compare")), l:count-1, -1)
+      endif
 
-      let swapped = 1
+      if dest < counter_edge
+        let head_pattern_list = pattern_lists[1]
+        let tail_pattern_list = pattern_lists[0]
+
+        let swapped = 1
+      else
+        break
+      endif
     else
       break
     endif
   endwhile
 
+  " remove unnecessary matched_patterns and candidates
+  if exists('swapped')
+    call filter(map(candidates, '((v:val[3] == 1) && (v:val[0] > counter_edge) || ((v:val[3] == 0) && (v:val[0] < counter_edge))) ? [] : v:val'), 'v:val != []')
+  endif
+
   " determine output or move cursor
+  if l:count == 1
+    let dest = max(map(copy(candidates), 'v:val[0]'))
+  else
+    let dest = get(reverse(sort(s:Sl.uniq_by(map(copy(candidates), 'v:val[0]'), 'v:val'), "s:compare")), l:count-1, -1)
+  endif
+
   let output = ''
-  if !empty(candidate_positions)
+  if !empty(candidates)
     if opt_raw != 1
       if !opt_debug_mode
-        if a:mode =~# '[nx]'
+        if a:mode =~# '[nxo]'
           call cursor(0, dest)
-        elseif a:mode =~# '[io]'
+        elseif a:mode ==# 'i'
           call cursor(0, dest + 1)
         elseif a:mode ==# 'c'
           call setcmdpos(dest + 1)
@@ -439,21 +471,19 @@ function! patternjump#backward(mode, ...) "{{{
     unlet output
     let output = {}
     let output.column     = dest
-    let output.candidates = candidate_positions
-    let output.patterns   = matched_patterns
+    let output.candidates = candidates
   endif
 
   " highlighting candidates (if necessary)
   if (opt_debug_mode || opt_highlight) && (a:mode =~# '[nxi]')
-    call s:highlighter(candidate_positions, matched_patterns, opt_debug_mode)
+    call s:highlighter(candidates, opt_debug_mode)
   endif
 
   return output
 endfunction
 "}}}
-function! s:backward_search(mode, string, col, head_pattern_list, tail_pattern_list)  "{{{
-  let candidate_positions = []
-  let matched_patterns    = []
+function! s:backward_search(mode, string, col, head_pattern_list, tail_pattern_list, swapped)  "{{{
+  let candidates = []
 
   " scan head patterns
   for pattern in a:head_pattern_list
@@ -466,8 +496,7 @@ function! s:backward_search(mode, string, col, head_pattern_list, tail_pattern_l
       if matched_pos < 0 || matched_pos >= a:col
         break
       else
-        let candidate_positions += [matched_pos]
-        let matched_patterns    += [[pattern, 'head']]
+        let candidates += [[matched_pos, pattern, 'head', a:swapped]]
         continue
       endif
     endwhile
@@ -485,14 +514,13 @@ function! s:backward_search(mode, string, col, head_pattern_list, tail_pattern_l
       if matched_pos < 0 || matched_pos >= a:col
         break
       else
-        let candidate_positions += [matched_pos]
-        let matched_patterns    += [[pattern, 'tail']]
+        let candidates += [[matched_pos, pattern, 'tail', a:swapped]]
         continue
       endif
     endwhile
   endfor
 
-  return [candidate_positions, matched_patterns]
+  return candidates
 endfunction
 "}}}
 function! patternjump#user_conf(name, arg, default)    "{{{
@@ -641,7 +669,7 @@ function! s:compare(i1, i2) "{{{
   return a:i1 - a:i2
 endfunction
 "}}}
-function! s:highlighter(candidate_positions, matched_patterns, opt_debug_mode) "{{{
+function! s:highlighter(candidates, opt_debug_mode) "{{{
   if !exists('b:patternjump')
     let b:patternjump       = {}
     let b:patternjump.state = 0
@@ -653,17 +681,17 @@ function! s:highlighter(candidate_positions, matched_patterns, opt_debug_mode) "
     call s:cleaner()
   endif
 
-  if a:candidate_positions != []
+  if a:candidates != []
     " highlighting candidates
     let line = line('.')
-    let b:patternjump.id = map(copy(a:candidate_positions), "s:highlight_add(line, v:val)")
+    let b:patternjump.id = map(copy(a:candidates), "s:highlight_add(line, v:val[0])")
     redraw
 
     " echo information
     if a:opt_debug_mode
       echomsg 'patternjump debug mode'
-      for idx in range(len(a:candidate_positions))
-        echomsg printf('%d, ''%s'', %s', a:candidate_positions[idx], a:matched_patterns[idx][0], a:matched_patterns[idx][1])
+      for idx in range(len(a:candidates))
+        echomsg printf('%d, ''%s'', %s, %s', a:candidates[idx][0], a:candidates[idx][1], a:candidates[idx][2], a:candidates[idx][3])
       endfor
       echomsg ''
     endif

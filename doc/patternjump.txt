@@ -1,4 +1,4 @@
-*patternjump.txt*	Last change:20-Mar-2014.
+﻿*patternjump.txt*	Last change:22-Mar-2014.
 
 Move cursor as you like.
 
@@ -556,15 +556,18 @@ like not moving cursor.
 <
 Please refer |verticalmove-configuration|.
 
-Besides, a special key "raw" can be also used. If the value is 1 or 2 return a
-dictionary which has three information. First one is the key "column", the
-value is the column number of destination. Another is the key "candidates",
-the value is a list including matched column number of candidates. The last
-one is the key "patterns", the value is a list including matched patterns of
-candidates. The value of "candidates" and "patterns" have a correspondence
-each other.
-If the value is 1, these functions do not move cursor. But if the value is 2,
-these functions do.
+Besides, a special key "raw" can be also used. If the value is 1, these
+functions do not move cursor. But if the value is 2, these functions do. In
+addition to that if the value is 1 or 2 return a dictionary which has two
+information. First one is the key "column", the value is the column number of
+destination. The other is the key "candidates", the value is a list including
+matched column number, matched patterns, head or tail of candidates and the
+last value represents the pattern is swapped or not. The last value is related
+to |g:patternjump_swap_head_tail| option. If the swapping is not valid, then
+the value is always -1. If the swapping is valid and the pattern has been
+swapped, the last value is 1.  If the swapping is vaid and the pattern has not
+been swapped, the value is 0.
+
 >
 	let output = patternjump#forward(
 		\			'n',
@@ -576,13 +579,9 @@ these functions do.
 	" e.g. 10
 	echo output.column
 
-	" matched positions of candidates
-	" e.g. [10, 20]
+	" information of candidates
+	" e.g. [[10, '\<\h\k\+\>', 'head', -1], [20, '$', 'tail', -1]]
 	echo output.candidates
-
-	" matched patterns of candidates
-	" e.g. [['\<\h\k\+\>', 'head'], ['$', 'tail']]
-	echo output.patterns
 <
 
 NOTE: If you want to use the mapping other than the default with caching
