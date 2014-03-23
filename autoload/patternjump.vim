@@ -164,7 +164,7 @@ function! patternjump#forward(mode, ...) "{{{
   let candidates = []
 
   while 1
-    let candidates += s:forward_search(a:mode, l:count, string, col, head_pattern_list, tail_pattern_list, opt_debug_mode, opt_highlight, swapped)
+    let candidates += s:forward_search(a:mode, l:count, string, col, head_pattern_list, tail_pattern_list, !(opt_debug_mode || opt_highlight), swapped)
 
     if swapped == 1
       if l:count == 1
@@ -229,7 +229,7 @@ function! patternjump#forward(mode, ...) "{{{
   return output
 endfunction
 "}}}
-function! s:forward_search(mode, count, string, col, head_pattern_list, tail_pattern_list, opt_debug_mode, opt_highlight, swapped) "{{{
+function! s:forward_search(mode, count, string, col, head_pattern_list, tail_pattern_list, collect_all, swapped) "{{{
   let candidates = []
 
   " resolve head_pattern_list and tail_pattern_list
@@ -280,7 +280,7 @@ function! s:forward_search(mode, count, string, col, head_pattern_list, tail_pat
       if matched_pos > a:col
         let candidates += [[matched_pos, pattern, 'head', a:swapped]]
 
-        if (a:count == 1) && !a:opt_debug_mode && !a:opt_highlight
+        if (a:count == 1) && !a:collect_all
           break
         else
           continue
@@ -305,7 +305,7 @@ function! s:forward_search(mode, count, string, col, head_pattern_list, tail_pat
       if matched_pos > a:col
         let candidates += [[matched_pos, pattern, 'tail', a:swapped]]
 
-        if (a:count == 1) && !a:opt_debug_mode && !a:opt_highlight
+        if (a:count == 1) && !a:collect_all
           break
         else
           continue
