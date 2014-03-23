@@ -1,4 +1,4 @@
-﻿" patternjump.vim - move cursor as you like
+" patternjump.vim - move cursor as you like
 
 " I assumed that several dozen patterns are used usually, so I optimized for the use case.
 " If defined patterns are too much, following algorithm might be slow.
@@ -50,6 +50,7 @@ function! patternjump#forward(mode, ...) "{{{
   " re-entering to the visual mode (if necessary)
   if (a:mode ==# 'x') && ((mode() !=? 'v') && (mode() != "\<C-v>"))
     normal! gv
+    let current_mode = mode()
   endif
 
   " searching for user configurations
@@ -142,36 +143,30 @@ function! patternjump#forward(mode, ...) "{{{
   endif
 
   " pattern swapping (only in visual mode)
-  if (a:mode ==# 'x') && opt_swap_head_tail
-    let current_mode = mode()
+  if (a:mode ==# 'x') && opt_swap_head_tail && ((current_mode ==# 'v') || (current_mode == "\<C-v>"))
+    normal! o
+    let counter_edge = col('.')
+    normal! o
 
-    if (current_mode ==# 'v') || (current_mode == "\<C-v>")
-      normal! o
-      let counter_edge = col('.')
-      normal! o
+    if col <= counter_edge
+      let head_pattern_list = pattern_lists[1]
+      let tail_pattern_list = pattern_lists[0]
 
-      if col <= counter_edge
-        let head_pattern_list = pattern_lists[1]
-        let tail_pattern_list = pattern_lists[0]
-
-        let swapped = 1
-      else
-        let swapped = 0
-      endif
+      let swapped = 1
+    else
+      let swapped = 0
     endif
+  else
+    let swapped = -1
   endif
 
   " searching candidate positions
   let candidates = []
 
   while 1
-    if exists('swapped')
-      let candidates += s:forward_search(a:mode, l:count, string, col, head_pattern_list, tail_pattern_list, opt_debug_mode, opt_highlight, swapped)
-    else
-      let candidates += s:forward_search(a:mode, l:count, string, col, head_pattern_list, tail_pattern_list, opt_debug_mode, opt_highlight, -1)
-    endif
+    let candidates += s:forward_search(a:mode, l:count, string, col, head_pattern_list, tail_pattern_list, opt_debug_mode, opt_highlight, swapped)
 
-    if exists('swapped') && swapped
+    if swapped == 1
       if l:count == 1
         let dest = min(map(copy(candidates), 'v:val[0]'))
       else
@@ -192,7 +187,7 @@ function! patternjump#forward(mode, ...) "{{{
   endwhile
 
   " remove unnecessary matched_patterns and candidates
-  if exists('swapped')
+  if swapped >= 0
     call filter(map(candidates, '((v:val[3] == 1) && (v:val[0] > counter_edge) || ((v:val[3] == 0) && (v:val[0] < counter_edge))) ? [] : v:val'), 'v:val != []')
   endif
 
@@ -298,6 +293,7 @@ function! patternjump#backward(mode, ...) "{{{
   " re-entering to the visual mode (if necessary)
   if (a:mode ==# 'x') && ((mode() !=? 'v') && (mode() != "\<C-v>"))
     normal! gv
+    let current_mode = mode()
   endif
 
   " searching for user configurations
@@ -390,36 +386,30 @@ function! patternjump#backward(mode, ...) "{{{
   endif
 
   " pattern swapping (only in visual mode)
-  if (a:mode ==# 'x') && opt_swap_head_tail
-    let current_mode = mode()
+  if (a:mode ==# 'x') && opt_swap_head_tail && ((current_mode ==# 'v') || (current_mode == "\<C-v>"))
+    normal! o
+    let counter_edge = col('.')
+    normal! o
 
-    if (current_mode ==# 'v') || (current_mode == "\<C-v>")
-      normal! o
-      let counter_edge = col('.')
-      normal! o
+    if col <= counter_edge
+      let head_pattern_list = pattern_lists[1]
+      let tail_pattern_list = pattern_lists[0]
 
-      if col <= counter_edge
-        let head_pattern_list = pattern_lists[1]
-        let tail_pattern_list = pattern_lists[0]
-
-        let swapped = 1
-      else
-        let swapped = 0
-      endif
+      let swapped = 1
+    else
+      let swapped = 0
     endif
+  else
+    let swapped = -1
   endif
 
   " searching candidate positions
   let candidates = []
 
   while 1
-    if exists('swapped')
-      let candidates += s:backward_search(a:mode, string, col, head_pattern_list, tail_pattern_list, swapped)
-    else
-      let candidates += s:backward_search(a:mode, string, col, head_pattern_list, tail_pattern_list, -1)
-    endif
+    let candidates += s:backward_search(a:mode, string, col, head_pattern_list, tail_pattern_list, swapped)
 
-    if exists('swapped') && !swapped
+    if swapped == 0
       if l:count == 1
         let dest = max(map(copy(candidates), 'v:val[0]'))
       else
@@ -440,7 +430,7 @@ function! patternjump#backward(mode, ...) "{{{
   endwhile
 
   " remove unnecessary matched_patterns and candidates
-  if exists('swapped')
+  if swapped >= 0
     call filter(map(candidates, '((v:val[3] == 1) && (v:val[0] > counter_edge) || ((v:val[3] == 0) && (v:val[0] < counter_edge))) ? [] : v:val'), 'v:val != []')
   endif
 
