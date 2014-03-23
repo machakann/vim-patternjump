@@ -232,8 +232,39 @@ endfunction
 function! s:forward_search(mode, count, string, col, head_pattern_list, tail_pattern_list, opt_debug_mode, opt_highlight, swapped) "{{{
   let candidates = []
 
+  " resolve head_pattern_list and tail_pattern_list
+  if type(get(a:head_pattern_list, 0, [])) == s:type_list
+    let head_pattern_list = get(a:head_pattern_list, 0, [])
+  elseif type(get(a:head_pattern_list, 0, [])) == s:type_str
+    let head_pattern_list = [a:head_pattern_list[0]]
+  else
+    let head_pattern_list = []
+  endif
+
+  if type(get(a:tail_pattern_list, 0, [])) == s:type_list
+    let tail_pattern_list = get(a:tail_pattern_list, 0, [])
+  elseif type(get(a:tail_pattern_list, 0, [])) == s:type_str
+    let tail_pattern_list = [a:tail_pattern_list[0]]
+  else
+    let tail_pattern_list = []
+  endif
+
+  if a:mode ==# 'o'
+    if type(get(a:head_pattern_list, 1, [])) == s:type_list
+      let head_inclusive_pattern_list = get(a:head_pattern_list, 1, [])
+    else
+      let head_inclusive_pattern_list = []
+    endif
+
+    if type(get(a:tail_pattern_list, 1, [])) == s:type_list
+      let tail_inclusive_pattern_list = get(a:tail_pattern_list, 1, [])
+    else
+      let tail_inclusive_pattern_list = []
+    endif
+  endif
+
   " scan head patterns
-  for pattern in a:head_pattern_list
+  for pattern in head_pattern_list
     let Nth = 0
     let len = len(a:string)
     while 1
@@ -259,7 +290,7 @@ function! s:forward_search(mode, count, string, col, head_pattern_list, tail_pat
   endfor
 
   " scan tail patterns
-  for pattern in a:tail_pattern_list
+  for pattern in tail_pattern_list
     let Nth = 0
     let len = len(a:string)
     while 1
@@ -475,8 +506,39 @@ endfunction
 function! s:backward_search(mode, string, col, head_pattern_list, tail_pattern_list, swapped)  "{{{
   let candidates = []
 
+  " resolve head_pattern_list and tail_pattern_list
+  if type(get(a:head_pattern_list, 0, [])) == s:type_list
+    let head_pattern_list = get(a:head_pattern_list, 0, [])
+  elseif type(get(a:head_pattern_list, 0, [])) == s:type_str
+    let head_pattern_list = [a:head_pattern_list[0]]
+  else
+    let head_pattern_list = []
+  endif
+
+  if type(get(a:tail_pattern_list, 0, [])) == s:type_list
+    let tail_pattern_list = get(a:tail_pattern_list, 0, [])
+  elseif type(get(a:tail_pattern_list, 0, [])) == s:type_str
+    let tail_pattern_list = [a:tail_pattern_list[0]]
+  else
+    let tail_pattern_list = []
+  endif
+
+  if a:mode ==# 'o'
+    if type(get(a:head_pattern_list, 1, [])) == s:type_list
+      let head_inclusive_pattern_list = get(a:head_pattern_list, 1, [])
+    else
+      let head_inclusive_pattern_list = []
+    endif
+
+    if type(get(a:tail_pattern_list, 1, [])) == s:type_list
+      let tail_inclusive_pattern_list = get(a:tail_pattern_list, 1, [])
+    else
+      let tail_inclusive_pattern_list = []
+    endif
+  endif
+
   " scan head patterns
-  for pattern in a:head_pattern_list
+  for pattern in head_pattern_list
     let Nth = 0
     while 1
       let Nth += 1
@@ -493,7 +555,7 @@ function! s:backward_search(mode, string, col, head_pattern_list, tail_pattern_l
   endfor
 
   " scan tail patterns
-  for pattern in a:tail_pattern_list
+  for pattern in tail_pattern_list
     let Nth = 0
     let len = len(a:string)
     while 1
@@ -571,8 +633,8 @@ function! s:resolve_pattern_dictionary(mode, direction, patternjump_patterns) "{
     let include_list += ['*']
   endif
 
-  let head_pattern_list = []
-  let tail_pattern_list = []
+  let head_pattern_list = [[], []]
+  let tail_pattern_list = [[], []]
   for key in include_list
     let temp = get(a:patternjump_patterns, key, [])
 
@@ -591,27 +653,44 @@ function! s:resolve_pattern_dictionary(mode, direction, patternjump_patterns) "{
     unlet temp
 
     if type(pattern_info) == s:type_list
-      let head_pattern_list += pattern_info
+      let head_pattern_list[0] += pattern_info
     elseif type(pattern_info) == s:type_dict
       let common    = has_key(pattern_info,    'common')
       let direction = has_key(pattern_info, a:direction)
       let head      = has_key(pattern_info,      'head')
       let tail      = has_key(pattern_info,      'tail')
+      let head_inclusive = has_key(pattern_info, 'head_inclusive')
+      let tail_inclusive = has_key(pattern_info, 'tail_inclusive')
 
       if common || direction
         if common
           if type(pattern_info.common) == s:type_list
-            let head_pattern_list += pattern_info.common
+            let head_pattern_list[0] += pattern_info.common
           elseif type(pattern_info.common) == s:type_dict
             if has_key(pattern_info.common, 'head')
               if type(pattern_info.common.head) == s:type_list
-                let head_pattern_list += pattern_info.common.head
+                let head_pattern_list[0] += pattern_info.common.head
               endif
             endif
 
             if has_key(pattern_info.common, 'tail')
               if type(pattern_info.common.tail) == s:type_list
-                let tail_pattern_list += pattern_info.common.tail
+                let tail_pattern_list[0] += pattern_info.common.tail
+              endif
+            endif
+
+            " only in operator-pending mode (code for inclusive motion)
+            if a:mode ==# 'o'
+              if has_key(pattern_info.common, 'head_inclusive')
+                if type(pattern_info.common.head_inclusive) == s:type_list
+                  let head_pattern_list[1] += pattern_info.common.head_inclusive
+                endif
+              endif
+
+              if has_key(pattern_info.common, 'tail_inclusive')
+                if type(pattern_info.common.tail_inclusive) == s:type_list
+                  let tail_pattern_list[1] += pattern_info.common.tail_inclusive
+                endif
               endif
             endif
           endif
@@ -619,17 +698,32 @@ function! s:resolve_pattern_dictionary(mode, direction, patternjump_patterns) "{
 
         if direction
           if type(pattern_info[a:direction]) == s:type_list
-            let head_pattern_list += pattern_info[a:direction]
+            let head_pattern_list[0] += pattern_info[a:direction]
           elseif type(pattern_info[a:direction]) == s:type_dict
             if has_key(pattern_info[a:direction], 'head')
               if type(pattern_info[a:direction].head) == s:type_list
-                let head_pattern_list += pattern_info[a:direction].head
+                let head_pattern_list[0] += pattern_info[a:direction].head
               endif
             endif
 
             if has_key(pattern_info[a:direction], 'tail')
               if type(pattern_info[a:direction].tail) == s:type_list
-                let tail_pattern_list += pattern_info[a:direction].tail
+                let tail_pattern_list[0] += pattern_info[a:direction].tail
+              endif
+            endif
+
+            " only in operator-pending mode (code for inclusive motion)
+            if a:mode ==# 'o'
+              if has_key(pattern_info[a:direction], 'head_inclusive')
+                if type(pattern_info[a:direction].head_inclusive) == s:type_list
+                  let head_pattern_list[1] += pattern_info[a:direction].head_inclusive
+                endif
+              endif
+
+              if has_key(pattern_info[a:direction], 'tail_inclusive')
+                if type(pattern_info[a:direction].tail_inclusive) == s:type_list
+                  let tail_pattern_list[1] += pattern_info[a:direction].tail_inclusive
+                endif
               endif
             endif
           endif
@@ -637,13 +731,28 @@ function! s:resolve_pattern_dictionary(mode, direction, patternjump_patterns) "{
       elseif head || tail
         if head
           if type(pattern_info.head) == s:type_list
-            let head_pattern_list += pattern_info.head
+            let head_pattern_list[0] += pattern_info.head
           endif
         endif
 
         if tail
           if type(pattern_info.tail) == s:type_list
-            let tail_pattern_list += pattern_info.tail
+            let tail_pattern_list[0] += pattern_info.tail
+          endif
+        endif
+
+        " only in operator-pending mode (code for inclusive motion)
+        if a:mode ==# 'o'
+          if head_inclusive
+            if type(pattern_info.head_inclusive) == s:type_list
+              let head_pattern_list[1] += pattern_info.head_inclusive
+            endif
+          endif
+
+          if tail_inclusive
+            if type(pattern_info.tail_inclusive) == s:type_list
+              let tail_pattern_list[1] += pattern_info.tail_inclusive
+            endif
           endif
         endif
       endif
