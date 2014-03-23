@@ -12,7 +12,7 @@
 let s:patternjump_patterns = {
       \ '_' : {
       \   'ci' : {
-      \     'head' : [',', ')', ']', '}', '$'],
+      \     'head' : ['^', '[A-Z]', ',', ')', ']', '}', '$'],
       \     'tail' : ['\<\h\k\+\>'],
       \     },
       \   'n' : {
@@ -22,7 +22,8 @@ let s:patternjump_patterns = {
       \     'tail' : ['\<\h\k\+\>', '$'],
       \     },
       \   'o' : {
-      \     'tail_inclusive' : ['\<\h\k\+\>'],
+      \     'forward'  : {'tail_inclusive' : ['\<\h\k\+\>']},
+      \     'backward' : {'head_inclusive' : ['\<\h\k\+\>']},
       \     },
       \   },
       \ 'vim' : {
