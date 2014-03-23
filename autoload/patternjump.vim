@@ -22,7 +22,7 @@ let s:patternjump_patterns = {
       \     'tail' : ['\<\h\k\+\>', '$'],
       \     },
       \   'o' : {
-      \     'tail' : ['\<\h\k\+\>.'],
+      \     'tail_inclusive' : ['\<\h\k\+\>'],
       \     },
       \   },
       \ 'vim' : {
@@ -160,17 +160,18 @@ function! patternjump#forward(mode, ...) "{{{
     let swapped = -1
   endif
 
-  " searching candidate positions
+  " searching for candidate positions
   let candidates = []
 
   while 1
     let candidates += s:forward_search(a:mode, l:count, string, col, head_pattern_list, tail_pattern_list, !(opt_debug_mode || opt_highlight), swapped)
+    let positions = map(copy(candidates), 'v:val[0]')
 
     if swapped == 1
       if l:count == 1
-        let dest = min(map(copy(candidates), 'v:val[0]'))
+        let dest = min(positions)
       else
-        let dest = get(sort(s:Sl.uniq_by(map(copy(candidates), 'v:val[0]'), 'v:val'), "s:compare"), l:count-1, -1)
+        let dest = get(sort(s:Sl.uniq_by(copy(positions), 'v:val'), "s:compare"), l:count-1, -1)
       endif
 
       if dest > counter_edge
@@ -193,16 +194,22 @@ function! patternjump#forward(mode, ...) "{{{
 
   " determine output and move cursor
   if l:count == 1
-    let dest = min(map(copy(candidates), 'v:val[0]'))
+    let dest = min(positions)
   else
-    let dest = get(sort(s:Sl.uniq_by(map(copy(candidates), 'v:val[0]'), 'v:val'), "s:compare"), l:count-1, -1)
+    let dest = get(sort(s:Sl.uniq_by(copy(positions), 'v:val'), "s:compare"), l:count-1, -1)
   endif
 
   let output = ''
   if !empty(candidates)
     if opt_raw != 1
       if !opt_debug_mode
-        if a:mode =~# '[nxo]'
+        if a:mode =~# '[nx]'
+          call cursor(0, dest)
+        elseif a:mode ==# 'o'
+          if candidates[match(positions, dest)][2] =~# '\%(head\|tail\)_inclusive'
+            normal! v
+          endif
+
           call cursor(0, dest)
         elseif a:mode ==# 'i'
           call cursor(0, dest + 1)
@@ -313,6 +320,59 @@ function! s:forward_search(mode, count, string, col, head_pattern_list, tail_pat
       endif
     endwhile
   endfor
+
+  if a:mode ==# 'o'
+    " scan head_inclusive patterns
+    for pattern in head_inclusive_pattern_list
+      let Nth = 0
+      let len = len(a:string)
+      while 1
+        let Nth += 1
+        let matched_pos = match(a:string, pattern, 0, Nth)
+        let matched_pos = ((a:mode =~# '[nxo]') && (matched_pos >= 0) && !(matched_pos == len)) ? (matched_pos + 1) : matched_pos
+        if matched_pos < 0 | break | endif
+
+        " counter measure for special patterns like '$'
+        " patched! : Vim 7.4.184
+        if matched_pos > len | break | endif
+
+        if matched_pos > a:col
+          let candidates += [[matched_pos, pattern, 'head_inclusive', a:swapped]]
+
+          if (a:count == 1) && !a:collect_all
+            break
+          else
+            continue
+          endif
+        endif
+      endwhile
+    endfor
+
+    " scan tail_inclusive patterns
+    for pattern in tail_inclusive_pattern_list
+      let Nth = 0
+      let len = len(a:string)
+      while 1
+        let Nth += 1
+        let matched_pos = matchend(a:string, pattern, 0, Nth)
+        if matched_pos < 0 | break | endif
+
+        " counter measure for special patterns like '$'
+        " patched! : Vim 7.4.184
+        if matched_pos > len | break | endif
+
+        if matched_pos > a:col
+          let candidates += [[matched_pos, pattern, 'tail_inclusive', a:swapped]]
+
+          if (a:count == 1) && !a:collect_all
+            break
+          else
+            continue
+          endif
+        endif
+      endwhile
+    endfor
+  endif
 
   return candidates
 endfunction
@@ -434,17 +494,18 @@ function! patternjump#backward(mode, ...) "{{{
     let swapped = -1
   endif
 
-  " searching candidate positions
+  " searching for candidate positions
   let candidates = []
 
   while 1
     let candidates += s:backward_search(a:mode, string, col, head_pattern_list, tail_pattern_list, swapped)
+    let positions = map(copy(candidates), 'v:val[0]')
 
     if swapped == 0
       if l:count == 1
-        let dest = max(map(copy(candidates), 'v:val[0]'))
+        let dest = max(positions)
       else
-        let dest = get(reverse(sort(s:Sl.uniq_by(map(copy(candidates), 'v:val[0]'), 'v:val'), "s:compare")), l:count-1, -1)
+        let dest = get(reverse(sort(s:Sl.uniq_by(copy(positions), 'v:val'), "s:compare")), l:count-1, -1)
       endif
 
       if dest < counter_edge
@@ -467,16 +528,22 @@ function! patternjump#backward(mode, ...) "{{{
 
   " determine output or move cursor
   if l:count == 1
-    let dest = max(map(copy(candidates), 'v:val[0]'))
+    let dest = max(positions)
   else
-    let dest = get(reverse(sort(s:Sl.uniq_by(map(copy(candidates), 'v:val[0]'), 'v:val'), "s:compare")), l:count-1, -1)
+    let dest = get(reverse(sort(s:Sl.uniq_by(copy(positions), 'v:val'), "s:compare")), l:count-1, -1)
   endif
 
   let output = ''
   if !empty(candidates)
     if opt_raw != 1
       if !opt_debug_mode
-        if a:mode =~# '[nxo]'
+        if a:mode =~# '[nx]'
+          call cursor(0, dest)
+        elseif a:mode ==# 'o'
+          if candidates[match(positions, dest)][2] =~# '\%(head\|tail\)_inclusive'
+            normal! v
+          endif
+
           call cursor(0, dest)
         elseif a:mode ==# 'i'
           call cursor(0, dest + 1)
@@ -571,6 +638,43 @@ function! s:backward_search(mode, string, col, head_pattern_list, tail_pattern_l
       endif
     endwhile
   endfor
+
+  if a:mode ==# 'o'
+    " scan head_inclusive patterns
+    for pattern in head_inclusive_pattern_list
+      let Nth = 0
+      while 1
+        let Nth += 1
+        let matched_pos = match(a:string, pattern, 0, Nth)
+        let matched_pos = (a:mode =~# '[nxo]') ? ((matched_pos < 0) ? matched_pos : (matched_pos + 1)) : matched_pos
+
+        if matched_pos < 0 || matched_pos >= a:col
+          break
+        else
+          let candidates += [[matched_pos, pattern, 'head_inclusive', a:swapped]]
+          continue
+        endif
+      endwhile
+    endfor
+
+    " scan tail_inclusive patterns
+    for pattern in tail_pattern_list
+      let Nth = 0
+      let len = len(a:string)
+      while 1
+        let Nth += 1
+        let matched_pos = matchend(a:string, pattern, 0, Nth)
+        let matched_pos = ((a:mode =~# '[nxo]') && (matched_pos == 0)) ? 1 : matched_pos
+
+        if matched_pos < 0 || matched_pos >= a:col
+          break
+        else
+          let candidates += [[matched_pos, pattern, 'tail_inclusive', a:swapped]]
+          continue
+        endif
+      endwhile
+    endfor
+  endif
 
   return candidates
 endfunction
@@ -728,7 +832,7 @@ function! s:resolve_pattern_dictionary(mode, direction, patternjump_patterns) "{
             endif
           endif
         endif
-      elseif head || tail
+      elseif head || tail || head_inclusive || tail_inclusive
         if head
           if type(pattern_info.head) == s:type_list
             let head_pattern_list[0] += pattern_info.head
