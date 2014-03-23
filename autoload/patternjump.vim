@@ -60,7 +60,12 @@ function! patternjump#forward(mode, ...) "{{{
   let opt_highlight      = patternjump#user_conf(     'highlight', options_dict, 0)
   let opt_cache_name     = patternjump#user_conf(    'cache_name', options_dict, 'b:patternjump_cache')
   let opt_swap_head_tail = patternjump#user_conf('swap_head_tail', options_dict, 0)
+  let opt_ignore_case    = patternjump#user_conf(   'ignore_case', options_dict, 0)
   let opt_raw            = s:check_raw(options_dict)
+
+  " case sensitivity
+  let ignore_case = &ignorecase
+  let &ignorecase = opt_ignore_case
 
   " check and modify cache name
   if opt_cache_name =~# '^\h[0-9a-zA-Z_#]*$'
@@ -233,6 +238,9 @@ function! patternjump#forward(mode, ...) "{{{
     call s:highlighter(candidates, opt_debug_mode)
   endif
 
+  " get back original settings
+  let &ignorecase = ignore_case
+
   return output
 endfunction
 "}}}
@@ -394,7 +402,12 @@ function! patternjump#backward(mode, ...) "{{{
   let opt_highlight      = patternjump#user_conf(     'highlight', options_dict, 0)
   let opt_cache_name     = patternjump#user_conf(    'cache_name', options_dict, 'b:patternjump_cache')
   let opt_swap_head_tail = patternjump#user_conf('swap_head_tail', options_dict, 0)
+  let opt_ignore_case    = patternjump#user_conf(   'ignore_case', options_dict, 0)
   let opt_raw            = s:check_raw(options_dict)
+
+  " case sensitivity
+  let ignore_case = &ignorecase
+  let &ignorecase = opt_ignore_case
 
   " check and modify cache name
   if opt_cache_name =~# '^\h[0-9a-zA-Z_#]*$'
@@ -566,6 +579,9 @@ function! patternjump#backward(mode, ...) "{{{
   if (opt_debug_mode || opt_highlight) && (a:mode =~# '[nxi]')
     call s:highlighter(candidates, opt_debug_mode)
   endif
+
+  " get back original settings
+  let &ignorecase = ignore_case
 
   return output
 endfunction
