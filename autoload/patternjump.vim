@@ -8,6 +8,9 @@
 " But I found that the present methods are faster.
 " Anyway I want to make it responsive also in command-line mode. Thus I used followings.
 
+let s:save_cpo = &cpo
+set cpo&vim
+
 " default patterns
 let s:patternjump_patterns = {
       \ '_' : {
@@ -957,6 +960,9 @@ function! s:highlight_del(id) "{{{
   return output
 endfunction
 "}}}
+
+let &cpo = s:save_cpo
+unlet s:save_cpo
 
 " vim:set foldmethod=marker:
 " vim:set commentstring="%s:
