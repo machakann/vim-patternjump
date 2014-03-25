@@ -65,6 +65,7 @@ function! patternjump#forward(mode, ...) "{{{
   let opt_cache_name     = patternjump#user_conf(    'cache_name', options_dict, 'b:patternjump_cache')
   let opt_swap_head_tail = patternjump#user_conf('swap_head_tail', options_dict, 0)
   let opt_ignore_case    = patternjump#user_conf(   'ignore_case', options_dict, 0)
+  let opt_wrap_line      = patternjump#user_conf(     'wrap_line', options_dict, 1)
   let opt_raw            = s:check_raw(options_dict)
 
   " case sensitivity
@@ -149,6 +150,7 @@ function! patternjump#forward(mode, ...) "{{{
   else
     let string = getline('.')
     let cursor = [line('.'), col('.')]
+    let fileend = line('$')
   endif
 
   " pattern swapping (only in visual mode)
@@ -170,23 +172,22 @@ function! patternjump#forward(mode, ...) "{{{
   endif
 
   " searching for candidate positions
-  let dest       = copy(cursor)
+  let marker     = copy(cursor)
   let candidates = []
 
   while 1
-    let candidates += s:forward_search(a:mode, l:count, string, cursor, head_pattern_list, tail_pattern_list, !(opt_debug_mode || opt_highlight), swapped)
+    let candidates += s:search_forward(a:mode, l:count, string, marker, head_pattern_list, tail_pattern_list, !(opt_debug_mode || opt_highlight), swapped)
 
-    if (swapped == 1) && (candidates != [])
-      let dest = get(sort(s:Sl.uniq_by(copy(candidates), 'v:val[0]'), "s:compare"), l:count-1, [[-1, -1], '', '', -1])
+    if (swapped == 1) && (candidates != []) && s:judge_swap('forward', swapped, candidates, l:count, counter_edge)
+      let head_pattern_list = pattern_lists[0]
+      let tail_pattern_list = pattern_lists[1]
 
-      if (dest[0][0] > counter_edge[0]) || ((dest[0][0] == counter_edge[0]) && (dest[0][1] > counter_edge[1]))
-        let head_pattern_list = pattern_lists[0]
-        let tail_pattern_list = pattern_lists[1]
-
-        let swapped = 0
-      else
-        break
-      endif
+      let swapped = 0
+    elseif opt_wrap_line && (a:mode !=# 'c') && (len(candidates) < l:count)
+      let marker[0] += 1
+      if  marker[0] >= fileend | break | endif
+      let string = getline(marker[0])
+      let marker[1]  = 0
     else
       break
     endif
@@ -241,9 +242,9 @@ function! patternjump#forward(mode, ...) "{{{
   return output
 endfunction
 "}}}
-function! s:forward_search(mode, count, string, cursor, head_pattern_list, tail_pattern_list, collect_all, swapped) "{{{
+function! s:search_forward(mode, count, string, marker, head_pattern_list, tail_pattern_list, collect_all, swapped) "{{{
   let candidates = []
-  let len        = (a:mode =~# '[ic]') ? (len(a:string) + 1) : len(a:string)
+  let len        = len(a:string)
 
   " resolve head_pattern_list and tail_pattern_list
   if type(get(a:head_pattern_list, 0, [])) == s:type_list
@@ -279,18 +280,22 @@ function! s:forward_search(mode, count, string, cursor, head_pattern_list, tail_
   " scan head patterns
   for pattern in head_pattern_list
     let Nth = 0
+    let previous_pos = -1
     while 1
       let Nth += 1
       let matched_pos = match(a:string, pattern, 0, Nth)
-      let matched_pos = ((matched_pos >= 0) && !(matched_pos == len)) ? (matched_pos + 1) : matched_pos
+      let matched_pos = ((matched_pos >= 0) && ((a:mode =~# '[ci]') || ((a:mode =~# '[nxo]') && !(matched_pos == len)))) ? (matched_pos + 1) : matched_pos
       if matched_pos < 0 | break | endif
 
       " counter measure for special patterns like '$'
       " patched! : Vim 7.4.184
-      if matched_pos > len | break | endif
+      " &encoding == cp932
+      if matched_pos > ((a:mode =~# '[ci]') ? (len + 1) : len) | break | endif
+      " &encoding == utf-8
+      if matched_pos == previous_pos | break | endif
 
-      if matched_pos > a:cursor[1]
-        let candidates += [[[a:cursor[0], matched_pos], pattern, 'head', a:swapped]]
+      if matched_pos > a:marker[1]
+        let candidates += [[[a:marker[0], matched_pos], pattern, 'head', a:swapped]]
 
         if (a:count == 1) && !a:collect_all
           break
@@ -304,18 +309,22 @@ function! s:forward_search(mode, count, string, cursor, head_pattern_list, tail_
   " scan tail patterns
   for pattern in tail_pattern_list
     let Nth = 0
+    let previous_pos = -1
     while 1
       let Nth += 1
       let matched_pos = matchend(a:string, pattern, 0, Nth)
-      let matched_pos = ((matched_pos == 0) || ((a:mode =~# '[ic]') && (matched_pos >= 0) && !(matched_pos == len))) ? (matched_pos + 1) : matched_pos
+      let matched_pos = ((matched_pos == 0) || ((a:mode =~# '[ic]') && (matched_pos > 0))) ? (matched_pos + 1) : matched_pos
       if matched_pos < 0 | break | endif
 
       " counter measure for special patterns like '$'
       " patched! : Vim 7.4.184
-      if matched_pos > len | break | endif
+      " &encoding == cp932
+      if matched_pos > ((a:mode =~# '[ci]') ? (len + 1) : len) | break | endif
+      " &encoding == utf-8
+      if matched_pos == previous_pos | break | endif
 
-      if matched_pos > a:cursor[1]
-        let candidates += [[[a:cursor[0], matched_pos], pattern, 'tail', a:swapped]]
+      if matched_pos > a:marker[1]
+        let candidates += [[[a:marker[0], matched_pos], pattern, 'tail', a:swapped]]
 
         if (a:count == 1) && !a:collect_all
           break
@@ -330,18 +339,23 @@ function! s:forward_search(mode, count, string, cursor, head_pattern_list, tail_
     " scan head_inclusive patterns
     for pattern in head_inclusive_pattern_list
       let Nth = 0
+      let previous_pos = -1
       while 1
         let Nth += 1
         let matched_pos = match(a:string, pattern, 0, Nth)
-        let matched_pos = ((matched_pos >= 0) && !(matched_pos == len)) ? (matched_pos + 1) : matched_pos
+        let matched_pos = (matched_pos >= 0) ? (matched_pos + 1) : matched_pos
+        let matched_pos = ((matched_pos >= 0) && ((a:mode =~# '[ci]') || ((a:mode =~# '[nxo]') && !(matched_pos == len)))) ? (matched_pos + 1) : matched_pos
         if matched_pos < 0 | break | endif
 
         " counter measure for special patterns like '$'
         " patched! : Vim 7.4.184
-        if matched_pos > len | break | endif
+        " &encoding == cp932
+        if matched_pos > ((a:mode =~# '[ci]') ? (len + 1) : len) | break | endif
+        " &encoding == utf-8
+        if matched_pos == previous_pos | break | endif
 
-        if matched_pos > a:cursor[1]
-          let candidates += [[[a:cursor[0], matched_pos], pattern, 'head_inclusive', a:swapped]]
+        if matched_pos > a:marker[1]
+          let candidates += [[[a:marker[0], matched_pos], pattern, 'head_inclusive', a:swapped]]
 
           if (a:count == 1) && !a:collect_all
             break
@@ -355,18 +369,22 @@ function! s:forward_search(mode, count, string, cursor, head_pattern_list, tail_
     " scan tail_inclusive patterns
     for pattern in tail_inclusive_pattern_list
       let Nth = 0
+      let previous_pos = -1
       while 1
         let Nth += 1
         let matched_pos = matchend(a:string, pattern, 0, Nth)
-        let matched_pos = ((matched_pos == 0) || ((a:mode =~# '[ic]') && (matched_pos >= 0) && !(matched_pos == len))) ? (matched_pos + 1) : matched_pos
+        let matched_pos = ((matched_pos == 0) || ((a:mode =~# '[ic]') && (matched_pos >= 0))) ? (matched_pos + 1) : matched_pos
         if matched_pos < 0 | break | endif
 
         " counter measure for special patterns like '$'
         " patched! : Vim 7.4.184
-        if matched_pos > len | break | endif
+        " &encoding == cp932
+        if matched_pos > ((a:mode =~# '[ci]') ? (len + 1) : len) | break | endif
+        " &encoding == utf-8
+        if matched_pos == previous_pos | break | endif
 
-        if matched_pos > a:cursor[1]
-          let candidates += [[[a:cursor[0], matched_pos], pattern, 'tail_inclusive', a:swapped]]
+        if matched_pos > a:marker[1]
+          let candidates += [[[a:marker[0], matched_pos], pattern, 'tail_inclusive', a:swapped]]
 
           if (a:count == 1) && !a:collect_all
             break
@@ -399,6 +417,7 @@ function! patternjump#backward(mode, ...) "{{{
   let opt_cache_name     = patternjump#user_conf(    'cache_name', options_dict, 'b:patternjump_cache')
   let opt_swap_head_tail = patternjump#user_conf('swap_head_tail', options_dict, 0)
   let opt_ignore_case    = patternjump#user_conf(   'ignore_case', options_dict, 0)
+  let opt_wrap_line      = patternjump#user_conf(     'wrap_line', options_dict, 1)
   let opt_raw            = s:check_raw(options_dict)
 
   " case sensitivity
@@ -504,23 +523,22 @@ function! patternjump#backward(mode, ...) "{{{
   endif
 
   " searching for candidate positions
-  let dest       = copy(cursor)
+  let marker     = copy(cursor)
   let candidates = []
 
   while 1
-    let candidates += s:backward_search(a:mode, string, cursor, head_pattern_list, tail_pattern_list, swapped)
+    let candidates += s:search_backward(a:mode, string, marker, head_pattern_list, tail_pattern_list, swapped)
 
-    if (swapped == 0) && (candidates != [])
-      let dest = get(reverse(sort(s:Sl.uniq_by(copy(candidates), 'v:val[0]'), "s:compare")), l:count-1, [[-1, -1], '', '', -1])
+    if (swapped == 0) && (candidates != []) && s:judge_swap('backward', swapped, candidates, l:count, counter_edge)
+      let head_pattern_list = pattern_lists[1]
+      let tail_pattern_list = pattern_lists[0]
 
-      if (dest[0][0] < counter_edge[0]) || ((dest[0][0] == counter_edge[0]) && (dest[0][1] < counter_edge[1]))
-        let head_pattern_list = pattern_lists[1]
-        let tail_pattern_list = pattern_lists[0]
-
-        let swapped = 1
-      else
-        break
-      endif
+      let swapped = 1
+    elseif opt_wrap_line && (a:mode !=# 'c') && (len(candidates) < l:count)
+      let marker[0] -= 1
+      if  marker[0] <= 0 | break | endif
+      let string = getline(marker[0])
+      let marker[1]  = len(string) + 2
     else
       break
     endif
@@ -575,9 +593,9 @@ function! patternjump#backward(mode, ...) "{{{
   return output
 endfunction
 "}}}
-function! s:backward_search(mode, string, cursor, head_pattern_list, tail_pattern_list, swapped)  "{{{
+function! s:search_backward(mode, string, marker, head_pattern_list, tail_pattern_list, swapped)  "{{{
   let candidates = []
-  let len        = (a:mode =~# '[ic]') ? (len(a:string) + 1) : len(a:string)
+  let len        = len(a:string) + 1
 
   " resolve head_pattern_list and tail_pattern_list
   if type(get(a:head_pattern_list, 0, [])) == s:type_list
@@ -613,15 +631,23 @@ function! s:backward_search(mode, string, cursor, head_pattern_list, tail_patter
   " scan head patterns
   for pattern in head_pattern_list
     let Nth = 0
+    let previous_pos = -1
     while 1
       let Nth += 1
       let matched_pos = match(a:string, pattern, 0, Nth)
-      let matched_pos = ((matched_pos >= 0) && !(matched_pos == len)) ? (matched_pos + 1) : matched_pos
+      let matched_pos = ((matched_pos >= 0) && ((a:mode =~# '[ci]') || ((a:mode =~# '[nxo]') && !(matched_pos == len)))) ? (matched_pos + 1) : matched_pos
 
-      if matched_pos < 0 || matched_pos >= a:cursor[1]
+      " counter measure for special patterns like '$'
+      " patched! : Vim 7.4.184
+      " &encoding == cp932
+      if matched_pos > ((a:mode =~# '[ci]') ? (len + 1) : len) | break | endif
+      " &encoding == utf-8
+      if matched_pos == previous_pos | break | endif
+
+      if matched_pos < 0 || matched_pos >= a:marker[1]
         break
       else
-        let candidates += [[[a:cursor[0], matched_pos], pattern, 'head', a:swapped]]
+        let candidates += [[[a:marker[0], matched_pos], pattern, 'head', a:swapped]]
         continue
       endif
     endwhile
@@ -630,15 +656,23 @@ function! s:backward_search(mode, string, cursor, head_pattern_list, tail_patter
   " scan tail patterns
   for pattern in tail_pattern_list
     let Nth = 0
+    let previous_pos = -1
     while 1
       let Nth += 1
       let matched_pos = matchend(a:string, pattern, 0, Nth)
-      let matched_pos = ((matched_pos == 0) || ((a:mode =~# '[ic]') && (matched_pos > 0) && !(matched_pos == len))) ? (matched_pos + 1) : matched_pos
+      let matched_pos = ((matched_pos == 0) || ((a:mode =~# '[ic]') && (matched_pos > 0))) ? (matched_pos + 1) : matched_pos
 
-      if matched_pos < 0 || matched_pos >= a:cursor[1]
+      " counter measure for special patterns like '$'
+      " patched! : Vim 7.4.184
+      " &encoding == cp932
+      if matched_pos > ((a:mode =~# '[ci]') ? (len + 1) : len) | break | endif
+      " &encoding == utf-8
+      if matched_pos == previous_pos | break | endif
+
+      if matched_pos < 0 || matched_pos >= a:marker[1]
         break
       else
-        let candidates += [[[a:cursor[0], matched_pos], pattern, 'tail', a:swapped]]
+        let candidates += [[[a:marker[0], matched_pos], pattern, 'tail', a:swapped]]
         continue
       endif
     endwhile
@@ -648,15 +682,23 @@ function! s:backward_search(mode, string, cursor, head_pattern_list, tail_patter
     " scan head_inclusive patterns
     for pattern in head_inclusive_pattern_list
       let Nth = 0
+      let previous_pos = -1
       while 1
         let Nth += 1
         let matched_pos = match(a:string, pattern, 0, Nth)
-        let matched_pos = ((matched_pos >= 0) && !(matched_pos == len)) ? (matched_pos + 1) : matched_pos
+        let matched_pos = ((matched_pos >= 0) && ((a:mode =~# '[ci]') || ((a:mode =~# '[nxo]') && !(matched_pos == len)))) ? (matched_pos + 1) : matched_pos
 
-        if matched_pos < 0 || matched_pos >= a:cursor[1]
+        " counter measure for special patterns like '$'
+        " patched! : Vim 7.4.184
+        " &encoding == cp932
+        if matched_pos > ((a:mode =~# '[ci]') ? (len + 1) : len) | break | endif
+        " &encoding == utf-8
+        if matched_pos == previous_pos | break | endif
+
+        if matched_pos < 0 || matched_pos >= a:marker[1]
           break
         else
-          let candidates += [[[a:cursor[0], matched_pos], pattern, 'head_inclusive', a:swapped]]
+          let candidates += [[[a:marker[0], matched_pos], pattern, 'head_inclusive', a:swapped]]
           continue
         endif
       endwhile
@@ -665,15 +707,23 @@ function! s:backward_search(mode, string, cursor, head_pattern_list, tail_patter
     " scan tail_inclusive patterns
     for pattern in tail_pattern_list
       let Nth = 0
+      let previous_pos = -1
       while 1
         let Nth += 1
         let matched_pos = matchend(a:string, pattern, 0, Nth)
-        let matched_pos = ((matched_pos == 0) || ((a:mode =~# '[ic]') && (matched_pos >= 0) && !(matched_pos == len))) ? (matched_pos + 1) : matched_pos
+        let matched_pos = ((matched_pos == 0) || ((a:mode =~# '[ic]') && (matched_pos >= 0))) ? (matched_pos + 1) : matched_pos
 
-        if matched_pos < 0 || matched_pos >= a:cursor[1]
+        " counter measure for special patterns like '$'
+        " patched! : Vim 7.4.184
+        " &encoding == cp932
+        if matched_pos > ((a:mode =~# '[ci]') ? (len + 1) : len) | break | endif
+        " &encoding == utf-8
+        if matched_pos == previous_pos | break | endif
+
+        if matched_pos < 0 || matched_pos >= a:marker[1]
           break
         else
-          let candidates += [[[a:cursor[0], matched_pos], pattern, 'tail_inclusive', a:swapped]]
+          let candidates += [[[a:marker[0], matched_pos], pattern, 'tail_inclusive', a:swapped]]
           continue
         endif
       endwhile
@@ -888,6 +938,26 @@ function! s:compare(i1, i2) "{{{
   endif
 endfunction
 "}}}
+function! s:judge_swap(direction, swapped, candidates, count, counter_edge) "{{{
+  if a:direction ==# 'forward'
+    let dest = get(sort(s:Sl.uniq_by(copy(a:candidates), 'v:val[0]'), "s:compare"), a:count-1, [[-1, -1], '', '', -1])
+
+    if (dest[0][0] > a:counter_edge[0]) || ((dest[0][0] == a:counter_edge[0]) && (dest[0][1] > a:counter_edge[1]))
+      return 1
+    else
+      return 0
+    endif
+  elseif a:direction ==# 'backward'
+    let dest = get(reverse(sort(s:Sl.uniq_by(copy(a:candidates), 'v:val[0]'), "s:compare")), a:count-1, [[-1, -1], '', '', -1])
+
+    if (dest[0][0] < a:counter_edge[0]) || ((dest[0][0] == a:counter_edge[0]) && (dest[0][1] < a:counter_edge[1]))
+      return 1
+    else
+      return 0
+    endif
+  endif
+endfunction
+"}}}
 function! s:highlighter(candidates, opt_debug_mode) "{{{
   if !exists('b:patternjump')
     let b:patternjump       = {}
@@ -902,7 +972,6 @@ function! s:highlighter(candidates, opt_debug_mode) "{{{
 
   if a:candidates != []
     " highlighting candidates
-    let line = line('.')
     let b:patternjump.id = map(copy(a:candidates), "s:highlight_add(v:val[0])")
     redraw
 
