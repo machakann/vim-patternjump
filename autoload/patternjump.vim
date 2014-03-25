@@ -293,6 +293,7 @@ function! s:search_forward(mode, count, string, marker, head_pattern_list, tail_
       if matched_pos > ((a:mode =~# '[ci]') ? (len + 1) : len) | break | endif
       " &encoding == utf-8
       if matched_pos == previous_pos | break | endif
+      let previous_pos = matched_pos
 
       if matched_pos > a:marker[1]
         let candidates += [[[a:marker[0], matched_pos], pattern, 'head', a:swapped]]
@@ -322,6 +323,7 @@ function! s:search_forward(mode, count, string, marker, head_pattern_list, tail_
       if matched_pos > ((a:mode =~# '[ci]') ? (len + 1) : len) | break | endif
       " &encoding == utf-8
       if matched_pos == previous_pos | break | endif
+      let previous_pos = matched_pos
 
       if matched_pos > a:marker[1]
         let candidates += [[[a:marker[0], matched_pos], pattern, 'tail', a:swapped]]
@@ -353,6 +355,7 @@ function! s:search_forward(mode, count, string, marker, head_pattern_list, tail_
         if matched_pos > ((a:mode =~# '[ci]') ? (len + 1) : len) | break | endif
         " &encoding == utf-8
         if matched_pos == previous_pos | break | endif
+        let previous_pos = matched_pos
 
         if matched_pos > a:marker[1]
           let candidates += [[[a:marker[0], matched_pos], pattern, 'head_inclusive', a:swapped]]
@@ -382,6 +385,7 @@ function! s:search_forward(mode, count, string, marker, head_pattern_list, tail_
         if matched_pos > ((a:mode =~# '[ci]') ? (len + 1) : len) | break | endif
         " &encoding == utf-8
         if matched_pos == previous_pos | break | endif
+        let previous_pos = matched_pos
 
         if matched_pos > a:marker[1]
           let candidates += [[[a:marker[0], matched_pos], pattern, 'tail_inclusive', a:swapped]]
@@ -636,6 +640,7 @@ function! s:search_backward(mode, string, marker, head_pattern_list, tail_patter
       let Nth += 1
       let matched_pos = match(a:string, pattern, 0, Nth)
       let matched_pos = ((matched_pos >= 0) && ((a:mode =~# '[ci]') || ((a:mode =~# '[nxo]') && !(matched_pos == len)))) ? (matched_pos + 1) : matched_pos
+      if (matched_pos < 0) || (matched_pos >= a:marker[1]) | break | endif
 
       " counter measure for special patterns like '$'
       " patched! : Vim 7.4.184
@@ -643,13 +648,9 @@ function! s:search_backward(mode, string, marker, head_pattern_list, tail_patter
       if matched_pos > ((a:mode =~# '[ci]') ? (len + 1) : len) | break | endif
       " &encoding == utf-8
       if matched_pos == previous_pos | break | endif
+      let previous_pos = matched_pos
 
-      if matched_pos < 0 || matched_pos >= a:marker[1]
-        break
-      else
-        let candidates += [[[a:marker[0], matched_pos], pattern, 'head', a:swapped]]
-        continue
-      endif
+      let candidates += [[[a:marker[0], matched_pos], pattern, 'head', a:swapped]]
     endwhile
   endfor
 
@@ -661,6 +662,7 @@ function! s:search_backward(mode, string, marker, head_pattern_list, tail_patter
       let Nth += 1
       let matched_pos = matchend(a:string, pattern, 0, Nth)
       let matched_pos = ((matched_pos == 0) || ((a:mode =~# '[ic]') && (matched_pos > 0))) ? (matched_pos + 1) : matched_pos
+      if (matched_pos < 0) || (matched_pos >= a:marker[1]) | break | endif
 
       " counter measure for special patterns like '$'
       " patched! : Vim 7.4.184
@@ -668,13 +670,9 @@ function! s:search_backward(mode, string, marker, head_pattern_list, tail_patter
       if matched_pos > ((a:mode =~# '[ci]') ? (len + 1) : len) | break | endif
       " &encoding == utf-8
       if matched_pos == previous_pos | break | endif
+      let previous_pos = matched_pos
 
-      if matched_pos < 0 || matched_pos >= a:marker[1]
-        break
-      else
-        let candidates += [[[a:marker[0], matched_pos], pattern, 'tail', a:swapped]]
-        continue
-      endif
+      let candidates += [[[a:marker[0], matched_pos], pattern, 'tail', a:swapped]]
     endwhile
   endfor
 
@@ -687,6 +685,7 @@ function! s:search_backward(mode, string, marker, head_pattern_list, tail_patter
         let Nth += 1
         let matched_pos = match(a:string, pattern, 0, Nth)
         let matched_pos = ((matched_pos >= 0) && ((a:mode =~# '[ci]') || ((a:mode =~# '[nxo]') && !(matched_pos == len)))) ? (matched_pos + 1) : matched_pos
+        if (matched_pos < 0) || (matched_pos >= a:marker[1]) | break | endif
 
         " counter measure for special patterns like '$'
         " patched! : Vim 7.4.184
@@ -694,13 +693,9 @@ function! s:search_backward(mode, string, marker, head_pattern_list, tail_patter
         if matched_pos > ((a:mode =~# '[ci]') ? (len + 1) : len) | break | endif
         " &encoding == utf-8
         if matched_pos == previous_pos | break | endif
+        let previous_pos = matched_pos
 
-        if matched_pos < 0 || matched_pos >= a:marker[1]
-          break
-        else
-          let candidates += [[[a:marker[0], matched_pos], pattern, 'head_inclusive', a:swapped]]
-          continue
-        endif
+        let candidates += [[[a:marker[0], matched_pos], pattern, 'head_inclusive', a:swapped]]
       endwhile
     endfor
 
@@ -712,6 +707,7 @@ function! s:search_backward(mode, string, marker, head_pattern_list, tail_patter
         let Nth += 1
         let matched_pos = matchend(a:string, pattern, 0, Nth)
         let matched_pos = ((matched_pos == 0) || ((a:mode =~# '[ic]') && (matched_pos >= 0))) ? (matched_pos + 1) : matched_pos
+        if (matched_pos < 0) || (matched_pos >= a:marker[1]) | break | endif
 
         " counter measure for special patterns like '$'
         " patched! : Vim 7.4.184
@@ -719,13 +715,9 @@ function! s:search_backward(mode, string, marker, head_pattern_list, tail_patter
         if matched_pos > ((a:mode =~# '[ci]') ? (len + 1) : len) | break | endif
         " &encoding == utf-8
         if matched_pos == previous_pos | break | endif
+        let previous_pos = matched_pos
 
-        if matched_pos < 0 || matched_pos >= a:marker[1]
-          break
-        else
-          let candidates += [[[a:marker[0], matched_pos], pattern, 'tail_inclusive', a:swapped]]
-          continue
-        endif
+        let candidates += [[[a:marker[0], matched_pos], pattern, 'tail_inclusive', a:swapped]]
       endwhile
     endfor
   endif
