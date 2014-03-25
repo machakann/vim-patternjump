@@ -145,19 +145,19 @@ function! patternjump#forward(mode, ...) "{{{
 
   if a:mode == 'c'
     let string = getcmdline()
-    let col    = getcmdpos() - 1
+    let cursor = [0, getcmdpos()]
   else
     let string = getline('.')
-    let col    = (a:mode == 'i') ? (col('.') - 1) : col('.')
+    let cursor = [line('.'), col('.')]
   endif
 
   " pattern swapping (only in visual mode)
   if (a:mode ==# 'x') && opt_swap_head_tail && ((current_mode ==# 'v') || (current_mode == "\<C-v>"))
     normal! o
-    let counter_edge = col('.')
+    let counter_edge  = [line('.'), col('.')]
     normal! o
 
-    if col <= counter_edge
+    if (cursor[0] < counter_edge[0]) || ((cursor[0] == counter_edge[0]) && (cursor[1] < counter_edge[1]))
       let head_pattern_list = pattern_lists[1]
       let tail_pattern_list = pattern_lists[0]
 
@@ -170,20 +170,16 @@ function! patternjump#forward(mode, ...) "{{{
   endif
 
   " searching for candidate positions
+  let dest       = copy(cursor)
   let candidates = []
 
   while 1
-    let candidates += s:forward_search(a:mode, l:count, string, col, head_pattern_list, tail_pattern_list, !(opt_debug_mode || opt_highlight), swapped)
-    let positions = map(copy(candidates), 'v:val[0]')
+    let candidates += s:forward_search(a:mode, l:count, string, cursor, head_pattern_list, tail_pattern_list, !(opt_debug_mode || opt_highlight), swapped)
 
-    if swapped == 1
-      if l:count == 1
-        let dest = min(positions)
-      else
-        let dest = get(sort(s:Sl.uniq_by(copy(positions), 'v:val'), "s:compare"), l:count-1, -1)
-      endif
+    if (swapped == 1) && (candidates != [])
+      let dest = get(sort(s:Sl.uniq_by(copy(candidates), 'v:val[0]'), "s:compare"), l:count-1, [[-1, -1], '', '', -1])
 
-      if dest > counter_edge
+      if (dest[0][0] > counter_edge[0]) || ((dest[0][0] == counter_edge[0]) && (dest[0][1] > counter_edge[1]))
         let head_pattern_list = pattern_lists[0]
         let tail_pattern_list = pattern_lists[1]
 
@@ -198,32 +194,29 @@ function! patternjump#forward(mode, ...) "{{{
 
   " remove unnecessary matched_patterns and candidates
   if swapped >= 0
-    call filter(map(candidates, '((v:val[3] == 1) && (v:val[0] > counter_edge) || ((v:val[3] == 0) && (v:val[0] < counter_edge))) ? [] : v:val'), 'v:val != []')
+    let filter  = '(v:val[3] == 1) && (((v:val[0][0] > counter_edge[0]) || (v:val[0][0] == counter_edge[0]) && (v:val[0][1] > counter_edge[1])))'
+    let filter .= ' || ((v:val[3] == 0) && ((v:val[0][0] < counter_edge[0]) || ((v:val[0][0] == counter_edge[0]) && (v:val[0][1] < counter_edge[1]))))'
+    let filter .= ' ? [] : v:val'
+    call filter(map(candidates, filter), 'v:val != []')
   endif
 
   " determine output and move cursor
-  if l:count == 1
-    let dest = min(positions)
-  else
-    let dest = get(sort(s:Sl.uniq_by(copy(positions), 'v:val'), "s:compare"), l:count-1, -1)
-  endif
+  let dest = get(sort(s:Sl.uniq_by(copy(candidates), 'v:val[0]'), "s:compare"), l:count-1, [[-1, -1], '', '', -1])
 
   let output = ''
-  if !empty(candidates)
+  if !empty(candidates) && (dest[0][1] > 0)
     if opt_raw != 1
       if !opt_debug_mode
-        if a:mode =~# '[nx]'
-          call cursor(0, dest)
+        if a:mode =~# '[nxi]'
+          call cursor(dest[0])
         elseif a:mode ==# 'o'
-          if candidates[match(positions, dest)][2] =~# '\%(head\|tail\)_inclusive'
+          if dest[2] =~# '\%(head\|tail\)_inclusive'
             normal! v
           endif
 
-          call cursor(0, dest)
-        elseif a:mode ==# 'i'
-          call cursor(0, dest + 1)
+          call cursor(dest[0])
         elseif a:mode ==# 'c'
-          call setcmdpos(dest + 1)
+          call setcmdpos(dest[0][1])
         endif
       endif
     endif
@@ -248,8 +241,9 @@ function! patternjump#forward(mode, ...) "{{{
   return output
 endfunction
 "}}}
-function! s:forward_search(mode, count, string, col, head_pattern_list, tail_pattern_list, collect_all, swapped) "{{{
+function! s:forward_search(mode, count, string, cursor, head_pattern_list, tail_pattern_list, collect_all, swapped) "{{{
   let candidates = []
+  let len        = (a:mode =~# '[ic]') ? (len(a:string) + 1) : len(a:string)
 
   " resolve head_pattern_list and tail_pattern_list
   if type(get(a:head_pattern_list, 0, [])) == s:type_list
@@ -285,19 +279,18 @@ function! s:forward_search(mode, count, string, col, head_pattern_list, tail_pat
   " scan head patterns
   for pattern in head_pattern_list
     let Nth = 0
-    let len = len(a:string)
     while 1
       let Nth += 1
       let matched_pos = match(a:string, pattern, 0, Nth)
-      let matched_pos = ((a:mode =~# '[nxo]') && (matched_pos >= 0) && !(matched_pos == len)) ? (matched_pos + 1) : matched_pos
+      let matched_pos = ((matched_pos >= 0) && !(matched_pos == len)) ? (matched_pos + 1) : matched_pos
       if matched_pos < 0 | break | endif
 
       " counter measure for special patterns like '$'
       " patched! : Vim 7.4.184
       if matched_pos > len | break | endif
 
-      if matched_pos > a:col
-        let candidates += [[matched_pos, pattern, 'head', a:swapped]]
+      if matched_pos > a:cursor[1]
+        let candidates += [[[a:cursor[0], matched_pos], pattern, 'head', a:swapped]]
 
         if (a:count == 1) && !a:collect_all
           break
@@ -311,18 +304,18 @@ function! s:forward_search(mode, count, string, col, head_pattern_list, tail_pat
   " scan tail patterns
   for pattern in tail_pattern_list
     let Nth = 0
-    let len = len(a:string)
     while 1
       let Nth += 1
       let matched_pos = matchend(a:string, pattern, 0, Nth)
+      let matched_pos = ((matched_pos == 0) || ((a:mode =~# '[ic]') && (matched_pos >= 0) && !(matched_pos == len))) ? (matched_pos + 1) : matched_pos
       if matched_pos < 0 | break | endif
 
       " counter measure for special patterns like '$'
       " patched! : Vim 7.4.184
       if matched_pos > len | break | endif
 
-      if matched_pos > a:col
-        let candidates += [[matched_pos, pattern, 'tail', a:swapped]]
+      if matched_pos > a:cursor[1]
+        let candidates += [[[a:cursor[0], matched_pos], pattern, 'tail', a:swapped]]
 
         if (a:count == 1) && !a:collect_all
           break
@@ -337,19 +330,18 @@ function! s:forward_search(mode, count, string, col, head_pattern_list, tail_pat
     " scan head_inclusive patterns
     for pattern in head_inclusive_pattern_list
       let Nth = 0
-      let len = len(a:string)
       while 1
         let Nth += 1
         let matched_pos = match(a:string, pattern, 0, Nth)
-        let matched_pos = ((a:mode =~# '[nxo]') && (matched_pos >= 0) && !(matched_pos == len)) ? (matched_pos + 1) : matched_pos
+        let matched_pos = ((matched_pos >= 0) && !(matched_pos == len)) ? (matched_pos + 1) : matched_pos
         if matched_pos < 0 | break | endif
 
         " counter measure for special patterns like '$'
         " patched! : Vim 7.4.184
         if matched_pos > len | break | endif
 
-        if matched_pos > a:col
-          let candidates += [[matched_pos, pattern, 'head_inclusive', a:swapped]]
+        if matched_pos > a:cursor[1]
+          let candidates += [[[a:cursor[0], matched_pos], pattern, 'head_inclusive', a:swapped]]
 
           if (a:count == 1) && !a:collect_all
             break
@@ -363,18 +355,18 @@ function! s:forward_search(mode, count, string, col, head_pattern_list, tail_pat
     " scan tail_inclusive patterns
     for pattern in tail_inclusive_pattern_list
       let Nth = 0
-      let len = len(a:string)
       while 1
         let Nth += 1
         let matched_pos = matchend(a:string, pattern, 0, Nth)
+        let matched_pos = ((matched_pos == 0) || ((a:mode =~# '[ic]') && (matched_pos >= 0) && !(matched_pos == len))) ? (matched_pos + 1) : matched_pos
         if matched_pos < 0 | break | endif
 
         " counter measure for special patterns like '$'
         " patched! : Vim 7.4.184
         if matched_pos > len | break | endif
 
-        if matched_pos > a:col
-          let candidates += [[matched_pos, pattern, 'tail_inclusive', a:swapped]]
+        if matched_pos > a:cursor[1]
+          let candidates += [[[a:cursor[0], matched_pos], pattern, 'tail_inclusive', a:swapped]]
 
           if (a:count == 1) && !a:collect_all
             break
@@ -487,19 +479,19 @@ function! patternjump#backward(mode, ...) "{{{
 
   if a:mode == 'c'
     let string = getcmdline()
-    let col    = getcmdpos() - 1
+    let cursor = [0, getcmdpos()]
   else
     let string = getline('.')
-    let col    = (a:mode == 'i') ? (col('.') - 1) : col('.')
+    let cursor = [line('.'), col('.')]
   endif
 
   " pattern swapping (only in visual mode)
   if (a:mode ==# 'x') && opt_swap_head_tail && ((current_mode ==# 'v') || (current_mode == "\<C-v>"))
     normal! o
-    let counter_edge = col('.')
+    let counter_edge  = [line('.'), col('.')]
     normal! o
 
-    if col <= counter_edge
+    if ((cursor[0] < counter_edge[0]) || ((cursor[0] == counter_edge[0]) && (cursor[1] <= counter_edge[1])))
       let head_pattern_list = pattern_lists[1]
       let tail_pattern_list = pattern_lists[0]
 
@@ -512,20 +504,16 @@ function! patternjump#backward(mode, ...) "{{{
   endif
 
   " searching for candidate positions
+  let dest       = copy(cursor)
   let candidates = []
 
   while 1
-    let candidates += s:backward_search(a:mode, string, col, head_pattern_list, tail_pattern_list, swapped)
-    let positions = map(copy(candidates), 'v:val[0]')
+    let candidates += s:backward_search(a:mode, string, cursor, head_pattern_list, tail_pattern_list, swapped)
 
-    if swapped == 0
-      if l:count == 1
-        let dest = max(positions)
-      else
-        let dest = get(reverse(sort(s:Sl.uniq_by(copy(positions), 'v:val'), "s:compare")), l:count-1, -1)
-      endif
+    if (swapped == 0) && (candidates != [])
+      let dest = get(reverse(sort(s:Sl.uniq_by(copy(candidates), 'v:val[0]'), "s:compare")), l:count-1, [[-1, -1], '', '', -1])
 
-      if dest < counter_edge
+      if (dest[0][0] < counter_edge[0]) || ((dest[0][0] == counter_edge[0]) && (dest[0][1] < counter_edge[1]))
         let head_pattern_list = pattern_lists[1]
         let tail_pattern_list = pattern_lists[0]
 
@@ -540,32 +528,29 @@ function! patternjump#backward(mode, ...) "{{{
 
   " remove unnecessary matched_patterns and candidates
   if swapped >= 0
-    call filter(map(candidates, '((v:val[3] == 1) && (v:val[0] > counter_edge) || ((v:val[3] == 0) && (v:val[0] < counter_edge))) ? [] : v:val'), 'v:val != []')
+    let filter  = '(v:val[3] == 1) && (((v:val[0][0] > counter_edge[0]) || (v:val[0][0] == counter_edge[0]) && (v:val[0][1] > counter_edge[1])))'
+    let filter .= ' || ((v:val[3] == 0) && ((v:val[0][0] < counter_edge[0]) || ((v:val[0][0] == counter_edge[0]) && (v:val[0][1] < counter_edge[1]))))'
+    let filter .= ' ? [] : v:val'
+    call filter(map(candidates, filter), 'v:val != []')
   endif
 
   " determine output or move cursor
-  if l:count == 1
-    let dest = max(positions)
-  else
-    let dest = get(reverse(sort(s:Sl.uniq_by(copy(positions), 'v:val'), "s:compare")), l:count-1, -1)
-  endif
+  let dest = get(reverse(sort(s:Sl.uniq_by(copy(candidates), 'v:val[0]'), "s:compare")), l:count-1, [[-1, -1], '', '', -1])
 
   let output = ''
-  if !empty(candidates)
+  if !empty(candidates) && (dest[0][1] > 0)
     if opt_raw != 1
       if !opt_debug_mode
-        if a:mode =~# '[nx]'
-          call cursor(0, dest)
+        if a:mode =~# '[nxi]'
+          call cursor(dest[0])
         elseif a:mode ==# 'o'
-          if candidates[match(positions, dest)][2] =~# '\%(head\|tail\)_inclusive'
+          if dest[2] =~# '\%(head\|tail\)_inclusive'
             normal! v
           endif
 
-          call cursor(0, dest)
-        elseif a:mode ==# 'i'
-          call cursor(0, dest + 1)
+          call cursor(dest[0])
         elseif a:mode ==# 'c'
-          call setcmdpos(dest + 1)
+          call setcmdpos(dest[0][1])
         endif
       endif
     endif
@@ -590,8 +575,9 @@ function! patternjump#backward(mode, ...) "{{{
   return output
 endfunction
 "}}}
-function! s:backward_search(mode, string, col, head_pattern_list, tail_pattern_list, swapped)  "{{{
+function! s:backward_search(mode, string, cursor, head_pattern_list, tail_pattern_list, swapped)  "{{{
   let candidates = []
+  let len        = (a:mode =~# '[ic]') ? (len(a:string) + 1) : len(a:string)
 
   " resolve head_pattern_list and tail_pattern_list
   if type(get(a:head_pattern_list, 0, [])) == s:type_list
@@ -630,12 +616,12 @@ function! s:backward_search(mode, string, col, head_pattern_list, tail_pattern_l
     while 1
       let Nth += 1
       let matched_pos = match(a:string, pattern, 0, Nth)
-      let matched_pos = (a:mode =~# '[nxo]') ? ((matched_pos < 0) ? matched_pos : (matched_pos + 1)) : matched_pos
+      let matched_pos = ((matched_pos >= 0) && !(matched_pos == len)) ? (matched_pos + 1) : matched_pos
 
-      if matched_pos < 0 || matched_pos >= a:col
+      if matched_pos < 0 || matched_pos >= a:cursor[1]
         break
       else
-        let candidates += [[matched_pos, pattern, 'head', a:swapped]]
+        let candidates += [[[a:cursor[0], matched_pos], pattern, 'head', a:swapped]]
         continue
       endif
     endwhile
@@ -644,16 +630,15 @@ function! s:backward_search(mode, string, col, head_pattern_list, tail_pattern_l
   " scan tail patterns
   for pattern in tail_pattern_list
     let Nth = 0
-    let len = len(a:string)
     while 1
       let Nth += 1
       let matched_pos = matchend(a:string, pattern, 0, Nth)
-      let matched_pos = ((a:mode =~# '[nxo]') && (matched_pos == 0)) ? 1 : matched_pos
+      let matched_pos = ((matched_pos == 0) || ((a:mode =~# '[ic]') && (matched_pos > 0) && !(matched_pos == len))) ? (matched_pos + 1) : matched_pos
 
-      if matched_pos < 0 || matched_pos >= a:col
+      if matched_pos < 0 || matched_pos >= a:cursor[1]
         break
       else
-        let candidates += [[matched_pos, pattern, 'tail', a:swapped]]
+        let candidates += [[[a:cursor[0], matched_pos], pattern, 'tail', a:swapped]]
         continue
       endif
     endwhile
@@ -666,12 +651,12 @@ function! s:backward_search(mode, string, col, head_pattern_list, tail_pattern_l
       while 1
         let Nth += 1
         let matched_pos = match(a:string, pattern, 0, Nth)
-        let matched_pos = (a:mode =~# '[nxo]') ? ((matched_pos < 0) ? matched_pos : (matched_pos + 1)) : matched_pos
+        let matched_pos = ((matched_pos >= 0) && !(matched_pos == len)) ? (matched_pos + 1) : matched_pos
 
-        if matched_pos < 0 || matched_pos >= a:col
+        if matched_pos < 0 || matched_pos >= a:cursor[1]
           break
         else
-          let candidates += [[matched_pos, pattern, 'head_inclusive', a:swapped]]
+          let candidates += [[[a:cursor[0], matched_pos], pattern, 'head_inclusive', a:swapped]]
           continue
         endif
       endwhile
@@ -680,16 +665,15 @@ function! s:backward_search(mode, string, col, head_pattern_list, tail_pattern_l
     " scan tail_inclusive patterns
     for pattern in tail_pattern_list
       let Nth = 0
-      let len = len(a:string)
       while 1
         let Nth += 1
         let matched_pos = matchend(a:string, pattern, 0, Nth)
-        let matched_pos = ((a:mode =~# '[nxo]') && (matched_pos == 0)) ? 1 : matched_pos
+        let matched_pos = ((matched_pos == 0) || ((a:mode =~# '[ic]') && (matched_pos >= 0) && !(matched_pos == len))) ? (matched_pos + 1) : matched_pos
 
-        if matched_pos < 0 || matched_pos >= a:col
+        if matched_pos < 0 || matched_pos >= a:cursor[1]
           break
         else
-          let candidates += [[matched_pos, pattern, 'tail_inclusive', a:swapped]]
+          let candidates += [[[a:cursor[0], matched_pos], pattern, 'tail_inclusive', a:swapped]]
           continue
         endif
       endwhile
@@ -889,7 +873,19 @@ function! s:resolve_pattern_dictionary(mode, direction, patternjump_patterns) "{
 endfunction
 "}}}
 function! s:compare(i1, i2) "{{{
-  return a:i1 - a:i2
+  if a:i1[0][0] < a:i2[0][0]
+    return -1
+  elseif a:i1[0][0] > a:i2[0][0]
+    return 1
+  else
+    if a:i1[0][1] < a:i2[0][1]
+      return -1
+    elseif a:i1[0][1] > a:i2[0][1]
+      return 1
+    else
+      return 0
+    endif
+  endif
 endfunction
 "}}}
 function! s:highlighter(candidates, opt_debug_mode) "{{{
@@ -907,14 +903,14 @@ function! s:highlighter(candidates, opt_debug_mode) "{{{
   if a:candidates != []
     " highlighting candidates
     let line = line('.')
-    let b:patternjump.id = map(copy(a:candidates), "s:highlight_add(line, v:val[0])")
+    let b:patternjump.id = map(copy(a:candidates), "s:highlight_add(v:val[0])")
     redraw
 
     " echo information
     if a:opt_debug_mode
       echomsg 'patternjump debug mode'
       for idx in range(len(a:candidates))
-        echomsg printf('%d, ''%s'', %s, %s', a:candidates[idx][0], a:candidates[idx][1], a:candidates[idx][2], a:candidates[idx][3])
+        echomsg printf('%d, %d, ''%s'', %s, %s', a:candidates[idx][0][0], a:candidates[idx][0][1], a:candidates[idx][1], a:candidates[idx][2], a:candidates[idx][3])
       endfor
       echomsg ''
     endif
@@ -929,8 +925,8 @@ function! s:highlighter(candidates, opt_debug_mode) "{{{
   endif
 endfunction
 "}}}
-function! s:highlight_add(row, col) "{{{
-  let pattern   = '\%' . a:row . 'l\%' . a:col . 'c.'
+function! s:highlight_add(pos) "{{{
+  let pattern   = '\%' . a:pos[0] . 'l\%' . a:pos[1] . 'c.'
   let id = matchadd("IncSearch", pattern)
   return id
 endfunction
