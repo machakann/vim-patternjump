@@ -284,18 +284,18 @@ function! s:search_forward(mode, count, string, marker, head_pattern_list, tail_
     while 1
       let Nth += 1
       let matched_pos = match(a:string, pattern, 0, Nth)
-      let matched_pos = ((matched_pos >= 0) && ((a:mode =~# '[ci]') || ((a:mode =~# '[nxo]') && !(matched_pos == len)))) ? (matched_pos + 1) : matched_pos
+      let matched_pos = ((matched_pos >= 0) && ((a:mode =~# '[ci]') || ((a:mode =~# '[nxo]') && (!(matched_pos == len) || ((matched_pos == 0) && (len == 0)))))) ? (matched_pos + 1) : matched_pos
       if matched_pos < 0 | break | endif
 
       " counter measure for special patterns like '$'
       " patched! : Vim 7.4.184
       " &encoding == cp932
-      if matched_pos > ((a:mode =~# '[ci]') ? (len + 1) : len) | break | endif
+      if matched_pos > (((a:mode =~# '[ci]') || (len == 0)) ? (len + 1) : len) | break | endif
       " &encoding == utf-8
       if matched_pos == previous_pos | break | endif
       let previous_pos = matched_pos
 
-      if matched_pos > a:marker[1]
+      if (matched_pos > a:marker[1]) || ((matched_pos == 0) && (a:marker[1] == 0))
         let candidates += [[[a:marker[0], matched_pos], pattern, 'head', a:swapped]]
 
         if (a:count == 1) && !a:collect_all
@@ -320,7 +320,7 @@ function! s:search_forward(mode, count, string, marker, head_pattern_list, tail_
       " counter measure for special patterns like '$'
       " patched! : Vim 7.4.184
       " &encoding == cp932
-      if matched_pos > ((a:mode =~# '[ci]') ? (len + 1) : len) | break | endif
+      if matched_pos > (((a:mode =~# '[ci]') || (len == 0)) ? (len + 1) : len) | break | endif
       " &encoding == utf-8
       if matched_pos == previous_pos | break | endif
       let previous_pos = matched_pos
@@ -346,13 +346,13 @@ function! s:search_forward(mode, count, string, marker, head_pattern_list, tail_
         let Nth += 1
         let matched_pos = match(a:string, pattern, 0, Nth)
         let matched_pos = (matched_pos >= 0) ? (matched_pos + 1) : matched_pos
-        let matched_pos = ((matched_pos >= 0) && ((a:mode =~# '[ci]') || ((a:mode =~# '[nxo]') && !(matched_pos == len)))) ? (matched_pos + 1) : matched_pos
+        let matched_pos = ((matched_pos >= 0) && ((a:mode =~# '[ci]') || ((a:mode =~# '[nxo]') && (!(matched_pos == len) || ((matched_pos == 0) && (len == 0)))))) ? (matched_pos + 1) : matched_pos
         if matched_pos < 0 | break | endif
 
         " counter measure for special patterns like '$'
         " patched! : Vim 7.4.184
         " &encoding == cp932
-        if matched_pos > ((a:mode =~# '[ci]') ? (len + 1) : len) | break | endif
+        if matched_pos > (((a:mode =~# '[ci]') || (len == 0)) ? (len + 1) : len) | break | endif
         " &encoding == utf-8
         if matched_pos == previous_pos | break | endif
         let previous_pos = matched_pos
@@ -382,7 +382,7 @@ function! s:search_forward(mode, count, string, marker, head_pattern_list, tail_
         " counter measure for special patterns like '$'
         " patched! : Vim 7.4.184
         " &encoding == cp932
-        if matched_pos > ((a:mode =~# '[ci]') ? (len + 1) : len) | break | endif
+        if matched_pos > (((a:mode =~# '[ci]') || (len == 0)) ? (len + 1) : len) | break | endif
         " &encoding == utf-8
         if matched_pos == previous_pos | break | endif
         let previous_pos = matched_pos
@@ -639,13 +639,13 @@ function! s:search_backward(mode, string, marker, head_pattern_list, tail_patter
     while 1
       let Nth += 1
       let matched_pos = match(a:string, pattern, 0, Nth)
-      let matched_pos = ((matched_pos >= 0) && ((a:mode =~# '[ci]') || ((a:mode =~# '[nxo]') && !(matched_pos == len)))) ? (matched_pos + 1) : matched_pos
+      let matched_pos = ((matched_pos >= 0) && ((a:mode =~# '[ci]') || ((a:mode =~# '[nxo]') && (!(matched_pos == len) || ((matched_pos == 0) && (len == 0)))))) ? (matched_pos + 1) : matched_pos
       if (matched_pos < 0) || (matched_pos >= a:marker[1]) | break | endif
 
       " counter measure for special patterns like '$'
       " patched! : Vim 7.4.184
       " &encoding == cp932
-      if matched_pos > ((a:mode =~# '[ci]') ? (len + 1) : len) | break | endif
+      if matched_pos > (((a:mode =~# '[ci]') || (len == 0)) ? (len + 1) : len) | break | endif
       " &encoding == utf-8
       if matched_pos == previous_pos | break | endif
       let previous_pos = matched_pos
@@ -667,7 +667,7 @@ function! s:search_backward(mode, string, marker, head_pattern_list, tail_patter
       " counter measure for special patterns like '$'
       " patched! : Vim 7.4.184
       " &encoding == cp932
-      if matched_pos > ((a:mode =~# '[ci]') ? (len + 1) : len) | break | endif
+      if matched_pos > (((a:mode =~# '[ci]') || (len == 0)) ? (len + 1) : len) | break | endif
       " &encoding == utf-8
       if matched_pos == previous_pos | break | endif
       let previous_pos = matched_pos
@@ -684,13 +684,13 @@ function! s:search_backward(mode, string, marker, head_pattern_list, tail_patter
       while 1
         let Nth += 1
         let matched_pos = match(a:string, pattern, 0, Nth)
-        let matched_pos = ((matched_pos >= 0) && ((a:mode =~# '[ci]') || ((a:mode =~# '[nxo]') && !(matched_pos == len)))) ? (matched_pos + 1) : matched_pos
+        let matched_pos = ((matched_pos >= 0) && ((a:mode =~# '[ci]') || ((a:mode =~# '[nxo]') && (!(matched_pos == len) || ((matched_pos == 0) && (len == 0)))))) ? (matched_pos + 1) : matched_pos
         if (matched_pos < 0) || (matched_pos >= a:marker[1]) | break | endif
 
         " counter measure for special patterns like '$'
         " patched! : Vim 7.4.184
         " &encoding == cp932
-        if matched_pos > ((a:mode =~# '[ci]') ? (len + 1) : len) | break | endif
+        if matched_pos > (((a:mode =~# '[ci]') || (len == 0)) ? (len + 1) : len) | break | endif
         " &encoding == utf-8
         if matched_pos == previous_pos | break | endif
         let previous_pos = matched_pos
@@ -712,7 +712,7 @@ function! s:search_backward(mode, string, marker, head_pattern_list, tail_patter
         " counter measure for special patterns like '$'
         " patched! : Vim 7.4.184
         " &encoding == cp932
-        if matched_pos > ((a:mode =~# '[ci]') ? (len + 1) : len) | break | endif
+        if matched_pos > (((a:mode =~# '[ci]') || (len == 0)) ? (len + 1) : len) | break | endif
         " &encoding == utf-8
         if matched_pos == previous_pos | break | endif
         let previous_pos = matched_pos
