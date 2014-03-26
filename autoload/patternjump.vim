@@ -14,25 +14,33 @@ set cpo&vim
 " default patterns
 let s:patternjump_patterns = {
       \ '_' : {
-      \   'ci' : {
-      \     'head' : ['^', '[A-Z]', ',', ')', ']', '}', '$'],
+      \   'i' : {
+      \     'head' : [',', ')', ']', '}', '.$'],
       \     'tail' : ['\<\h\k\+\>'],
       \     },
       \   'n' : {
-      \     'head' : ['\<\h\k\+\>', '$'],
+      \     'head' : ['^\s*\zs\S', '\<\h\k\+\>', '.$'],
       \     },
       \   'x' : {
-      \     'tail' : ['\<\h\k\+\>', '$'],
+      \     'tail' : ['^\s*\zs\S', '\<\h\k\+\>', '.$'],
       \     },
       \   'o' : {
       \     'forward'  : {'tail_inclusive' : ['\<\h\k\+\>']},
       \     'backward' : {'head_inclusive' : ['\<\h\k\+\>']},
       \     },
       \   },
+      \ '*' : {
+      \   'c' : {
+      \     'head' : ['^', ' ', '[A-Z]', ',', ')', ']', '}', '$'],
+      \     },
+      \   },
       \ 'vim' : {
       \   'include' : '_',
       \   'n'     : {
       \     'head' : ['\<[abglstvw]:\k\+'],
+      \     },
+      \   'x'     : {
+      \     'tail' : ['\<[abglstvw]:\k\+'],
       \     },
       \   },
       \ }
