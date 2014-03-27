@@ -15,7 +15,7 @@ set cpo&vim
 let s:patternjump_patterns = {
       \ '_' : {
       \   'i' : {
-      \     'head' : [',', ')', ']', '}', '.$'],
+      \     'head' : ['^\s*\zs\S', ',', ')', ']', '}', '.$'],
       \     'tail' : ['\<\h\k*\>'],
       \     },
       \   'n' : {
