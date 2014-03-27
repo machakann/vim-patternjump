@@ -16,31 +16,22 @@ let s:patternjump_patterns = {
       \ '_' : {
       \   'i' : {
       \     'head' : [',', ')', ']', '}', '.$'],
-      \     'tail' : ['\<\h\k\+\>'],
+      \     'tail' : ['\<\h\k*\>'],
       \     },
       \   'n' : {
-      \     'head' : ['^\s*\zs\S', '\<\h\k\+\>', '.$'],
+      \     'head' : ['^\s*\zs\S', '\<\h\k*\>', '.$'],
       \     },
       \   'x' : {
-      \     'tail' : ['^\s*\zs\S', '\<\h\k\+\>', '.$'],
+      \     'tail' : ['^\s*\zs\S', '\<\h\k*\>', '.$'],
       \     },
       \   'o' : {
-      \     'forward'  : {'tail_inclusive' : ['\<\h\k\+\>']},
-      \     'backward' : {'head_inclusive' : ['\<\h\k\+\>']},
+      \     'forward'  : {'tail_inclusive' : ['\<\h\k*\>']},
+      \     'backward' : {'head_inclusive' : ['\<\h\k*\>']},
       \     },
       \   },
       \ '*' : {
       \   'c' : {
       \     'head' : ['^', ' ', '[A-Z]', ',', ')', ']', '}', '$'],
-      \     },
-      \   },
-      \ 'vim' : {
-      \   'include' : '_',
-      \   'n'     : {
-      \     'head' : ['\<[abglstvw]:\k\+'],
-      \     },
-      \   'x'     : {
-      \     'tail' : ['\<[abglstvw]:\k\+'],
       \     },
       \   },
       \ }

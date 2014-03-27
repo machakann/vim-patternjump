@@ -1,6 +1,6 @@
 " vim:set foldmethod=marker:
 " vim:set commentstring="%s:
-" Last Change: 10-Mar-2014.
+" Last Change: 25-Mar-2014.
 
 " なぜnormal!ではなくマクロを使ったのかというとそっちの方がちらちらして好きだ
 " からです！
@@ -668,7 +668,7 @@ let test_info.2       = {
     \   "2"    : {'caption'     : 'default pattern',
     \             'result'      : 'col(".")',
     \             'expectation' : '3',
-    \             'key_input'   : "$a\<M-h>",
+    \             'key_input'   : "A\<M-h>",
     \             'breaking'    : 1,
     \             'abort'       : 0,
     \             'pre' : {'commands' : [':let g:patternjump_patterns=g:default']}, 'post' : {}
@@ -677,7 +677,7 @@ let test_info.2       = {
     \   "3"    : {'caption'     : 'default pattern',
     \             'result'      : 'col(".")',
     \             'expectation' : '8',
-    \             'key_input'   : "$a\<M-h>",
+    \             'key_input'   : "A\<M-h>",
     \             'breaking'    : 1,
     \             'abort'       : 0,
     \             'pre' : {'commands' : [':let g:patternjump_patterns=g:default']}, 'post' : {}
