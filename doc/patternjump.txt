@@ -1,4 +1,4 @@
-*patternjump.txt*	Last change:23-Mar-2014.
+*patternjump.txt*	Last change:28-Mar-2014.
 
 Move cursor as you like.
 
@@ -19,7 +19,7 @@ FUNCTIONS		|patternjump-functions|
 ==============================================================================
 INTRODUCTION					*patternjump-introduction*
 
-Patternjump give you a effective way to move cursor in various modes. The
+Patternjump gives you a effective way to move cursor in various modes. The
 rules to move cursor can be easily optimized by using regular expression. In
 this help those rules defined by regular expression are called patterns.
 Please note it. Numbers of patterns can be registered and cursor would be
@@ -80,24 +80,24 @@ with the default.
 >
 	let g:patternjump_patterns = {
 		\ '_' : {
-		\   'ci' : {
-		\     'head' : [',', ')', ']', '}', '$'],
-		\     'tail' : ['\<\h\k\+\>'],
+		\   'i' : {
+		\     'head' : ['^\s*\zs\S', ',', ')', ']', '}', '$'],
+		\     'tail' : ['\<\h\k*\>'],
 		\     },
 		\   'n' : {
-		\     'head' : ['\<\h\k\+\>', '$'],
+		\     'head' : ['^\s*\zs\S', '\<\h\k*\>', '.$'],
 		\     },
 		\   'x' : {
-		\     'tail' : ['\<\h\k\+\>', '$'],
+		\     'tail' : ['^\s*\zs\S', '\<\h\k*\>', '.$'],
 		\     },
 		\   'o' : {
-		\     'tail' : ['\<\h\k\+\>.'],
+		\     'forward'  : {'tail_inclusive' : ['\<\h\k*\>']},
+		\     'backward' : {'head_inclusive' : ['\<\h\k*\>']},
 		\     },
 		\   },
-		\ 'vim' : {
-		\   'include' : '_',
-		\   'n'     : {
-		\     'head' : ['\<[abglstvw]:\k\+'],
+		\ '*' : {
+		\   'c' : {
+		\     'head' : ['^', ' ', '[A-Z]', ',', ')', ']', '}', '$'],
 		\     },
 		\   },
 		\ }
@@ -105,15 +105,66 @@ with the default.
 
 						*g:patternjump_patterns*
 As you can see, |g:patternjump_patterns| is a dictionary and it has keys which
-is corresponded to each |filetype| at the first level. For example, the
-default patterns has a specific pattern for vimscript. This key name should
+is corresponded to each |filetype| at the first level. This key name should
 equal to the value &filetype of each filetypes, that is to say, it should same
-as the filetype name which is set by |ftdetect|. The key '_' is used for the
-case there is no specified patterns for the current filetype. Each filetype
-settings have a dictionary as a value. This dictionary has keys like "ci",
-"n", "x", "o". These keys represent the mode specified patterns. "ci"
-represents the patterns which is available only in command-line mode and
-insert mode.
+as the filetype name which is set by |ftdetect|. Although the default patterns
+do not have filetype name keys at this level, but '_' and '*' keys are there.
+They are alternatives of filetype name and employed in versatile situations.
+The key '_' is used for the case there is no specified patterns for the
+current filetype. The key '*' will be explained later. If you want to add
+filetype specific patterns, then you can do it easily. For example, assume
+that you want to add a pattern for the variable name with scope of Vim script,
+just define your patterns like this:
+>
+	let g:patternjump_patterns = {
+		\ '_' : {
+		\   'i' : {
+		\     'head' : ['^\s*\zs\S', ',', ')', ']', '}', '$'],
+		\     'tail' : ['\<\h\k*\>'],
+		\     },
+		\   'n' : {
+		\     'head' : ['^\s*\zs\S', '\<\h\k*\>', '.$'],
+		\     },
+		\   'x' : {
+		\     'tail' : ['^\s*\zs\S', '\<\h\k*\>', '.$'],
+		\     },
+		\   'o' : {
+		\     'forward'  : {'tail_inclusive' : ['\<\h\k*\>']},
+		\     'backward' : {'head_inclusive' : ['\<\h\k*\>']},
+		\     },
+		\   },
+		\
+		\ '*' : {
+		\   'c' : {
+		\     'head' : ['^', ' ', '[A-Z]', ',', ')', ']', '}', '$'],
+		\     },
+		\   },
+		\
+		\ 'vim' : {
+		\   'include' : '_'
+		\   'n' : {
+		\     'head' : ['\<[abglstvw]:\k\+'],
+		\     },
+		\   },
+		\ }
+<
+Or if you have already defined your patterns to |g:patternjump_patterns|, then
+the following description is also OK.
+>
+	let g:patternjump_patterns.vim = {
+		\   'n' : {
+		\     'include' : '_'
+		\     'head' : ['\<[abglstvw]:\k\+'],
+		\     },
+		\   },
+		\ }
+<
+But, actually, this pattern can be covered by the default pattern '\<\h\k*\>'.
+This pattern would not be required. Just for explanation.
+
+Each filetype settings have a dictionary as a value. This dictionary has keys
+like "i", "n", "x", "o", "c". These keys represent the mode specified
+patterns.
 
 	'n' : normal mode
 	'x' : visual mode
@@ -121,41 +172,14 @@ insert mode.
 	'c' : command-line mode
 	'i' : insert mode
 
-These five characters can be used for assignment of a mode and if a character
-is included in the key it is valid, you do not need to mind about the order.
-Both "ci" and "ic" are OK. If you want to separate the patterns for
-command-line mode and insert mode, then make each keys and set a dictionary
-which includes head- and/or tail- patterns.
->
-	let g:patternjump_patterns = {
-		\ '_' : {
-		\   'c' : {
-		\     'head' : [',', ')', ']', '}', '$'],
-		\     'tail' : ['\<\h\k\+\>'],
-		\     },
-		\   'i' : {
-		\     'tail' : ['\<\h\k\+\>', '$'],
-		\     },
-		\   'n' : {
-		\     'head' : ['\<\h\k\+\>', '$'],
-		\     },
-		\   'x' : {
-		\     'tail' : ['\<\h\k\+\>', '$'],
-		\     },
-		\   'o' : {
-		\     'tail' : ['\<\h\k\+\>.'],
-		\     },
-		\   },
-		\ 'vim' : {
-		\   'include' : '_',
-		\   'n'     : {
-		\     'head' : ['\<[abglstvw]:\k\+'],
-		\     },
-		\   },
-		\ }
-<
-If you use this |g:patternjump_patterns|, never responses for ',' and
-close-parenthesis in insert mode.
+If you want to use same patterns in different mode, the key name can
+be put together like "ci", "nxo". In this case, both "ci" and "ic" are OK.
+
+As you can see in the default patterns, only the operator-pending mode can
+have unique assignments like "head-inclusive" and "tail_inclusive". "head" and
+"tail" patterns in operator-pending mode works as |exclusive| motion. So if
+you want to make it |inclusive| motion, please use "head-inclusive" and
+"tail_inclusive".
 
 If you see the filetype specific patterns for vim, you would find a special
 key named "include" and it has a value '_'. This means that the patterns in
@@ -164,18 +188,24 @@ list. If you want to add much more other settings, use list for the value.
 >
 	let g:patternjump_patterns = {
 		\ '_' : {
-		\   'ci' : {
-		\     'head' : [',', ')', ']', '}'],
-		\     'tail' : ['\<\h\k\+\>', '$'],
+		\   'i' : {
+		\     'head' : ['^\s*\zs\S', ',', ')', ']', '}', '$'],
+		\     'tail' : ['\<\h\k*\>'],
 		\     },
 		\   'n' : {
-		\     'head' : ['\<\h\k\+\>', '$'],
+		\     'head' : ['^\s*\zs\S', '\<\h\k*\>', '.$'],
 		\     },
 		\   'x' : {
-		\     'tail' : ['\<\h\k\+\>', '$'],
+		\     'tail' : ['^\s*\zs\S', '\<\h\k*\>', '.$'],
 		\     },
 		\   'o' : {
-		\     'tail' : ['\<\h\k\+\>.'],
+		\     'forward'  : {'tail_inclusive' : ['\<\h\k*\>']},
+		\     'backward' : {'head_inclusive' : ['\<\h\k*\>']},
+		\     },
+		\   },
+		\ '*' : {
+		\   'c' : {
+		\     'head' : ['^', ' ', '[A-Z]', ',', ')', ']', '}', '$'],
 		\     },
 		\   },
 		\ 'SomeOtherFiletype' : {
@@ -192,127 +222,76 @@ list. If you want to add much more other settings, use list for the value.
 		\   },
 		\ }
 <
+There is one more special key name '*' other than '_'. If this key exists, it
+is always included. Command-line mode configuration is probably common for all
+filetypes. Thus using '*' key might be a good way to share command-line mode
+patterns. However, because of this characteristic, this key might cause
+unwanted effect for other scenes. Please use it carefully.
+
 This "include" is only available in a unit of a whole filetype settings, you
 can not include mode specific or head-/tail-patterns separately. So if you
 want to use common patterns more finely, I suggest to write as following.
 >
-	let common_pattern = ['\<\h\k\+\>']
+	let common_pattern = ['\<\h\k*\>']
 	let g:patternjump_patterns = {
 		\ '_' : {
-		\   'ci' : {
-		\     'head' : [',', ')', ']', '}'],
-		\     'tail' : ['$'] + common_pattern,
+		\   'i' : {
+		\     'head' : ['^\s*\zs\S', ',', ')', ']', '}', '$'],
+		\     'tail' : common_pattern
 		\     },
 		\   'n' : {
-		\     'head' : ['$'] + common_pattern,
+		\     'head' : ['^\s*\zs\S', '.$'] + common_pattern,
 		\     },
 		\   'x' : {
-		\     'tail' : ['$'] + common_pattern,
+		\     'tail' : ['^\s*\zs\S', '.$'] + common_pattern,
 		\     },
 		\   'o' : {
-		\     'tail' : ['\<\h\k\+\>.'],
+		\     'forward'  : {'tail_inclusive' : common_pattern},
+		\     'backward' : {'head_inclusive' : common_pattern},
 		\     },
 		\   },
-		\ 'vim' : {
-		\   'include' : '_',
-		\   'n'     : {
-		\     'head' : ['\<[abglstvw]:\k\+'],
+		\ '*' : {
+		\   'c' : {
+		\     'head' : ['^', ' ', '[A-Z]', ',', ')', ']', '}', '$'],
 		\     },
 		\   },
 		\ }
 <
 If you add patterns to "common_pattern", they will valid as tail-patterns in
-command-line mode and insert mode and also as head-patterns in normal mode, as
-tail-patterns in visual mode.
+ insert mode and also as head-patterns in normal mode, as tail-patterns in
+ visual mode.
 NOTE: "include" can not be nested!
 
-There is one more special key name '*'. If this key exists, it is always
-included. Command-line mode configuration is probably common for all
-filetypes. Thus using '*' key might be a good way to share command-line mode
-patterns. However, because of this characteristic, this key might cause
-unwanted effect for other scenes. Please use it carefully.
+You can use different patterns for the forward directed keymapping and the
+backward one as you can see in operator-pending mode configuration of the
+default patterns. And additionally, look at the command-line mode patterns of
+following patterns.
 >
 	let g:patternjump_patterns = {
 		\ '_' : {
 		\   'i' : {
-		\     'head' : [',', ')', ']', '}'],
-		\     'tail' : ['\<\h\k\+\>', '$'],
+		\     'head' : ['^\s*\zs\S', ',', ')', ']', '}', '.$'],
+		\     'tail' : ['\<\h\k*\>'],
 		\     },
 		\   'n' : {
-		\     'head' : ['\<\h\k\+\>', '$'],
+		\     'head' : ['^\s*\zs\S', '\<\h\k*\>', '.$'],
 		\     },
 		\   'x' : {
-		\     'tail' : ['\<\h\k\+\>', '$'],
+		\     'tail' : ['^\s*\zs\S', '\<\h\k*\>', '.$'],
 		\     },
 		\   'o' : {
-		\     'tail' : ['\<\h\k\+\>.'],
+		\     'forward'  : {'tail_inclusive' : ['\<\h\k*\>']},
+		\     'backward' : {'head_inclusive' : ['\<\h\k*\>']},
 		\     },
 		\   },
 		\ '*' : {
 		\   'c' : {
-		\     'head' : [',', ')', ']', '}'],
-		\     'tail' : ['\<\h\k\+\>', '$'],
-		\     },
-		\   },
-		\ 'vim' : {
-		\   'include' : '_',
-		\   'n'     : {
-		\     'head' : ['\<[abglstvw]:\k\+'],
-		\     },
-		\   },
-		\ }
-<
-
-Actually it is possible to omit so many things from |g:patternjump_patterns|.
-For example, head-/tail- assignment can be omitted. In that case it is
-regarded as head-patterns.
->
-	let g:patternjump_patterns = {
-		\ '_' : {
-		\   'ci'  : [',', ')', ']', '}'],
-		\   'nxo' : ['\<\h\k\+\>'],
-		\   },
-		\ }
-<
-Or you can omit mode specification.
->
-	let g:patternjump_patterns = {
-		\ '_' : ['\<\h\k\+\>'],
-		\ }
-<
-It still works.
-
-There is one more thing I want to explain. This is somewhat tricky, but you
-can use different patterns for the forward directed keymapping and the
-backward one.
->
-	let common_pattern = {
-		\    'head' : [',', ')', ']', '}'],
-		\    'tail' : ['\<\h\k\+\>', '$'],
-		\  }
-	let g:patternjump_patterns = {
-		\ '_' : {
-		\   'n' : {
-		\     'head' : ['\<\h\k\+\>', '$'],
-		\     },
-		\   'x' : {
-		\     'tail' : ['\<\h\k\+\>', '$'],
-		\     },
-		\   'o' : {
-		\     'tail' : ['\<\h\k\+\>.'],
-		\     },
-		\   'i' : {
-		\     'common' : common_pattern,
-		\     },
-		\   'c' : {
-		\     'forward'  : {'tail' : ['$']},
-		\     'backward' : common_pattern,
-		\     },
-		\   },
-		\ 'vim' : {
-		\   'include' : '_',
-		\   'n'     : {
-		\     'head' : ['\<[abglstvw]:\k\+'],
+		\     'common' : {
+		\       'head' : ['$'],
+		\       },
+		\     'forward' : {
+		\       'head' : ['^', ' ', '[A-Z]', ',', ')', ']', '}'],
+		\       },
 		\     },
 		\   },
 		\ }
@@ -321,8 +300,26 @@ If you use this patterns, the forward directed keymapping always move cursor
 to at the end of line in command-line mode. There are three kinds of keys in
 the value of the key '_', I mean, "common", "forward", and, "backward".
 "common" patterns are used for both directions. "forward" and "backward"
-patterns are used only for each directed keymappings. "common" and direction
-specific patterns can be registered at the same time.
+patterns are used only for each directed keymappings.
+
+Actually it is possible to omit so many things from |g:patternjump_patterns|.
+For example, head-/tail- assignment can be omitted. In that case it is
+regarded as head-patterns.
+>
+	let g:patternjump_patterns = {
+		\ '_' : {
+		\   'ci'  : [',', ')', ']', '}'],
+		\   'nxo' : ['\<\h\k*\>'],
+		\   },
+		\ }
+<
+Or you can omit mode specification.
+>
+	let g:patternjump_patterns = {
+		\ '_' : ['\<\h\k*\>'],
+		\ }
+<
+It still works.
 
 There are so many types to assign your patterns, but there is a important
 rule, the order of assignment. The first level of |g:patternjump_patterns|
@@ -333,12 +330,43 @@ the order of them.
 
 
 ------------------------------------------------------------------------------
+Available keynames~
+
+Filetype assignments~
+	'_', '*', and filetype names
+	If there is no specific filetype patterns, '_' key will be used.
+	The patterns of '*' key will be always included if it exists.
+
+Mode assignments~
+	'n', 'x', 'o', 'i', 'c' and their combination
+
+	'n' : normal mode
+	'x' : visual mode
+	'o' : operator-pending mode
+	'c' : command-line mode
+	'i' : insert mode
+
+Direction assignments~
+	"common", "forward" and "backward"
+
+head-/tail- pattern assignments~
+	"head", "tail" and "head_inclusive", "tail_inclusive" is available
+	only in operator-pending mode.
+	"head" and "tail" patterns is |exclusive|.
+	"head_inclusive" and "tail_inclusive" is |inclusive|.
+
+
+------------------------------------------------------------------------------
 Other options~
 
 There are several variables to control the behavior of keymappings. You can
 use same variable name with different scopes, buffer local b:, window local
 w:, tab page local t:, global g:. If same variable name is defined in
 different scopes, b: is prior to w:, w: is prior to t:, t: is prior to g:.
+
+g:patternjump_ignore_case			*g:patternjump_ignore_case*
+	If the value is 1, ignore case in search candidates of destination. If
+	the value is 0, do not ignore case. Default value is 0.
 
 g:patternjump_caching				*g:patternjump_caching*
 	If the value is 1, patternjump makes caches for current buffer named
@@ -397,9 +425,9 @@ g:patternjump_debug_mode			*g:patternjump_debug_mode*
 
 g:patternjump_swap_head_tail			*g:patternjump_swap_head_tail*
 	This option changes the behavior in the visual mode depending on the
-	relationship of two edges of selection. When the cursor comes the
-	backside of the other edge, the head-patterns and tail-patterns are
-	switched if the value is 1.
+	relationship of two edges of selection. When the cursor comes closer
+	to the file head than the other edge, the head-patterns and
+	tail-patterns are switched if the value is 1.
 	For example, thinking about the following line with the tail-pattern
 	'\<\h\k+\>'. Assume that the cursor is on 'b' and the other edge of
 	selection is on '='.
@@ -419,6 +447,12 @@ g:patternjump_swap_head_tail			*g:patternjump_swap_head_tail*
 	    #<---       selected area
 	let foo = "bar"                         '#' represents cursor position
 <
+
+g:patternjump_wrap_line				*g:patternjump_wrap_line*
+	If the value is 1, patternjump keymappings can move cursor to the
+	vicinal lines. If the value is 0, cursor would stay in the current
+	line. Default value is 1.
+
 
 ==============================================================================
 KEYMAPPINGS					*patternjump-keymappings*
@@ -528,7 +562,8 @@ a negative number are assigned, functions refer {count} as usual.
 The fourth argument "options_dict" is a dictionary which can force to use
 given values of configuration variables. The key names are the name of
 configuration variables removing first "g:patternjump_". Thus you can use
-"highlight", "debug_mode".
+"ignore_case", "caching", "cache_name", "wrap_line", "highlight",
+"debug_mode", "swap_head_tail", "wrap_line".
 >
 	nmap <silent> <M-l> :<C-u>call patternjump#forward(
 		\				'n',
@@ -559,14 +594,15 @@ Please refer |verticalmove-configuration|.
 Besides, a special key "raw" can be also used. If the value is 1, these
 functions do not move cursor. But if the value is 2, these functions do. In
 addition to that if the value is 1 or 2 return a dictionary which has two
-information. First one is the key "column", the value is the column number of
-destination. The other is the key "candidates", the value is a list including
-matched column number, matched patterns, head or tail of candidates and the
-last value represents the pattern is swapped or not. The last value is related
-to |g:patternjump_swap_head_tail| option. If the swapping is not valid, then
-the value is always -1. If the swapping is valid and the pattern has been
-swapped, the last value is 1.  If the swapping is vaid and the pattern has not
-been swapped, the value is 0.
+information. The first one is the key "destination", the value is a list which
+has a list of line and column number of the destination, the matched pattern,
+head or tail, and the last value represents the pattern is swapped or not. The
+last value is related to |g:patternjump_swap_head_tail| option. If the
+swapping is not valid, then the value is always -1. If the swapping is valid
+and the pattern has been swapped, the last value is 1.  If the swapping is
+vaid and the pattern has not been swapped, the value is 0. The other is the
+key "candidates", the value is the list of lists which has same information as
+"destination" of candidates.
 
 >
 	let output = patternjump#forward(
@@ -575,12 +611,12 @@ been swapped, the value is 0.
 		\			1,
 		\			{'raw' : 1})
 
-	" the column number of the destination
-	" e.g. 10
-	echo output.column
+	" the line and column number of the destination
+	" e.g. [[1, 5], '\<\h\k*\>', 'head', -1]
+	echo output.destination
 
 	" information of candidates
-	" e.g. [[10, '\<\h\k\+\>', 'head', -1], [20, '$', 'tail', -1]]
+	" e.g. [[[1, 5], '\<\h\k*\>', 'head', -1], [[1, 10], '$', 'tail', -1]]
 	echo output.candidates
 <
 

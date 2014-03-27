@@ -227,8 +227,8 @@ function! patternjump#forward(mode, ...) "{{{
     " raw mode
     unlet output
     let output = {}
-    let output.column     = dest
-    let output.candidates = candidates
+    let output.destination = dest
+    let output.candidates  = candidates
   endif
 
   " highlighting candidates (if necessary)
