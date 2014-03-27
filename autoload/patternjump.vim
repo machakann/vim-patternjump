@@ -154,9 +154,10 @@ function! patternjump#forward(mode, ...) "{{{
 
   " pattern swapping (only in visual mode)
   if (a:mode ==# 'x') && opt_swap_head_tail && ((current_mode ==# 'v') || (current_mode == "\<C-v>"))
-    normal! o
-    let counter_edge  = [line('.'), col('.')]
-    normal! o
+    let counter_edge = [line("'<"), col("'<")]
+    if counter_edge == cursor
+      let counter_edge = [line("'>"), col("'>")]
+    endif
 
     if (cursor[0] < counter_edge[0]) || ((cursor[0] == counter_edge[0]) && (cursor[1] < counter_edge[1]))
       let head_pattern_list = pattern_lists[1]
@@ -509,9 +510,10 @@ function! patternjump#backward(mode, ...) "{{{
 
   " pattern swapping (only in visual mode)
   if (a:mode ==# 'x') && opt_swap_head_tail && ((current_mode ==# 'v') || (current_mode == "\<C-v>"))
-    normal! o
-    let counter_edge  = [line('.'), col('.')]
-    normal! o
+    let counter_edge = [line("'>"), col("'>")]
+    if counter_edge == cursor
+      let counter_edge = [line("'<"), col("'<")]
+    endif
 
     if ((cursor[0] < counter_edge[0]) || ((cursor[0] == counter_edge[0]) && (cursor[1] <= counter_edge[1])))
       let head_pattern_list = pattern_lists[1]
