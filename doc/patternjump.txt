@@ -303,7 +303,7 @@ the value of the key '_', I mean, "common", "forward", and, "backward".
 patterns are used only for each directed keymappings.
 
 Actually it is possible to omit so many things from |g:patternjump_patterns|.
-For example, head-/tail- assignment can be omitted. In that case it is
+For example, head-/tail- assignment can be omitted. In that case they are
 regarded as head-patterns.
 >
 	let g:patternjump_patterns = {
@@ -313,7 +313,7 @@ regarded as head-patterns.
 		\   },
 		\ }
 <
-Or you can omit mode specification.
+And you can omit mode specification.
 >
 	let g:patternjump_patterns = {
 		\ '_' : ['\<\h\k*\>'],
