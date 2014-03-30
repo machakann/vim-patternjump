@@ -205,7 +205,7 @@ function! patternjump#forward(mode, ...) "{{{
   " determine output and move cursor
   let candidates_uniq = sort(s:Sl.uniq_by(copy(candidates), 'v:val[0]'), "s:compare")
   let dest = get(candidates_uniq, l:count-1, [[-1, -1], '', '', -1])
-  if (dest == [[-1, -1], '', '', -1]) && opt_move_afap && (candidates != [])
+  if (dest == [[-1, -1], '', '', -1]) && opt_move_afap
     let dest = candidates_uniq[-1]
   endif
 
@@ -566,7 +566,7 @@ function! patternjump#backward(mode, ...) "{{{
   " determine output or move cursor
   let candidates_uniq = reverse(sort(s:Sl.uniq_by(copy(candidates), 'v:val[0]'), "s:compare"))
   let dest = get(candidates_uniq, l:count-1, [[-1, -1], '', '', -1])
-  if (dest == [[-1, -1], '', '', -1]) && opt_move_afap && (candidates != [])
+  if (dest == [[-1, -1], '', '', -1]) && opt_move_afap
     let dest = candidates_uniq[-1]
   endif
 
@@ -943,9 +943,9 @@ endfunction
 "}}}
 function! s:judge_swap(direction, swapped, candidates, count, counter_edge, opt_move_afap) "{{{
   if a:direction ==# 'forward'
-    let candidates_uniq = sort(s:Sl.uniq_by(copy(candidates), 'v:val[0]'), "s:compare")
+    let candidates_uniq = sort(s:Sl.uniq_by(copy(a:candidates), 'v:val[0]'), "s:compare")
     let dest = get(candidates_uniq, a:count-1, [[-1, -1], '', '', -1])
-    if (dest == [[-1, -1], '', '', -1]) && a:opt_move_afap && (candidates != [])
+    if (dest == [[-1, -1], '', '', -1]) && a:opt_move_afap
       let dest = candidates_uniq[-1]
     endif
 
@@ -957,7 +957,7 @@ function! s:judge_swap(direction, swapped, candidates, count, counter_edge, opt_
   elseif a:direction ==# 'backward'
     let candidates_uniq = reverse(sort(s:Sl.uniq_by(copy(a:candidates), 'v:val[0]'), "s:compare"))
     let dest = get(candidates_uniq, a:count-1, [[-1, -1], '', '', -1])
-    if (dest == [[-1, -1], '', '', -1]) && a:opt_move_afap && (candidates != [])
+    if (dest == [[-1, -1], '', '', -1]) && a:opt_move_afap
       let dest = candidates_uniq[-1]
     endif
 
