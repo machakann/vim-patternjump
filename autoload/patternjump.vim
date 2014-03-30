@@ -68,6 +68,7 @@ function! patternjump#forward(mode, ...) "{{{
   let opt_swap_head_tail = patternjump#user_conf('swap_head_tail', options_dict, 0)
   let opt_ignore_case    = patternjump#user_conf(   'ignore_case', options_dict, 0)
   let opt_wrap_line      = patternjump#user_conf(     'wrap_line', options_dict, 1)
+  let opt_move_afap      = patternjump#user_conf(     'move_afap', options_dict, 1)
   let opt_raw            = s:check_raw(options_dict)
 
   " case sensitivity
@@ -181,14 +182,14 @@ function! patternjump#forward(mode, ...) "{{{
   while 1
     let candidates += s:search_forward(a:mode, l:count, string, marker, head_pattern_list, tail_pattern_list, !(opt_debug_mode || opt_highlight), swapped)
 
-    if (swapped == 1) && (candidates != []) && s:judge_swap('forward', swapped, candidates, l:count, counter_edge)
+    if (swapped == 1) && (candidates != []) && s:judge_swap('forward', swapped, candidates, l:count, counter_edge, opt_move_afap)
       let head_pattern_list = pattern_lists[0]
       let tail_pattern_list = pattern_lists[1]
 
       let swapped = 0
     elseif opt_wrap_line && (a:mode !=# 'c') && (len(candidates) < l:count)
       let marker[0] += 1
-      if  marker[0] >= fileend | break | endif
+      if  marker[0] > fileend | break | endif
       let string = getline(marker[0])
       let marker[1]  = 0
     else
@@ -205,7 +206,11 @@ function! patternjump#forward(mode, ...) "{{{
   endif
 
   " determine output and move cursor
-  let dest = get(sort(s:Sl.uniq_by(copy(candidates), 'v:val[0]'), "s:compare"), l:count-1, [[-1, -1], '', '', -1])
+  let candidates_uniq = sort(s:Sl.uniq_by(copy(candidates), 'v:val[0]'), "s:compare")
+  let dest = get(candidates_uniq, l:count-1, [[-1, -1], '', '', -1])
+  if (dest == [[-1, -1], '', '', -1]) && opt_move_afap && (candidates != [])
+    let dest = candidates_uniq[-1]
+  endif
 
   let output = ''
   if !empty(candidates) && (dest[0][1] > 0)
@@ -428,6 +433,7 @@ function! patternjump#backward(mode, ...) "{{{
   let opt_swap_head_tail = patternjump#user_conf('swap_head_tail', options_dict, 0)
   let opt_ignore_case    = patternjump#user_conf(   'ignore_case', options_dict, 0)
   let opt_wrap_line      = patternjump#user_conf(     'wrap_line', options_dict, 1)
+  let opt_move_afap      = patternjump#user_conf(     'move_afap', options_dict, 1)
   let opt_raw            = s:check_raw(options_dict)
 
   " case sensitivity
@@ -540,14 +546,14 @@ function! patternjump#backward(mode, ...) "{{{
   while 1
     let candidates += s:search_backward(a:mode, string, marker, head_pattern_list, tail_pattern_list, swapped)
 
-    if (swapped == 0) && (candidates != []) && s:judge_swap('backward', swapped, candidates, l:count, counter_edge)
+    if (swapped == 0) && (candidates != []) && s:judge_swap('backward', swapped, candidates, l:count, counter_edge, opt_move_afap)
       let head_pattern_list = pattern_lists[1]
       let tail_pattern_list = pattern_lists[0]
 
       let swapped = 1
     elseif opt_wrap_line && (a:mode !=# 'c') && (len(candidates) < l:count)
       let marker[0] -= 1
-      if  marker[0] <= 0 | break | endif
+      if  marker[0] < 1 | break | endif
       let string = getline(marker[0])
       let marker[1]  = len(string) + 2
     else
@@ -564,7 +570,11 @@ function! patternjump#backward(mode, ...) "{{{
   endif
 
   " determine output or move cursor
-  let dest = get(reverse(sort(s:Sl.uniq_by(copy(candidates), 'v:val[0]'), "s:compare")), l:count-1, [[-1, -1], '', '', -1])
+  let candidates_uniq = reverse(sort(s:Sl.uniq_by(copy(candidates), 'v:val[0]'), "s:compare"))
+  let dest = get(candidates_uniq, l:count-1, [[-1, -1], '', '', -1])
+  if (dest == [[-1, -1], '', '', -1]) && opt_move_afap && (candidates != [])
+    let dest = candidates_uniq[-1]
+  endif
 
   let output = ''
   if !empty(candidates) && (dest[0][1] > 0)
@@ -937,9 +947,13 @@ function! s:compare(i1, i2) "{{{
   endif
 endfunction
 "}}}
-function! s:judge_swap(direction, swapped, candidates, count, counter_edge) "{{{
+function! s:judge_swap(direction, swapped, candidates, count, counter_edge, opt_move_afap) "{{{
   if a:direction ==# 'forward'
-    let dest = get(sort(s:Sl.uniq_by(copy(a:candidates), 'v:val[0]'), "s:compare"), a:count-1, [[-1, -1], '', '', -1])
+    let candidates_uniq = sort(s:Sl.uniq_by(copy(candidates), 'v:val[0]'), "s:compare")
+    let dest = get(candidates_uniq, a:count-1, [[-1, -1], '', '', -1])
+    if (dest == [[-1, -1], '', '', -1]) && a:opt_move_afap && (candidates != [])
+      let dest = candidates_uniq[-1]
+    endif
 
     if (dest[0][0] > a:counter_edge[0]) || ((dest[0][0] == a:counter_edge[0]) && (dest[0][1] > a:counter_edge[1]))
       return 1
@@ -947,7 +961,12 @@ function! s:judge_swap(direction, swapped, candidates, count, counter_edge) "{{{
       return 0
     endif
   elseif a:direction ==# 'backward'
-    let dest = get(reverse(sort(s:Sl.uniq_by(copy(a:candidates), 'v:val[0]'), "s:compare")), a:count-1, [[-1, -1], '', '', -1])
+    let candidates_uniq = reverse(sort(s:Sl.uniq_by(copy(a:candidates), 'v:val[0]'), "s:compare"))
+    let dest = get(candidates_uniq, a:count-1, [[-1, -1], '', '', -1])
+    if (dest == [[-1, -1], '', '', -1]) && a:opt_move_afap && (candidates != [])
+      let dest = candidates_uniq[-1]
+    endif
+
 
     if (dest[0][0] < a:counter_edge[0]) || ((dest[0][0] == a:counter_edge[0]) && (dest[0][1] < a:counter_edge[1]))
       return 1
