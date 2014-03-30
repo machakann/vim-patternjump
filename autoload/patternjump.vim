@@ -205,7 +205,7 @@ function! patternjump#forward(mode, ...) "{{{
   " determine output and move cursor
   let candidates_uniq = sort(s:Sl.uniq_by(copy(candidates), 'v:val[0]'), "s:compare")
   let dest = get(candidates_uniq, l:count-1, [[-1, -1], '', '', -1])
-  if (dest == [[-1, -1], '', '', -1]) && opt_move_afap
+  if (dest == [[-1, -1], '', '', -1]) && opt_move_afap && (candidates_uniq != [])
     let dest = candidates_uniq[-1]
   endif
 
@@ -566,7 +566,7 @@ function! patternjump#backward(mode, ...) "{{{
   " determine output or move cursor
   let candidates_uniq = reverse(sort(s:Sl.uniq_by(copy(candidates), 'v:val[0]'), "s:compare"))
   let dest = get(candidates_uniq, l:count-1, [[-1, -1], '', '', -1])
-  if (dest == [[-1, -1], '', '', -1]) && opt_move_afap
+  if (dest == [[-1, -1], '', '', -1]) && opt_move_afap && (candidates_uniq != [])
     let dest = candidates_uniq[-1]
   endif
 
