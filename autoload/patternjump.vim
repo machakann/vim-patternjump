@@ -51,9 +51,12 @@ function! patternjump#forward(mode, ...) "{{{
   let l:count = (a:0 > 1 && a:2 > 0) ? a:2 : v:count1
 
   " re-entering to the visual mode (if necessary)
-  if (a:mode ==# 'x') && ((mode() !=? 'v') && (mode() != "\<C-v>"))
-    normal! gv
+  if (a:mode ==# 'x')
     let current_mode = mode()
+
+    if (mode() !=? 'v') && (mode() != "\<C-v>")
+      normal! gv
+    endif
   endif
 
   " searching for user configurations
@@ -408,9 +411,12 @@ function! patternjump#backward(mode, ...) "{{{
   let l:count = (a:0 > 1 && a:2 > 0) ? a:2 : v:count1
 
   " re-entering to the visual mode (if necessary)
-  if (a:mode ==# 'x') && ((mode() !=? 'v') && (mode() != "\<C-v>"))
-    normal! gv
+  if (a:mode ==# 'x')
     let current_mode = mode()
+
+    if (mode() !=? 'v') && (mode() != "\<C-v>")
+      normal! gv
+    endif
   endif
 
   " searching for user configurations
