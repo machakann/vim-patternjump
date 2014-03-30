@@ -1,394 +1,1834 @@
 " *** Test field ***
 
 " Test 1
-" forward
+" forward (no wrap)
 "-----------------------
-" 1.1 default pattern
+" 1.1 normal mode
+  foo bar baz
+
+
+" 1.2 normal mode
+  foo bar baz
+
+
+" 1.3 normal mode
+  foo bar baz
+
+
+" 1.4 normal mode
+foo bar baz
+
+
+" 1.5 normal mode
+foo bar baz
+
+
+" 1.6 normal mode
+foo bar baz
+
+
+" 1.7 normal mode
+  foo bar baz
+
+
+" 1.8 normal mode
+  foo bar baz
+
+
+" 1.9 normal mode
+  foo bar baz
+
+
+" 1.10 insert mode
+  foo bar baz
+
+
+" 1.11 insert mode
+  foo bar baz
+
+
+" 1.12 insert mode
+  foo bar baz
+
+
+" 1.13 insert mode
+foo bar baz
+
+
+" 1.14 insert mode
+foo bar baz
+
+
+" 1.15 insert mode
+foo bar baz
+
+
+" 1.16 visual mode
+  foo bar baz
+
+
+" 1.17 visual mode
+  foo bar baz
+
+
+" 1.18 visual mode
+  foo bar baz
+
+
+" 1.19 visual mode
+  foo bar baz
+
+
+" 1.20 visual mode
+  foo bar baz
+
+
+" 1.21 visual mode
+  foo bar baz
+
+
+" 1.22 visual mode
+foo bar baz
+
+
+" 1.23 visual mode
+foo bar baz
+
+
+" 1.24 visual mode
+foo bar baz
+
+
+" 1.25 visual mode
+foo bar baz
+
+
+" 1.26 visual mode
+foo bar baz
+
+
+" 1.27 visual mode
+foo bar baz
+
+
+" 1.28 visual mode
+  foo bar baz
+
+
+" 1.29 visual mode
+  foo bar baz
+
+
+" 1.30 visual mode
+  foo bar baz
+
+
+" 1.31 visual mode
+  foo bar baz
+
+
+" 1.32 visual mode
+  foo bar baz
+
+
+" 1.33 visual mode
+  foo bar baz
+
+
+" 1.34 visual mode
+  foo bar baz
+
+
+" 1.35 visual mode
+  foo bar baz
+
+
+" 1.36 visual mode
+  foo bar baz
+
+
+" 1.37 visual mode
+  foo bar baz
+
+
+" 1.38 visual mode
+  foo bar baz
+
+
+" 1.39 visual mode
+  foo bar baz
+
+
+" 1.40 visual mode
+  foo bar baz
+
+
+" 1.41 visual mode
+  foo bar baz
+
+
+" 1.42 visual mode
+  foo bar baz
+
+
+" 1.43 visual mode
+  foo bar baz
+
+
+" 1.44 visual mode
+  foo bar baz
+
+
+" 1.45 visual mode
+  foo bar baz
+
+
+" 1.46 visual mode
+  foo bar baz
+
+
+" 1.47 visual mode
+  foo bar baz
+
+
+" 1.48 visual mode
+  foo bar baz
+
+
+" 1.49 visual mode
+  foo bar baz
+
+
+" 1.50 visual mode
+  foo bar baz
+
+
+" 1.51 visual mode
+  foo bar baz
+
+
+" 1.52 visual mode
+  foo bar baz
+
+
+" 1.53 visual mode
+  foo bar baz
+
+
+" 1.54 visual mode
+  foo bar baz
+
+
+" 1.55 visual mode
+  foo bar baz
+
+
+" 1.56 visual mode
+  foo bar baz
+
+
+" 1.57 visual mode
+  foo bar baz
+
+
+" 1.58 visual mode
+foo bar baz
+
+
+" 1.59 visual mode
+foo bar baz
+
+
+" 1.60 visual mode
+foo bar baz
+
+
+" 1.61 visual mode
+foo bar baz
+
+
+" 1.62 visual mode
+foo bar baz
+
+
+" 1.63 visual mode
+foo bar baz
+
+
+" 1.64 visual mode
+  foo bar baz
+
+
+" 1.65 visual mode
+  foo bar baz
+
+
+" 1.66 visual mode
+  foo bar baz
+
+
+" 1.67 visual mode
+  foo bar baz
+
+
+" 1.68 visual mode
+  foo bar baz
+
+
+" 1.69 visual mode
+  foo bar baz
+
+
+" 1.70 visual mode
+  foo bar baz
+
+
+" 1.71 visual mode
+  foo bar baz
+
+
+" 1.72 visual mode
+  foo bar baz
+
+
+" 1.73 visual mode
+  foo bar baz
+
+
+" 1.74 visual mode
+  foo bar baz
+
+
+" 1.75 visual mode
+  foo bar baz
+
+
+" 1.76 visual mode
+  foo bar baz
+
+
+" 1.77 visual mode
+  foo bar baz
+
+
+" 1.78 visual mode
+  foo bar baz
+
+
+" 1.79 visual mode
+  foo bar baz
+
+
+" 1.80 visual mode
+  foo bar baz
+
+
+" 1.81 visual mode
+  foo bar baz
+
+
+" 1.82 visual mode
+  foo bar baz
+
+
+" 1.83 visual mode
+  foo bar baz
+
+
+" 1.84 visual mode
+  foo bar baz
+
+
+" 1.85 visual mode
+  foo bar baz
+
+
+" 1.86 visual mode
+  foo bar baz
+
+
+" 1.87 visual mode
+  foo bar baz
+
+
+" 1.88 operator-pending mode
+  foo bar baz
+
+
+" 1.89 operator-pending mode
+  foo bar baz
+
+
+" 1.90 operator-pending mode
+  foo bar baz
+
+
+" 1.91 operator-pending mode
+  foo bar baz
+
+
+" 1.92 operator-pending mode
+  foo bar baz
+
+
+" 1.93 operator-pending mode
+  foo bar baz
+
+
+" 1.94 command-line mode
+
+
+" 1.95 command-line mode
+
+
+" 1.96 command-line mode
+
+
+" 1.97 normal mode
+  foo bar baz
+
+
+" 1.98 normal mode
+  foo bar baz
+
+
+" 1.99 normal mode
+  foo bar baz
+
+
+" 1.100 normal mode
+foo bar baz
+
+
+" 1.101 normal mode
+foo bar baz
+
+
+" 1.102 normal mode
+foo bar baz
+
+
+" 1.103 normal mode
+  foo bar baz
+
+
+" 1.104 normal mode
+  foo bar baz
+
+
+" 1.105 normal mode
+  foo bar baz
+
+
+" 1.106 insert mode
+  foo bar baz
+
+
+" 1.107 insert mode
+  foo bar baz
+
+
+" 1.108 insert mode
+  foo bar baz
+
+
+" 1.109 insert mode
+foo bar baz
+
+
+" 1.110 insert mode
+foo bar baz
+
+
+" 1.111 insert mode
+foo bar baz
+
+
+" 1.112 visual mode
+  foo bar baz
+
+
+" 1.113 visual mode
+  foo bar baz
+
+
+" 1.114 visual mode
+  foo bar baz
+
+
+" 1.115 visual mode
+  foo bar baz
+
+
+" 1.116 visual mode
+  foo bar baz
+
+
+" 1.117 visual mode
+  foo bar baz
+
+
+" 1.118 visual mode
+foo bar baz
+
+
+" 1.119 visual mode
+foo bar baz
+
+
+" 1.120 visual mode
+foo bar baz
+
+
+" 1.121 visual mode
+foo bar baz
+
+
+" 1.122 visual mode
+foo bar baz
+
+
+" 1.123 visual mode
+foo bar baz
+
+
+" 1.124 visual mode
+  foo bar baz
+
+
+" 1.125 visual mode
+  foo bar baz
+
+
+" 1.126 visual mode
+  foo bar baz
+
+
+" 1.127 visual mode
+  foo bar baz
+
+
+" 1.128 visual mode
+  foo bar baz
+
+
+" 1.129 visual mode
+  foo bar baz
+
+
+" 1.130 visual mode
+  foo bar baz
+
+
+" 1.131 visual mode
+  foo bar baz
+
+
+" 1.132 visual mode
+  foo bar baz
+
+
+" 1.133 visual mode
+  foo bar baz
+
+
+" 1.134 visual mode
+  foo bar baz
+
+
+" 1.135 visual mode
+  foo bar baz
+
+
+" 1.136 visual mode
+  foo bar baz
+
+
+" 1.137 visual mode
+  foo bar baz
+
+
+" 1.138 visual mode
+  foo bar baz
+
+
+" 1.139 visual mode
+  foo bar baz
+
+
+" 1.140 visual mode
+  foo bar baz
+
+
+" 1.141 visual mode
+  foo bar baz
+
+
+" 1.142 visual mode
+  foo bar baz
+
+
+" 1.143 visual mode
+  foo bar baz
+
+
+" 1.144 visual mode
+  foo bar baz
+
+
+" 1.145 visual mode
+  foo bar baz
+
+
+" 1.146 visual mode
+  foo bar baz
+
+
+" 1.147 visual mode
+  foo bar baz
+
+
+" 1.148 visual mode
+  foo bar baz
+
+
+" 1.149 visual mode
+  foo bar baz
+
+
+" 1.150 visual mode
+  foo bar baz
+
+
+" 1.151 visual mode
+  foo bar baz
+
+
+" 1.152 visual mode
+  foo bar baz
+
+
+" 1.153 visual mode
+  foo bar baz
+
+
+" 1.154 visual mode
+foo bar baz
+
+
+" 1.155 visual mode
+foo bar baz
+
+
+" 1.156 visual mode
+foo bar baz
+
+
+" 1.157 visual mode
+foo bar baz
+
+
+" 1.158 visual mode
+foo bar baz
+
+
+" 1.159 visual mode
+foo bar baz
+
+
+" 1.160 visual mode
+  foo bar baz
+
+
+" 1.161 visual mode
+  foo bar baz
+
+
+" 1.162 visual mode
+  foo bar baz
+
+
+" 1.163 visual mode
+  foo bar baz
+
+
+" 1.164 visual mode
+  foo bar baz
+
+
+" 1.165 visual mode
+  foo bar baz
+
+
+" 1.166 visual mode
+  foo bar baz
+
+
+" 1.167 visual mode
+  foo bar baz
+
+
+" 1.168 visual mode
+  foo bar baz
+
+
+" 1.169 visual mode
+  foo bar baz
+
+
+" 1.170 visual mode
+  foo bar baz
+
+
+" 1.171 visual mode
+  foo bar baz
+
+
+" 1.172 visual mode
+  foo bar baz
+
+
+" 1.173 visual mode
+  foo bar baz
+
+
+" 1.174 visual mode
+  foo bar baz
+
+
+" 1.175 visual mode
+  foo bar baz
+
+
+" 1.176 visual mode
+  foo bar baz
+
+
+" 1.177 visual mode
+  foo bar baz
+
+
+" 1.178 visual mode
+  foo bar baz
+
+
+" 1.179 visual mode
+  foo bar baz
+
+
+" 1.180 visual mode
+  foo bar baz
+
+
+" 1.181 visual mode
+  foo bar baz
+
+
+" 1.182 visual mode
+  foo bar baz
+
+
+" 1.183 visual mode
+  foo bar baz
+
+
+" 1.184 operator-pending mode
+  foo bar baz
+
+
+" 1.185 operator-pending mode
+  foo bar baz
+
+
+" 1.186 operator-pending mode
+  foo bar baz
+
+
+" 1.187 operator-pending mode
+  foo bar baz
+
+
+" 1.188 operator-pending mode
+  foo bar baz
+
+
+" 1.189 operator-pending mode
+  foo bar baz
+
+
+" 1.190 command-line mode
+
+
+" 1.191 command-line mode
+
+
+" 1.192 command-line mode
+
+
+" 1.193 default pattern
+  foo bar
+
+
+" 1.194 default pattern
 foo bar
 
 
-" 1.2 default pattern
-foo, bar
-
-
-" 1.3 default pattern
-foo (bar)
-
-
-" 1.4 default pattern
-foobar
-
-
-" 1.5 default pattern
-foo a:bar
-
-
-" 1.6 example 1
+" 1.195 default pattern
 foo bar
 
 
-" 1.7 example 1
+" 1.196 default pattern
+  foo bar
+
+
+" 1.197 default pattern
 foo , bar
 
 
-" 1.8 example 1
-foo (bar)
+" 1.198 default pattern
+foo ( bar )
 
 
-" 1.9 example 1
-foobar
+" 1.199 default pattern
+foo [ bar ]
 
 
-" 1.10 example 1
-foo a:bar
+" 1.200 default pattern
+foo { bar }
 
 
-" 1.11 example 2
+" 1.201 default pattern
 foo bar
 
 
-" 1.12 example 2
-foo , bar
-
-
-" 1.13 example 2
-foo (bar)
-
-
-" 1.14 example 2
-foobar
-
-
-" 1.15 example 2
-foo a:bar
-
-
-" 1.16 example 3
+" 1.202 default pattern
 foo bar
 
 
-" 1.17 example 3
-foo, bar
+" 1.203 default pattern
+  foo bar
 
 
-" 1.18 example 3
-foo (bar)
+" 1.204 default pattern
+  foo bar
 
 
-" 1.19 example 3
+" 1.205 default pattern
+  foo bar
+
+
+" 1.206 default pattern
+  foo bar
+
+
+" 1.207 default pattern
+  foo bar
+
+
+" 1.208 default pattern
+  foo bar baz
+
+
+" 1.209 default pattern
+  foo bar baz
+
+
+" 1.210 default pattern
+  foo bar baz
+
+
+" 1.211 default pattern
+  foo bar
+
+
+" 1.212 default pattern
+  foo bar
+
+
+" 1.213 default pattern
+  foo bar
+
+
+" 1.214 default pattern
+  foo bar baz
+
+
+" 1.215 default pattern
+  foo bar baz
+
+
+" 1.216 default pattern
+  foo bar baz
+
+
+" 1.217 default pattern
+  foo bar baz
+
+
+" 1.218 default pattern
+  foo bar baz
+
+
+" 1.219 default pattern
+  foo bar baz
+
+
+" 1.220 default pattern
+  foo bar baz
+
+
+" 1.221 default pattern
+
+
+" 1.222 default pattern
+
+
+" 1.223 default pattern
+
+
+" 1.224 default pattern
+
+
+" 1.225 default pattern
+
+
+" 1.226 default pattern
+
+
+" 1.227 default pattern
+
+
+" 1.228 special pattern 1
 foobar
 
 
-" 1.20 example 3
-foo a:bar
-
-
-" 1.21 example 4
-foo bar
-
-
-" 1.22 example 4
-foo, bar
-
-
-" 1.23 example 4
-foo (bar)
-
-
-" 1.24 example 4
+" 1.229 special pattern 2
 foobar
 
 
-" 1.25 example 4
-foo a:bar
-
-
-" 1.26 example 5
-foo bar
-
-
-" 1.27 example 5
-foo , bar
-
-
-" 1.28 example 5
-foo (bar)
-
-
-" 1.29 example 5
+" 1.230 special pattern 3
 foobar
 
 
-" 1.30 example 5
-foo a:bar
-
-
-" 1.31 example 6
-foo bar
-
-
-" 1.32 example 6
-foo , bar
-
-
-" 1.33 example 6
-foo (bar)
-
-
-" 1.34 example 6
+" 1.231 special pattern 4
 foobar
 
 
-" 1.35 example 6
-foo a:bar
-
-
-" 1.36 example 7
-foo bar
-
-
-" 1.37 example 7
-foo , bar
-
-
-" 1.38 example 7
-foo (bar)
-
-
-" 1.39 example 7
-foobar
-
-
-" 1.40 example 7
-foo a:bar
-
-
-" 1.41 special pattern 1
-foobar
-
-
-" 1.42 special pattern 2
-foobar
-
-
-" 1.43 special pattern 3
-foobar
-
-
-" 1.44 special pattern 4
-foobar
-
-
-" 1.45 elementary pattern 1
-xxx foo bar xxx
-
-
-" 1.46 elementary pattern 1
-xxx foo bar xxx
-
-
-" 1.47 elementary pattern 2
-xxx foo bar xxx
-
-
-" 1.48 elementary pattern 2
-xxx foo bar xxx
 
 
 
 " Test 2
-" backward
+" backward (no wrap)
 "-----------------------
-" 2.1 default pattern
+" 2.1 normal mode
+foo bar baz  
+
+
+" 2.2 normal mode
+foo bar baz  
+
+
+" 2.3 normal mode
+foo bar baz  
+
+
+" 2.4 normal mode
+foo bar baz
+
+
+" 2.5 normal mode
+foo bar baz
+
+
+" 2.6 normal mode
+foo bar baz
+
+
+" 2.7 normal mode
+foo bar baz  
+
+
+" 2.8 normal mode
+foo bar baz  
+
+
+" 2.9 normal mode
+foo bar baz  
+
+
+" 2.10 insert mode
+foo bar baz  
+
+
+" 2.11 insert mode
+foo bar baz  
+
+
+" 2.12 insert mode
+foo bar baz  
+
+
+" 2.13 insert mode
+foo bar baz
+
+
+" 2.14 insert mode
+foo bar baz
+
+
+" 2.15 insert mode
+foo bar baz
+
+
+" 2.16 visual mode
+foo bar baz  
+
+
+" 2.17 visual mode
+foo bar baz  
+
+
+" 2.18 visual mode
+foo bar baz  
+
+
+" 2.19 visual mode
+foo bar baz  
+
+
+" 2.20 visual mode
+foo bar baz  
+
+
+" 2.21 visual mode
+foo bar baz  
+
+
+" 2.22 visual mode
+foo bar baz
+
+
+" 2.23 visual mode
+foo bar baz
+
+
+" 2.24 visual mode
+foo bar baz
+
+
+" 2.25 visual mode
+foo bar baz
+
+
+" 2.26 visual mode
+foo bar baz
+
+
+" 2.27 visual mode
+foo bar baz
+
+
+" 2.28 visual mode
+foo bar baz  
+
+
+" 2.29 visual mode
+foo bar baz  
+
+
+" 2.30 visual mode
+foo bar baz  
+
+
+" 2.31 visual mode
+foo bar baz  
+
+
+" 2.32 visual mode
+foo bar baz  
+
+
+" 2.33 visual mode
+foo bar baz  
+
+
+" 2.34 visual mode
+foo bar baz  
+
+
+" 2.35 visual mode
+foo bar baz  
+
+
+" 2.36 visual mode
+foo bar baz  
+
+
+" 2.37 visual mode
+foo bar baz  
+
+
+" 2.38 visual mode
+foo bar baz  
+
+
+" 2.39 visual mode
+foo bar baz  
+
+
+" 2.40 visual mode
+foo bar baz  
+
+
+" 2.41 visual mode
+foo bar baz  
+
+
+" 2.42 visual mode
+foo bar baz  
+
+
+" 2.43 visual mode
+foo bar baz  
+
+
+" 2.44 visual mode
+foo bar baz  
+
+
+" 2.45 visual mode
+foo bar baz  
+
+
+" 2.46 visual mode
+foo bar baz  
+
+
+" 2.47 visual mode
+foo bar baz  
+
+
+" 2.48 visual mode
+foo bar baz  
+
+
+" 2.49 visual mode
+foo bar baz  
+
+
+" 2.50 visual mode
+foo bar baz  
+
+
+" 2.51 visual mode
+foo bar baz  
+
+
+" 2.52 visual mode
+foo bar baz  
+
+
+" 2.53 visual mode
+foo bar baz  
+
+
+" 2.54 visual mode
+foo bar baz  
+
+
+" 2.55 visual mode
+foo bar baz  
+
+
+" 2.56 visual mode
+foo bar baz  
+
+
+" 2.57 visual mode
+foo bar baz  
+
+
+" 2.58 visual mode
+foo bar baz
+
+
+" 2.59 visual mode
+foo bar baz
+
+
+" 2.60 visual mode
+foo bar baz
+
+
+" 2.61 visual mode
+foo bar baz
+
+
+" 2.62 visual mode
+foo bar baz
+
+
+" 2.63 visual mode
+foo bar baz
+
+
+" 2.64 visual mode
+foo bar baz  
+
+
+" 2.65 visual mode
+foo bar baz  
+
+
+" 2.66 visual mode
+foo bar baz  
+
+
+" 2.67 visual mode
+foo bar baz  
+
+
+" 2.68 visual mode
+foo bar baz  
+
+
+" 2.69 visual mode
+foo bar baz  
+
+
+" 2.70 visual mode
+foo bar baz  
+
+
+" 2.71 visual mode
+foo bar baz  
+
+
+" 2.72 visual mode
+foo bar baz  
+
+
+" 2.73 visual mode
+foo bar baz  
+
+
+" 2.74 visual mode
+foo bar baz  
+
+
+" 2.75 visual mode
+foo bar baz  
+
+
+" 2.76 visual mode
+foo bar baz  
+
+
+" 2.77 visual mode
+foo bar baz  
+
+
+" 2.78 visual mode
+foo bar baz  
+
+
+" 2.79 visual mode
+foo bar baz  
+
+
+" 2.80 visual mode
+foo bar baz  
+
+
+" 2.81 visual mode
+foo bar baz  
+
+
+" 2.82 visual mode
+foo bar baz  
+
+
+" 2.83 visual mode
+foo bar baz  
+
+
+" 2.84 visual mode
+foo bar baz  
+
+
+" 2.85 visual mode
+foo bar baz  
+
+
+" 2.86 visual mode
+foo bar baz  
+
+
+" 2.87 visual mode
+foo bar baz  
+
+
+" 2.88 operator-pending mode
+foo bar baz  
+
+
+" 2.89 operator-pending mode
+foo bar baz  
+
+
+" 2.90 operator-pending mode
+foo bar baz  
+
+
+" 2.91 operator-pending mode
+foo bar baz  
+
+
+" 2.92 operator-pending mode
+foo bar baz  
+
+
+" 2.93 operator-pending mode
+foo bar baz  
+
+
+" 2.94 command-line mode
+
+
+" 2.95 command-line mode
+
+
+" 2.96 command-line mode
+
+
+" 2.97 normal mode
+foo bar baz  
+
+
+" 2.98 normal mode
+foo bar baz  
+
+
+" 2.99 normal mode
+foo bar baz  
+
+
+" 2.100 normal mode
+foo bar baz
+
+
+" 2.101 normal mode
+foo bar baz
+
+
+" 2.102 normal mode
+foo bar baz
+
+
+" 2.103 normal mode
+foo bar baz  
+
+
+" 2.104 normal mode
+foo bar baz  
+
+
+" 2.105 normal mode
+foo bar baz  
+
+
+" 2.106 insert mode
+foo bar baz  
+
+
+" 2.107 insert mode
+foo bar baz  
+
+
+" 2.108 insert mode
+foo bar baz  
+
+
+" 2.109 insert mode
+foo bar baz
+
+
+" 2.110 insert mode
+foo bar baz
+
+
+" 2.111 insert mode
+foo bar baz
+
+
+" 2.112 visual mode
+foo bar baz  
+
+
+" 2.113 visual mode
+foo bar baz  
+
+
+" 2.114 visual mode
+foo bar baz  
+
+
+" 2.115 visual mode
+foo bar baz  
+
+
+" 2.116 visual mode
+foo bar baz  
+
+
+" 2.117 visual mode
+foo bar baz  
+
+
+" 2.118 visual mode
+foo bar baz
+
+
+" 2.119 visual mode
+foo bar baz
+
+
+" 2.120 visual mode
+foo bar baz
+
+
+" 2.121 visual mode
+foo bar baz
+
+
+" 2.122 visual mode
+foo bar baz
+
+
+" 2.123 visual mode
+foo bar baz
+
+
+" 2.124 visual mode
+foo bar baz  
+
+
+" 2.125 visual mode
+foo bar baz  
+
+
+" 2.126 visual mode
+foo bar baz  
+
+
+" 2.127 visual mode
+foo bar baz  
+
+
+" 2.128 visual mode
+foo bar baz  
+
+
+" 2.129 visual mode
+foo bar baz  
+
+
+" 2.130 visual mode
+foo bar baz  
+
+
+" 2.131 visual mode
+foo bar baz  
+
+
+" 2.132 visual mode
+foo bar baz  
+
+
+" 2.133 visual mode
+foo bar baz  
+
+
+" 2.134 visual mode
+foo bar baz  
+
+
+" 2.135 visual mode
+foo bar baz  
+
+
+" 2.136 visual mode
+foo bar baz  
+
+
+" 2.137 visual mode
+foo bar baz  
+
+
+" 2.138 visual mode
+foo bar baz  
+
+
+" 2.139 visual mode
+foo bar baz  
+
+
+" 2.140 visual mode
+foo bar baz  
+
+
+" 2.141 visual mode
+foo bar baz  
+
+
+" 2.142 visual mode
+foo bar baz  
+
+
+" 2.143 visual mode
+foo bar baz  
+
+
+" 2.144 visual mode
+foo bar baz  
+
+
+" 2.145 visual mode
+foo bar baz  
+
+
+" 2.146 visual mode
+foo bar baz  
+
+
+" 2.147 visual mode
+foo bar baz  
+
+
+" 2.148 visual mode
+foo bar baz  
+
+
+" 2.149 visual mode
+foo bar baz  
+
+
+" 2.150 visual mode
+foo bar baz  
+
+
+" 2.151 visual mode
+foo bar baz  
+
+
+" 2.152 visual mode
+foo bar baz  
+
+
+" 2.153 visual mode
+foo bar baz  
+
+
+" 2.154 visual mode
+foo bar baz
+
+
+" 2.155 visual mode
+foo bar baz
+
+
+" 2.156 visual mode
+foo bar baz
+
+
+" 2.157 visual mode
+foo bar baz
+
+
+" 2.158 visual mode
+foo bar baz
+
+
+" 2.159 visual mode
+foo bar baz
+
+
+" 2.160 visual mode
+foo bar baz  
+
+
+" 2.161 visual mode
+foo bar baz  
+
+
+" 2.162 visual mode
+foo bar baz  
+
+
+" 2.163 visual mode
+foo bar baz  
+
+
+" 2.164 visual mode
+foo bar baz  
+
+
+" 2.165 visual mode
+foo bar baz  
+
+
+" 2.166 visual mode
+foo bar baz  
+
+
+" 2.167 visual mode
+foo bar baz  
+
+
+" 2.168 visual mode
+foo bar baz  
+
+
+" 2.169 visual mode
+foo bar baz  
+
+
+" 2.170 visual mode
+foo bar baz  
+
+
+" 2.171 visual mode
+foo bar baz  
+
+
+" 2.172 visual mode
+foo bar baz  
+
+
+" 2.173 visual mode
+foo bar baz  
+
+
+" 2.174 visual mode
+foo bar baz  
+
+
+" 2.175 visual mode
+foo bar baz  
+
+
+" 2.176 visual mode
+foo bar baz  
+
+
+" 2.177 visual mode
+foo bar baz  
+
+
+" 2.178 visual mode
+foo bar baz  
+
+
+" 2.179 visual mode
+foo bar baz  
+
+
+" 2.180 visual mode
+foo bar baz  
+
+
+" 2.181 visual mode
+foo bar baz  
+
+
+" 2.182 visual mode
+foo bar baz  
+
+
+" 2.183 visual mode
+foo bar baz  
+
+
+" 2.184 operator-pending mode
+foo bar baz  
+
+
+" 2.185 operator-pending mode
+foo bar baz  
+
+
+" 2.186 operator-pending mode
+foo bar baz  
+
+
+" 2.187 operator-pending mode
+foo bar baz  
+
+
+" 2.188 operator-pending mode
+foo bar baz  
+
+
+" 2.189 operator-pending mode
+foo bar baz  
+
+
+" 2.190 command-line mode
+
+
+" 2.191 command-line mode
+
+
+" 2.192 command-line mode
+
+
+" 2.193 default pattern
+foo bar  
+
+
+" 2.194 default pattern
 foo bar
 
 
-" 2.2 default pattern
-foo, bar
+" 2.195 default pattern
+  foo bar
 
 
-" 2.3 default pattern
-foo (bar)
+" 2.196 default pattern
+  foo bar
 
 
-" 2.4 default pattern
-foobar
-
-
-" 2.5 default pattern
-foo a:bar
-
-
-" 2.6 example 1
-foo bar
-
-
-" 2.7 example 1
+" 2.197 default pattern
 foo , bar
 
 
-" 2.8 example 1
-foo (bar)
+" 2.198 default pattern
+foo ( bar )
 
 
-" 2.9 example 1
-foobar
+" 2.199 default pattern
+foo [ bar ]
 
 
-" 2.10 example 1
-foo a:bar
+" 2.200 default pattern
+foo { bar }
 
 
-" 2.11 example 2
+" 2.201 default pattern
 foo bar
 
 
-" 2.12 example 2
-foo , bar
-
-
-" 2.13 example 2
-foo (bar)
-
-
-" 2.14 example 2
-foobar
-
-
-" 2.15 example 2
-foo a:bar
-
-
-" 2.16 example 3
+" 2.202 default pattern
 foo bar
 
 
-" 2.17 example 3
-foo, bar
+" 2.203 default pattern
+  foo bar
 
 
-" 2.18 example 3
-foo (bar)
+" 2.204 default pattern
+  foo bar
 
 
-" 2.19 example 3
+" 2.205 default pattern
+  foo bar
+
+
+" 2.206 default pattern
+  foo bar
+
+
+" 2.207 default pattern
+  foo bar
+
+
+" 2.208 default pattern
+foo bar baz  
+
+
+" 2.209 default pattern
+foo bar baz  
+
+
+" 2.210 default pattern
+foo bar baz  
+
+
+" 2.211 default pattern
+  foo bar
+
+
+" 2.212 default pattern
+  foo bar
+
+
+" 2.213 default pattern
+  foo bar
+
+
+" 2.214 default pattern
+foo bar baz  
+
+
+" 2.215 default pattern
+foo bar baz  
+
+
+" 2.216 default pattern
+foo bar baz  
+
+
+" 2.217 default pattern
+foo bar baz  
+
+
+" 2.218 default pattern
+foo bar baz  
+
+
+" 2.219 default pattern
+foo bar baz  
+
+
+" 2.220 default pattern
+foo bar baz  
+
+
+" 2.221 default pattern
+
+
+" 2.222 default pattern
+
+
+" 2.223 default pattern
+
+
+" 2.224 default pattern
+
+
+" 2.225 default pattern
+
+
+" 2.226 default pattern
+
+
+" 2.227 default pattern
+
+
+" 2.228 special pattern 1
 foobar
 
 
-" 2.20 example 3
-foo a:bar
-
-
-" 2.21 example 4
-foo bar
-
-
-" 2.22 example 4
-foo, bar
-
-
-" 2.23 example 4
-foo (bar)
-
-
-" 2.24 example 4
+" 2.229 special pattern 2
 foobar
 
 
-" 2.25 example 4
-foo a:bar
-
-
-" 2.26 example 5
-foo bar
-
-
-" 2.27 example 5
-foo , bar
-
-
-" 2.28 example 5
-foo (bar)
-
-
-" 2.29 example 5
+" 2.230 special pattern 3
 foobar
 
 
-" 2.30 example 5
-foo a:bar
-
-
-" 2.31 example 6
-foo bar
-
-
-" 2.32 example 6
-foo , bar
-
-
-" 2.33 example 6
-foo (bar)
-
-
-" 2.34 example 6
+" 2.231 special pattern 4
 foobar
-
-
-" 2.35 example 6
-foo a:bar
-
-
-" 2.36 example 7
-foo bar
-
-
-" 2.37 example 7
-foo , bar
-
-
-" 2.38 example 7
-foo (bar )
-
-
-" 2.39 example 7
-foobar
-
-
-" 2.40 example 7
-foo a:bar
-
-
-" 2.41 special pattern 1
-foobar
-
-
-" 2.42 special pattern 2
-foobar
-
-
-" 2.43 special pattern 3
-foobar
-
-
-" 2.44 special pattern 4
-foobar
-
-
-" 2.45 elementary pattern 1
-xxx foo bar xxx
-
-
-" 2.46 elementary pattern 1
-xxx foo bar xxx
-
-
-" 2.47 elementary pattern 2
-xxx foo bar xxx
-
-
-" 2.48 elementary pattern 2
-xxx foo bar xxx
 
 
 
