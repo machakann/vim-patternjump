@@ -1832,6 +1832,1840 @@ foobar
 
 
 
+
+
+" Test 3
+" forward
+"-----------------------
+" 3.1 normal mode
+  foo bar baz
+  foo bar baz
+
+" 3.2 normal mode
+  foo bar baz
+  foo bar baz
+
+" 3.3 normal mode
+  foo bar baz
+  foo bar baz
+
+" 3.4 normal mode
+foo bar baz
+foo bar baz
+
+" 3.5 normal mode
+foo bar baz
+foo bar baz
+
+" 3.6 normal mode
+foo bar baz
+foo bar baz
+
+" 3.7 normal mode
+  foo bar baz
+  foo bar baz
+
+" 3.8 normal mode
+  foo bar baz
+  foo bar baz
+
+" 3.9 normal mode
+  foo bar baz
+  foo bar baz
+
+" 3.10 insert mode
+  foo bar baz
+  foo bar baz
+
+" 3.11 insert mode
+  foo bar baz
+  foo bar baz
+
+" 3.12 insert mode
+  foo bar baz
+  foo bar baz
+
+" 3.13 insert mode
+foo bar baz
+foo bar baz
+
+" 3.14 insert mode
+foo bar baz
+foo bar baz
+
+" 3.15 insert mode
+foo bar baz
+foo bar baz
+
+" 3.16 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.17 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.18 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.19 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.20 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.21 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.22 visual mode
+foo bar baz
+foo bar baz
+
+" 3.23 visual mode
+foo bar baz
+foo bar baz
+
+" 3.24 visual mode
+foo bar baz
+foo bar baz
+
+" 3.25 visual mode
+foo bar baz
+foo bar baz
+
+" 3.26 visual mode
+foo bar baz
+foo bar baz
+
+" 3.27 visual mode
+foo bar baz
+foo bar baz
+
+" 3.28 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.29 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.30 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.31 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.32 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.33 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.34 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.35 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.36 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.37 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.38 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.39 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.40 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.41 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.42 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.43 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.44 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.45 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.46 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.47 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.48 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.49 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.50 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.51 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.52 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.53 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.54 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.55 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.56 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.57 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.58 visual mode
+foo bar baz
+foo bar baz
+
+" 3.59 visual mode
+foo bar baz
+foo bar baz
+
+" 3.60 visual mode
+foo bar baz
+foo bar baz
+
+" 3.61 visual mode
+foo bar baz
+foo bar baz
+
+" 3.62 visual mode
+foo bar baz
+foo bar baz
+
+" 3.63 visual mode
+foo bar baz
+foo bar baz
+
+" 3.64 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.65 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.66 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.67 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.68 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.69 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.70 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.71 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.72 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.73 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.74 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.75 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.76 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.77 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.78 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.79 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.80 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.81 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.82 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.83 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.84 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.85 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.86 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.87 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.88 operator-pending mode
+  foo bar baz
+  foo bar baz
+
+" 3.89 operator-pending mode
+  foo bar baz
+  foo bar baz
+
+" 3.90 operator-pending mode
+  foo bar baz
+  foo bar baz
+
+" 3.91 operator-pending mode
+  foo bar baz
+  foo bar baz
+
+" 3.92 operator-pending mode
+  foo bar baz
+  foo bar baz
+
+" 3.93 operator-pending mode
+  foo bar baz
+  foo bar baz
+
+" 3.94 command-line mode
+
+
+" 3.95 command-line mode
+
+
+" 3.96 command-line mode
+
+
+" 3.97 normal mode
+  foo bar baz
+  foo bar baz
+
+" 3.98 normal mode
+  foo bar baz
+  foo bar baz
+
+" 3.99 normal mode
+  foo bar baz
+  foo bar baz
+
+" 3.100 normal mode
+foo bar baz
+foo bar baz
+
+" 3.101 normal mode
+foo bar baz
+foo bar baz
+
+" 3.102 normal mode
+foo bar baz
+foo bar baz
+
+" 3.103 normal mode
+  foo bar baz
+  foo bar baz
+
+" 3.104 normal mode
+  foo bar baz
+  foo bar baz
+
+" 3.105 normal mode
+  foo bar baz
+  foo bar baz
+
+" 3.106 insert mode
+  foo bar baz
+  foo bar baz
+
+" 3.107 insert mode
+  foo bar baz
+  foo bar baz
+
+" 3.108 insert mode
+  foo bar baz
+  foo bar baz
+
+" 3.109 insert mode
+foo bar baz
+foo bar baz
+
+" 3.110 insert mode
+foo bar baz
+foo bar baz
+
+" 3.111 insert mode
+foo bar baz
+foo bar baz
+
+" 3.112 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.113 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.114 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.115 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.116 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.117 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.118 visual mode
+foo bar baz
+foo bar baz
+
+" 3.119 visual mode
+foo bar baz
+foo bar baz
+
+" 3.120 visual mode
+foo bar baz
+foo bar baz
+
+" 3.121 visual mode
+foo bar baz
+foo bar baz
+
+" 3.122 visual mode
+foo bar baz
+foo bar baz
+
+" 3.123 visual mode
+foo bar baz
+foo bar baz
+
+" 3.124 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.125 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.126 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.127 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.128 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.129 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.130 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.131 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.132 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.133 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.134 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.135 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.136 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.137 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.138 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.139 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.140 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.141 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.142 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.143 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.144 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.145 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.146 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.147 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.148 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.149 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.150 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.151 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.152 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.153 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.154 visual mode
+foo bar baz
+foo bar baz
+
+" 3.155 visual mode
+foo bar baz
+foo bar baz
+
+" 3.156 visual mode
+foo bar baz
+foo bar baz
+
+" 3.157 visual mode
+foo bar baz
+foo bar baz
+
+" 3.158 visual mode
+foo bar baz
+foo bar baz
+
+" 3.159 visual mode
+foo bar baz
+foo bar baz
+
+" 3.160 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.161 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.162 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.163 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.164 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.165 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.166 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.167 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.168 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.169 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.170 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.171 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.172 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.173 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.174 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.175 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.176 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.177 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.178 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.179 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.180 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.181 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.182 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.183 visual mode
+  foo bar baz
+  foo bar baz
+
+" 3.184 operator-pending mode
+  foo bar baz
+  foo bar baz
+
+" 3.185 operator-pending mode
+  foo bar baz
+  foo bar baz
+
+" 3.186 operator-pending mode
+  foo bar baz
+  foo bar baz
+
+" 3.187 operator-pending mode
+  foo bar baz
+  foo bar baz
+
+" 3.188 operator-pending mode
+  foo bar baz
+  foo bar baz
+
+" 3.189 operator-pending mode
+  foo bar baz
+  foo bar baz
+
+" 3.190 command-line mode
+
+
+" 3.191 command-line mode
+
+
+" 3.192 command-line mode
+
+
+" 3.193 default pattern
+  foo bar
+  foo bar
+
+" 3.194 default pattern
+foo bar
+
+
+" 3.195 default pattern
+foo bar
+
+
+" 3.196 default pattern
+  foo bar
+  foo bar
+
+" 3.197 default pattern
+foo , bar
+
+
+" 3.198 default pattern
+foo ( bar )
+
+
+" 3.199 default pattern
+foo [ bar ]
+
+
+" 3.200 default pattern
+foo { bar }
+
+
+" 3.201 default pattern
+foo bar
+
+
+" 3.202 default pattern
+foo bar
+
+
+" 3.203 default pattern
+  foo bar
+  foo bar
+
+" 3.204 default pattern
+  foo bar
+  foo bar
+
+" 3.205 default pattern
+  foo bar
+  foo bar
+
+" 3.206 default pattern
+  foo bar
+  foo bar
+
+" 3.207 default pattern
+  foo bar
+  foo bar
+
+" 3.208 default pattern
+  foo bar baz
+  foo bar baz
+
+" 3.209 default pattern
+  foo bar baz
+  foo bar baz
+
+" 3.210 default pattern
+  foo bar baz
+  foo bar baz
+
+" 3.211 default pattern
+  foo bar
+  foo bar
+
+" 3.212 default pattern
+  foo bar
+  foo bar
+
+" 3.213 default pattern
+  foo bar
+  foo bar
+
+" 3.214 default pattern
+  foo bar baz
+  foo bar baz
+
+" 3.215 default pattern
+  foo bar baz
+  foo bar baz
+
+" 3.216 default pattern
+  foo bar baz
+  foo bar baz
+
+" 3.217 default pattern
+  foo bar baz
+  foo bar baz
+
+" 3.218 default pattern
+  foo bar baz
+  foo bar baz
+
+" 3.219 default pattern
+  foo bar baz
+  foo bar baz
+
+" 3.220 default pattern
+  foo bar baz
+  foo bar baz
+
+" 3.221 default pattern
+
+
+" 3.222 default pattern
+
+
+" 3.223 default pattern
+
+
+" 3.224 default pattern
+
+
+" 3.225 default pattern
+
+
+" 3.226 default pattern
+
+
+" 3.227 default pattern
+
+
+" 3.228 special pattern 1
+foobar
+foobar
+
+" 3.229 special pattern 2
+foobar
+foobar
+
+" 3.230 special pattern 3
+foobar
+foobar
+
+" 3.231 special pattern 4
+foobar
+foobar
+
+
+
+
+" Test 4
+" backward
+"-----------------------
+" 4.1 normal mode
+foo bar baz  
+foo bar baz  
+
+" 4.2 normal mode
+foo bar baz  
+foo bar baz  
+
+" 4.3 normal mode
+foo bar baz  
+foo bar baz  
+
+" 4.4 normal mode
+foo bar baz
+foo bar baz
+
+" 4.5 normal mode
+foo bar baz
+foo bar baz
+
+" 4.6 normal mode
+foo bar baz
+foo bar baz
+
+" 4.7 normal mode
+foo bar baz  
+foo bar baz  
+
+" 4.8 normal mode
+foo bar baz  
+foo bar baz  
+
+" 4.9 normal mode
+foo bar baz  
+foo bar baz  
+
+" 4.10 insert mode
+foo bar baz  
+foo bar baz  
+
+" 4.11 insert mode
+foo bar baz  
+foo bar baz  
+
+" 4.12 insert mode
+foo bar baz  
+foo bar baz  
+
+" 4.13 insert mode
+foo bar baz
+foo bar baz
+
+" 4.14 insert mode
+foo bar baz
+foo bar baz
+
+" 4.15 insert mode
+foo bar baz
+foo bar baz
+
+" 4.16 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.17 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.18 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.19 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.20 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.21 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.22 visual mode
+foo bar baz
+foo bar baz
+
+" 4.23 visual mode
+foo bar baz
+foo bar baz
+
+" 4.24 visual mode
+foo bar baz
+foo bar baz
+
+" 4.25 visual mode
+foo bar baz
+foo bar baz
+
+" 4.26 visual mode
+foo bar baz
+foo bar baz
+
+" 4.27 visual mode
+foo bar baz
+foo bar baz
+
+" 4.28 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.29 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.30 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.31 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.32 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.33 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.34 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.35 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.36 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.37 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.38 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.39 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.40 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.41 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.42 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.43 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.44 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.45 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.46 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.47 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.48 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.49 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.50 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.51 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.52 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.53 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.54 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.55 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.56 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.57 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.58 visual mode
+foo bar baz
+foo bar baz
+
+" 4.59 visual mode
+foo bar baz
+foo bar baz
+
+" 4.60 visual mode
+foo bar baz
+foo bar baz
+
+" 4.61 visual mode
+foo bar baz
+foo bar baz
+
+" 4.62 visual mode
+foo bar baz
+foo bar baz
+
+" 4.63 visual mode
+foo bar baz
+foo bar baz
+
+" 4.64 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.65 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.66 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.67 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.68 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.69 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.70 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.71 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.72 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.73 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.74 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.75 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.76 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.77 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.78 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.79 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.80 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.81 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.82 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.83 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.84 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.85 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.86 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.87 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.88 operator-pending mode
+foo bar baz  
+foo bar baz  
+
+" 4.89 operator-pending mode
+foo bar baz  
+foo bar baz  
+
+" 4.90 operator-pending mode
+foo bar baz  
+foo bar baz  
+
+" 4.91 operator-pending mode
+foo bar baz  
+foo bar baz  
+
+" 4.92 operator-pending mode
+foo bar baz  
+foo bar baz  
+
+" 4.93 operator-pending mode
+foo bar baz  
+foo bar baz  
+
+" 4.94 command-line mode
+
+
+" 4.95 command-line mode
+
+
+" 4.96 command-line mode
+
+
+" 4.97 normal mode
+foo bar baz  
+foo bar baz  
+
+" 4.98 normal mode
+foo bar baz  
+foo bar baz  
+
+" 4.99 normal mode
+foo bar baz  
+foo bar baz  
+
+" 4.100 normal mode
+foo bar baz
+foo bar baz
+
+" 4.101 normal mode
+foo bar baz
+foo bar baz
+
+" 4.102 normal mode
+foo bar baz
+foo bar baz
+
+" 4.103 normal mode
+foo bar baz  
+foo bar baz  
+
+" 4.104 normal mode
+foo bar baz  
+foo bar baz  
+
+" 4.105 normal mode
+foo bar baz  
+foo bar baz  
+
+" 4.106 insert mode
+foo bar baz  
+foo bar baz  
+
+" 4.107 insert mode
+foo bar baz  
+foo bar baz  
+
+" 4.108 insert mode
+foo bar baz  
+foo bar baz  
+
+" 4.109 insert mode
+foo bar baz
+foo bar baz
+
+" 4.110 insert mode
+foo bar baz
+foo bar baz
+
+" 4.111 insert mode
+foo bar baz
+foo bar baz
+
+" 4.112 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.113 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.114 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.115 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.116 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.117 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.118 visual mode
+foo bar baz
+foo bar baz
+
+" 4.119 visual mode
+foo bar baz
+foo bar baz
+
+" 4.120 visual mode
+foo bar baz
+foo bar baz
+
+" 4.121 visual mode
+foo bar baz
+foo bar baz
+
+" 4.122 visual mode
+foo bar baz
+foo bar baz
+
+" 4.123 visual mode
+foo bar baz
+foo bar baz
+
+" 4.124 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.125 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.126 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.127 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.128 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.129 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.130 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.131 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.132 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.133 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.134 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.135 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.136 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.137 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.138 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.139 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.140 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.141 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.142 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.143 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.144 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.145 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.146 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.147 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.148 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.149 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.150 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.151 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.152 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.153 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.154 visual mode
+foo bar baz
+foo bar baz
+
+" 4.155 visual mode
+foo bar baz
+foo bar baz
+
+" 4.156 visual mode
+foo bar baz
+foo bar baz
+
+" 4.157 visual mode
+foo bar baz
+foo bar baz
+
+" 4.158 visual mode
+foo bar baz
+foo bar baz
+
+" 4.159 visual mode
+foo bar baz
+foo bar baz
+
+" 4.160 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.161 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.162 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.163 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.164 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.165 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.166 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.167 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.168 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.169 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.170 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.171 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.172 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.173 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.174 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.175 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.176 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.177 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.178 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.179 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.180 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.181 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.182 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.183 visual mode
+foo bar baz  
+foo bar baz  
+
+" 4.184 operator-pending mode
+foo bar baz  
+foo bar baz  
+
+" 4.185 operator-pending mode
+foo bar baz  
+foo bar baz  
+
+" 4.186 operator-pending mode
+foo bar baz  
+foo bar baz  
+
+" 4.187 operator-pending mode
+foo bar baz  
+foo bar baz  
+
+" 4.188 operator-pending mode
+foo bar baz  
+foo bar baz  
+
+" 4.189 operator-pending mode
+foo bar baz  
+foo bar baz  
+
+" 4.190 command-line mode
+
+
+" 4.191 command-line mode
+
+
+" 4.192 command-line mode
+
+
+" 4.193 default pattern
+foo bar  
+
+
+" 4.194 default pattern
+foo bar
+
+
+" 4.195 default pattern
+  foo bar
+  foo bar
+
+" 4.196 default pattern
+  foo bar
+  foo bar
+
+" 4.197 default pattern
+foo , bar
+
+
+" 4.198 default pattern
+foo ( bar )
+
+
+" 4.199 default pattern
+foo [ bar ]
+
+
+" 4.200 default pattern
+foo { bar }
+
+
+" 4.201 default pattern
+foo bar
+
+
+" 4.202 default pattern
+foo bar
+
+
+" 4.203 default pattern
+  foo bar
+  foo bar
+
+" 4.204 default pattern
+  foo bar
+  foo bar
+
+" 4.205 default pattern
+  foo bar
+  foo bar
+
+" 4.206 default pattern
+  foo bar
+  foo bar
+
+" 4.207 default pattern
+  foo bar
+  foo bar
+
+" 4.208 default pattern
+foo bar baz  
+foo bar baz  
+
+" 4.209 default pattern
+foo bar baz  
+foo bar baz  
+
+" 4.210 default pattern
+foo bar baz  
+foo bar baz  
+
+" 4.211 default pattern
+  foo bar
+  foo bar
+
+" 4.212 default pattern
+  foo bar
+  foo bar
+
+" 4.213 default pattern
+  foo bar
+  foo bar
+
+" 4.214 default pattern
+foo bar baz  
+foo bar baz  
+
+" 4.215 default pattern
+foo bar baz  
+foo bar baz  
+
+" 4.216 default pattern
+foo bar baz  
+foo bar baz  
+
+" 4.217 default pattern
+foo bar baz  
+foo bar baz  
+
+" 4.218 default pattern
+foo bar baz  
+foo bar baz  
+
+" 4.219 default pattern
+foo bar baz  
+foo bar baz  
+
+" 4.220 default pattern
+foo bar baz  
+foo bar baz  
+
+" 4.221 default pattern
+
+
+" 4.222 default pattern
+
+
+" 4.223 default pattern
+
+
+" 4.224 default pattern
+
+
+" 4.225 default pattern
+
+
+" 4.226 default pattern
+
+
+" 4.227 default pattern
+
+
+" 4.228 special pattern 1
+foobar
+foobar
+
+" 4.229 special pattern 2
+foobar
+foobar
+
+" 4.230 special pattern 3
+foobar
+foobar
+
+" 4.231 special pattern 4
+foobar
+foobar
+
+
 " vim:set foldcolumn=2:
 " vim:set foldmethod=marker:
 " vim:set commentstring="%s:
