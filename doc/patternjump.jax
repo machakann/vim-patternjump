@@ -1,4 +1,4 @@
-﻿*patternjump.jax*	日本語版ヘルプ		Last change:28-Mar-2014.
+﻿*patternjump.jax*	日本語版ヘルプ		Last change:01-Apr-2014.
 
 カーソル移動をお望みのままに！
 
@@ -466,6 +466,29 @@ g:patternjump_swap_head_tail			*g:patternjump_swap_head_tail*
 g:patternjump_wrap_line				*g:patternjump_wrap_line*
 	もし値が1なら patternjump のキーマッピングは行を超えて移動します。0な
 	らしません。デフォルト値は1です。
+
+g:patternjump_move_afap				*g:patternjump_move_afap*
+	このオプションは、移動先候補の数よりも多い {count} が与えられた時の挙
+	動を制御します。もし値が1なら patternjump はカーソルをできるだけ動かし
+	ます。もし値が0なら patternjump はカーソルを動かしません。例えば、次の
+	行の最初の文字の上にカーソルがあり、 |g:patternjump_patterns| は
+	tail_pattern の "foo" だけを持つとします。
+>
+	----------------->#
+	foo foo foo foo foo                                  {count} が5の場合
+	--- end of file ---
+<
+	五つの "foo" があるので、 {count} に5が与えられた場合、前方検索のキー
+	マッピングは最後の "foo" の末尾へカーソルを動かすでしょう。しかし、
+	{count}に6が与えられた場合、六つ目の移動先候補は存在しません。この時、
+	このオプションの値が1なら、カーソルを {count} に5が与えられた場合と同
+	じ場所まで動かします。これに対し、このオプションの値が0ならカーソルを
+	動かしません。デフォルト値は1です。
+>
+	-----------------># : g:patternjump_move_afap == 1
+	foo foo foo foo foo                                  {count} が6の場合
+	#                   : g:patternjump_move_afap == 0
+<
 
 
 ==============================================================================
