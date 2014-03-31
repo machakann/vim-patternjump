@@ -175,32 +175,46 @@ function! patternjump#forward(mode, ...) "{{{
   " searching for candidate positions
   let marker     = copy(cursor)
   let candidates = []
+  let filtered   = 0
 
   while 1
     let candidates += s:search_forward(a:mode, l:count, string, marker, head_pattern_list, tail_pattern_list, !(opt_debug_mode || opt_highlight), swapped)
 
+    " remove unnecessary matched_patterns and candidates
+    if (filtered == 0) && (swapped == 0)
+      let filter  = '(v:val[3] == 1) && (((v:val[0][0] > counter_edge[0]) || (v:val[0][0] == counter_edge[0]) && (v:val[0][1] > counter_edge[1])))'
+      let filter .= ' || ((v:val[3] == 0) && ((v:val[0][0] < counter_edge[0]) || ((v:val[0][0] == counter_edge[0]) && (v:val[0][1] < counter_edge[1]))))'
+      let filter .= ' ? [] : v:val'
+      call filter(map(candidates, filter), 'v:val != []')
+
+      let filtered = 1
+    endif
+
+    " swap patterns or go to the next line or break
     if (swapped == 1) && (candidates != []) && s:judge_swap('forward', swapped, candidates, l:count, counter_edge, opt_move_afap)
+      " swap patterns
       let head_pattern_list = pattern_lists[0]
       let tail_pattern_list = pattern_lists[1]
 
       let swapped = 0
     elseif opt_wrap_line && (a:mode !=# 'c') && (len(candidates) < l:count)
-      let marker[0] += 1
-      if  marker[0] > fileend | break | endif
-      let string = getline(marker[0])
-      let marker[1]  = 0
+      if (swapped == 1) && (marker[0] == counter_edge[0])
+        " swap patterns
+        let head_pattern_list = pattern_lists[0]
+        let tail_pattern_list = pattern_lists[1]
+
+        let swapped = 0
+      else
+        " go to the next line
+        let marker[0] += 1
+        if  marker[0] > fileend | break | endif
+        let string = getline(marker[0])
+        let marker[1]  = 0
+      endif
     else
       break
     endif
   endwhile
-
-  " remove unnecessary matched_patterns and candidates
-  if swapped >= 0
-    let filter  = '(v:val[3] == 1) && (((v:val[0][0] > counter_edge[0]) || (v:val[0][0] == counter_edge[0]) && (v:val[0][1] > counter_edge[1])))'
-    let filter .= ' || ((v:val[3] == 0) && ((v:val[0][0] < counter_edge[0]) || ((v:val[0][0] == counter_edge[0]) && (v:val[0][1] < counter_edge[1]))))'
-    let filter .= ' ? [] : v:val'
-    call filter(map(candidates, filter), 'v:val != []')
-  endif
 
   " determine output and move cursor
   let candidates_uniq = sort(s:Sl.uniq_by(copy(candidates), 'v:val[0]'), "s:compare")
@@ -535,32 +549,46 @@ function! patternjump#backward(mode, ...) "{{{
   " searching for candidate positions
   let marker     = copy(cursor)
   let candidates = []
+  let filtered   = 0
 
   while 1
     let candidates += s:search_backward(a:mode, string, marker, head_pattern_list, tail_pattern_list, swapped)
 
+    " remove unnecessary matched_patterns and candidates
+    if (filtered == 0) && (swapped == 1)
+      let filter  = '(v:val[3] == 1) && (((v:val[0][0] > counter_edge[0]) || (v:val[0][0] == counter_edge[0]) && (v:val[0][1] > counter_edge[1])))'
+      let filter .= ' || ((v:val[3] == 0) && ((v:val[0][0] < counter_edge[0]) || ((v:val[0][0] == counter_edge[0]) && (v:val[0][1] < counter_edge[1]))))'
+      let filter .= ' ? [] : v:val'
+      call filter(map(candidates, filter), 'v:val != []')
+
+      let filtered = 1
+    endif
+
+    " swap patterns or go to the next line or break
     if (swapped == 0) && (candidates != []) && s:judge_swap('backward', swapped, candidates, l:count, counter_edge, opt_move_afap)
+      " swap patterns
       let head_pattern_list = pattern_lists[1]
       let tail_pattern_list = pattern_lists[0]
 
       let swapped = 1
     elseif opt_wrap_line && (a:mode !=# 'c') && (len(candidates) < l:count)
-      let marker[0] -= 1
-      if  marker[0] < 1 | break | endif
-      let string = getline(marker[0])
-      let marker[1]  = len(string) + 2
+      if (swapped == 0) && (marker[0] == counter_edge[0])
+        " swap patterns
+        let head_pattern_list = pattern_lists[1]
+        let tail_pattern_list = pattern_lists[0]
+
+        let swapped = 1
+      else
+        " go to the next line
+        let marker[0] -= 1
+        if  marker[0] < 1 | break | endif
+        let string = getline(marker[0])
+        let marker[1]  = len(string) + 2
+      endif
     else
       break
     endif
   endwhile
-
-  " remove unnecessary matched_patterns and candidates
-  if swapped >= 0
-    let filter  = '(v:val[3] == 1) && (((v:val[0][0] > counter_edge[0]) || (v:val[0][0] == counter_edge[0]) && (v:val[0][1] > counter_edge[1])))'
-    let filter .= ' || ((v:val[3] == 0) && ((v:val[0][0] < counter_edge[0]) || ((v:val[0][0] == counter_edge[0]) && (v:val[0][1] < counter_edge[1]))))'
-    let filter .= ' ? [] : v:val'
-    call filter(map(candidates, filter), 'v:val != []')
-  endif
 
   " determine output or move cursor
   let candidates_uniq = reverse(sort(s:Sl.uniq_by(copy(candidates), 'v:val[0]'), "s:compare"))

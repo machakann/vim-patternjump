@@ -7501,7 +7501,7 @@ let test_info.3 = {
       \
       \ "183" : { 'caption'     : 'visual mode',
       \           'result'      : 'substitute(@*, ''\n'', "", "g")',
-      \           'expectation' : 'z  foo',
+      \           'expectation' : 'z',
       \           'key_input'   : "$v04\<M-l>y",
       \           'breaking'    : 1,
       \           'abort'       : 0,
