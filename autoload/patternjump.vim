@@ -178,7 +178,7 @@ function! patternjump#forward(mode, ...) "{{{
   let filtered   = 0
 
   while 1
-    let candidates += s:search_forward(a:mode, l:count, string, marker, head_pattern_list, tail_pattern_list, !(opt_debug_mode || opt_highlight), swapped)
+    let candidates += s:search_forward(a:mode, l:count, string, marker, head_pattern_list, tail_pattern_list, (opt_debug_mode || opt_highlight), swapped)
 
     " remove unnecessary matched_patterns and candidates
     if (filtered == 0) && (swapped == 0)
