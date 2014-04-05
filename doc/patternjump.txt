@@ -1,4 +1,4 @@
-*patternjump.txt*	Last change:01-Apr-2014.
+*patternjump.txt*	Last change:05-Apr-2014.
 
 Move cursor as you like.
 
@@ -97,7 +97,8 @@ with the default.
 		\   },
 		\ '*' : {
 		\   'c' : {
-		\     'head' : ['^', ' ', '[A-Z]', ',', ')', ']', '}', '$'],
+		\     'head' : ['^', ' ', '/', '[A-Z]', ',',
+		\               ')', ']', '}', '$'],
 		\     },
 		\   },
 		\ }
@@ -136,7 +137,8 @@ just define your patterns like this:
 		\
 		\ '*' : {
 		\   'c' : {
-		\     'head' : ['^', ' ', '[A-Z]', ',', ')', ']', '}', '$'],
+		\     'head' : ['^', ' ', '/', '[A-Z]', ',',
+		\               ')', ']', '}', '$'],
 		\     },
 		\   },
 		\
@@ -205,7 +207,8 @@ list. If you want to add much more other settings, use list for the value.
 		\   },
 		\ '*' : {
 		\   'c' : {
-		\     'head' : ['^', ' ', '[A-Z]', ',', ')', ']', '}', '$'],
+		\     'head' : ['^', ' ', '/', '[A-Z]', ',',
+		\               ')', ']', '}', '$'],
 		\     },
 		\   },
 		\ 'SomeOtherFiletype' : {
@@ -252,7 +255,8 @@ want to use common patterns more finely, I suggest to write as following.
 		\   },
 		\ '*' : {
 		\   'c' : {
-		\     'head' : ['^', ' ', '[A-Z]', ',', ')', ']', '}', '$'],
+		\     'head' : ['^', ' ', '/', '[A-Z]', ',',
+		\               ')', ']', '}', '$'],
 		\     },
 		\   },
 		\ }
@@ -290,7 +294,7 @@ following patterns.
 		\       'head' : ['$'],
 		\       },
 		\     'forward' : {
-		\       'head' : ['^', ' ', '[A-Z]', ',', ')', ']', '}'],
+		\       'head' : ['^', ' ', '/', '[A-Z]', ',', ')', ']', '}'],
 		\       },
 		\     },
 		\   },
