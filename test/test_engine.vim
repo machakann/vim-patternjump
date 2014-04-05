@@ -1,6 +1,6 @@
 " vim:set foldmethod=marker:
 " vim:set commentstring="%s:
-" Last Change: 31-Mar-2014.
+" Last Change: 05-Apr-2014.
 
 " なぜnormal!ではなくマクロを使ったのかというとそっちの方がちらちらして好きだ
 " からです！
@@ -94,6 +94,25 @@ let g:special_pattern3 = {
 let g:special_pattern4 = {
     \ '_' : {
     \   'tail'  : ['$'],
+    \   },
+    \ }
+
+let g:filetype_option = {
+    \ '_' : {
+    \   'head' : ['foo']
+    \   },
+    \ '*' : {
+    \   'head' : ['bar']
+    \   },
+    \ 'baz' : {
+    \   'head' : ['baz']
+    \   },
+    \ }
+
+let g:direction_option = {
+    \ '_' : {
+    \   'forward'  : {'head' : ['foo', '$']},
+    \   'backward' : {'head' : ['bar', '^']}
     \   },
     \ }
 
@@ -2723,6 +2742,104 @@ let test_info.1 = {
       \           'breaking'    : 1,
       \           'abort'       : 0,
       \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern4']}, 'post' : {}
+      \           },
+      \
+      \ "232"  : {'caption'     : 'empty line',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'bar',
+      \           'key_input'   : "3l\<M-l>y$",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:elementary_pattern1',
+      \                                   'let g:patternjump_wrap_line=0',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "233"  : {'caption'     : 'empty line',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'obar',
+      \           'key_input'   : "3li\<M-l>\<Esc>y$",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:elementary_pattern1',
+      \                                   'let g:patternjump_wrap_line=0',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "234"  : {'caption'     : 'empty line',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'b',
+      \           'key_input'   : "3lv\<M-l>y",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:elementary_pattern1',
+      \                                   'let g:patternjump_swap_head_tail=0',
+      \                                   'let g:patternjump_wrap_line=0',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "235"  : {'caption'     : 'empty line',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : '',
+      \           'key_input'   : "3ly\<M-l>",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:elementary_pattern1',
+      \                                   'let g:patternjump_wrap_line=0',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "236"  : {'caption'     : 'empty line',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'r',
+      \           'key_input'   : "$\<M-l>y$",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:elementary_pattern2',
+      \                                   'let g:patternjump_wrap_line=0',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "237"  : {'caption'     : 'empty line',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'r',
+      \           'key_input'   : "A\<M-l>\<Esc>y$",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:elementary_pattern2',
+      \                                   'let g:patternjump_wrap_line=0',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "238"  : {'caption'     : 'empty line',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'r',
+      \           'key_input'   : "$v\<M-l>y",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:elementary_pattern2',
+      \                                   'let g:patternjump_swap_head_tail=0',
+      \                                   'let g:patternjump_wrap_line=0',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "239"  : {'caption'     : 'empty line',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : '',
+      \           'key_input'   : "$y\<M-l>",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:elementary_pattern2',
+      \                                   'let g:patternjump_wrap_line=0',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
       \           },
       \
       \ "post" : {'breaking' : 1},
@@ -5365,6 +5482,104 @@ let test_info.2 = {
       \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern4']}, 'post' : {}
       \           },
       \
+      \ "232"  : {'caption'     : 'empty line',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'baz',
+      \           'key_input'   : "2j\<M-h>y$",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:elementary_pattern1',
+      \                                   'let g:patternjump_wrap_line=0',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "233"  : {'caption'     : 'empty line',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'baz',
+      \           'key_input'   : "2ji\<M-h>\<Esc>y$",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:elementary_pattern1',
+      \                                   'let g:patternjump_wrap_line=0',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "234"  : {'caption'     : 'empty line',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'b',
+      \           'key_input'   : "2jv\<M-h>y",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:elementary_pattern1',
+      \                                   'let g:patternjump_swap_head_tail=0',
+      \                                   'let g:patternjump_wrap_line=0',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "235"  : {'caption'     : 'empty line',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : '',
+      \           'key_input'   : "2jy\<M-h>",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:elementary_pattern1',
+      \                                   'let g:patternjump_wrap_line=0',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "236"  : {'caption'     : 'empty line',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'baz',
+      \           'key_input'   : "2j\<M-h>y$",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:elementary_pattern2',
+      \                                   'let g:patternjump_wrap_line=0',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "237"  : {'caption'     : 'empty line',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'baz',
+      \           'key_input'   : "2ji\<M-h>\<Esc>y$",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:elementary_pattern2',
+      \                                   'let g:patternjump_wrap_line=0',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "238"  : {'caption'     : 'empty line',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'b',
+      \           'key_input'   : "2jv\<M-h>y",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:elementary_pattern2',
+      \                                   'let g:patternjump_swap_head_tail=0',
+      \                                   'let g:patternjump_wrap_line=0',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "239"  : {'caption'     : 'empty line',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : '',
+      \           'key_input'   : "2jy\<M-h>",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:elementary_pattern2',
+      \                                   'let g:patternjump_wrap_line=0',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
       \ "post" : {'breaking' : 1},
       \ }
 
@@ -7940,39 +8155,497 @@ let test_info.3 = {
       \           },
       \
       \ "228"  : {'caption'     : 'special pattern 1',
-      \           'result'      : 'col(".")',
-      \           'expectation' : '1',
-      \           'key_input'   : "2l\<M-l>",
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'baz',
+      \           'key_input'   : "2l\<M-l>y$",
       \           'breaking'    : 1,
       \           'abort'       : 0,
-      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern1']}, 'post' : {}
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern1',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
       \           },
       \
-      \ "229"  : {'caption'     : 'special pattern 2',
-      \           'result'      : 'col(".")',
-      \           'expectation' : '1',
-      \           'key_input'   : "2l\<M-l>",
+      \ "229"  : {'caption'     : 'special pattern 1',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'baz',
+      \           'key_input'   : "2li\<M-l>\<Esc>y$",
       \           'breaking'    : 1,
       \           'abort'       : 0,
-      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern2']}, 'post' : {}
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern1',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
       \           },
       \
-      \ "230"  : {'caption'     : 'special pattern 3',
-      \           'result'      : 'col(".")',
-      \           'expectation' : '6',
-      \           'key_input'   : "2l\<M-l>",
+      \ "230"  : {'caption'     : 'special pattern 1',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'obarb',
+      \           'key_input'   : "2lv\<M-l>y",
       \           'breaking'    : 1,
       \           'abort'       : 0,
-      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern3']}, 'post' : {}
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern1',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
       \           },
       \
-      \ "231"  : {'caption'     : 'special pattern 4',
-      \           'result'      : 'col(".")',
-      \           'expectation' : '6',
-      \           'key_input'   : "2l\<M-l>",
+      \ "231"  : {'caption'     : 'special pattern 1',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'obar',
+      \           'key_input'   : "2ly\<M-l>",
       \           'breaking'    : 1,
       \           'abort'       : 0,
-      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern4']}, 'post' : {}
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern1',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "232"  : {'caption'     : 'special pattern 1',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'fooabar',
+      \           'key_input'   : ":i\<CR>foobar\<Left>\<Left>\<Left>\<M-l>a\<CR>.\<CR>0y$",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern1',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "233"  : {'caption'     : 'special pattern 1',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : '<br>',
+      \           'key_input'   : "2l\<M-l>yy",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern1',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "234"  : {'caption'     : 'special pattern 1',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : '<br>',
+      \           'key_input'   : "2li\<M-l>\<Esc>yy",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern1',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "235"  : {'caption'     : 'special pattern 1',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'obar<br><br>',
+      \           'key_input'   : "2lv\<M-l>y",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern1',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "236"  : {'caption'     : 'special pattern 1',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'obar',
+      \           'key_input'   : "2ly\<M-l>",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern1',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "237"  : {'caption'     : 'special pattern 2',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'baz',
+      \           'key_input'   : "2l\<M-l>y$",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern2',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "238"  : {'caption'     : 'special pattern 2',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'baz',
+      \           'key_input'   : "2li\<M-l>\<Esc>y$",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern2',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "239"  : {'caption'     : 'special pattern 2',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'obarb',
+      \           'key_input'   : "2lv\<M-l>y",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern2',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "240"  : {'caption'     : 'special pattern 2',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'obar',
+      \           'key_input'   : "2ly\<M-l>",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern2',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "241"  : {'caption'     : 'special pattern 2',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'fooabar',
+      \           'key_input'   : ":i\<CR>foobar\<Left>\<Left>\<Left>\<M-l>a\<CR>.\<CR>0y$",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern2',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "242"  : {'caption'     : 'special pattern 2',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : '<br>',
+      \           'key_input'   : "2l\<M-l>yy",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern2',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "243"  : {'caption'     : 'special pattern 2',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : '<br>',
+      \           'key_input'   : "2li\<M-l>\<Esc>yy",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern2',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "244"  : {'caption'     : 'special pattern 2',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'obar<br><br>',
+      \           'key_input'   : "2lv\<M-l>y",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern2',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "245"  : {'caption'     : 'special pattern 2',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'obar',
+      \           'key_input'   : "2ly\<M-l>",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern2',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "246"  : {'caption'     : 'special pattern 3',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'r',
+      \           'key_input'   : "2l\<M-l>y$",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern3',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "247"  : {'caption'     : 'special pattern 3',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'r',
+      \           'key_input'   : "2li\<M-l>\<Esc>y$",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern3',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "248"  : {'caption'     : 'special pattern 3',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'obar',
+      \           'key_input'   : "2lv\<M-l>y",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern3',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "249"  : {'caption'     : 'special pattern 3',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'oba',
+      \           'key_input'   : "2ly\<M-l>",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern3',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "250"  : {'caption'     : 'special pattern 3',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'foobara',
+      \           'key_input'   : ":i\<CR>foobar\<Left>\<Left>\<Left>\<M-l>a\<CR>.\<CR>0y$",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern3',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "251"  : {'caption'     : 'special pattern 3',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : '<br>',
+      \           'key_input'   : "$\<M-l>yy",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern3',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "252"  : {'caption'     : 'special pattern 3',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : '<br>',
+      \           'key_input'   : "A\<M-l>\<Esc>yy",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern3',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "253"  : {'caption'     : 'special pattern 3',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'r<br><br>',
+      \           'key_input'   : "$v\<M-l>y",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern3',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "254"  : {'caption'     : 'special pattern 3',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'r',
+      \           'key_input'   : "$y\<M-l>",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern3',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "255"  : {'caption'     : 'special pattern 4',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'r',
+      \           'key_input'   : "2l\<M-l>y$",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern4',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "256"  : {'caption'     : 'special pattern 4',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'r',
+      \           'key_input'   : "2li\<M-l>\<Esc>y$",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern4',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "257"  : {'caption'     : 'special pattern 4',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'obar',
+      \           'key_input'   : "2lv\<M-l>y",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern4',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "258"  : {'caption'     : 'special pattern 4',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'oba',
+      \           'key_input'   : "2ly\<M-l>",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern4',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "259"  : {'caption'     : 'special pattern 4',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'foobara',
+      \           'key_input'   : ":i\<CR>foobar\<Left>\<Left>\<Left>\<M-l>a\<CR>.\<CR>0y$",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern4',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "260"  : {'caption'     : 'special pattern 4',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : '<br>',
+      \           'key_input'   : "$\<M-l>yy",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern4',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "261"  : {'caption'     : 'special pattern 4',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : '<br>',
+      \           'key_input'   : "A\<M-l>\<Esc>yy",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern4',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "262"  : {'caption'     : 'special pattern 4',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'r<br><br>',
+      \           'key_input'   : "$v\<M-l>y",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern4',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "263"  : {'caption'     : 'special pattern 4',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'r',
+      \           'key_input'   : "$y\<M-l>",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:special_pattern4',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "264"  : {'caption'     : 'empty line',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'baz',
+      \           'key_input'   : "3l\<M-l>y$",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:elementary_pattern1',
+      \                                   'let g:patternjump_wrap_line=1',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "265"  : {'caption'     : 'empty line',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'baz',
+      \           'key_input'   : "3li\<M-l>\<Esc>y$",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:elementary_pattern1',
+      \                                   'let g:patternjump_wrap_line=1',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "266"  : {'caption'     : 'empty line',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'bar<br><br>b',
+      \           'key_input'   : "3lv\<M-l>y",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:elementary_pattern1',
+      \                                   'let g:patternjump_swap_head_tail=0',
+      \                                   'let g:patternjump_wrap_line=1',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "267"  : {'caption'     : 'empty line',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'bar<br>',
+      \           'key_input'   : "3ly\<M-l>",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:elementary_pattern1',
+      \                                   'let g:patternjump_wrap_line=1',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "268"  : {'caption'     : 'empty line',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'z',
+      \           'key_input'   : "$\<M-l>y$",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:elementary_pattern2',
+      \                                   'let g:patternjump_wrap_line=1',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "269"  : {'caption'     : 'empty line',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'z',
+      \           'key_input'   : "A\<M-l>\<Esc>y$",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:elementary_pattern2',
+      \                                   'let g:patternjump_wrap_line=1',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "270"  : {'caption'     : 'empty line',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'r<br><br>baz',
+      \           'key_input'   : "$v\<M-l>y",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:elementary_pattern2',
+      \                                   'let g:patternjump_swap_head_tail=0',
+      \                                   'let g:patternjump_wrap_line=1',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "271"  : {'caption'     : 'empty line',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'r<br><br>ba',
+      \           'key_input'   : "$y\<M-l>",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:elementary_pattern2',
+      \                                   'let g:patternjump_wrap_line=1',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
       \           },
       \
       \ "post" : {'breaking' : 1},
@@ -10580,39 +11253,714 @@ let test_info.4 = {
       \           },
       \
       \ "228"  : {'caption'     : 'special pattern 1',
-      \           'result'      : 'col(".")',
-      \           'expectation' : '1',
-      \           'key_input'   : "j2l\<M-h>",
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'foobar',
+      \           'key_input'   : "j\<M-h>y$",
       \           'breaking'    : 1,
       \           'abort'       : 0,
       \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern1']}, 'post' : {}
       \           },
       \
-      \ "229"  : {'caption'     : 'special pattern 2',
-      \           'result'      : 'col(".")',
-      \           'expectation' : '1',
-      \           'key_input'   : "j2l\<M-h>",
+      \ "229"  : {'caption'     : 'special pattern 1',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'foobar',
+      \           'key_input'   : "ji\<M-h>\<Esc>y$",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern1']}, 'post' : {}
+      \           },
+      \
+      \ "230"  : {'caption'     : 'special pattern 1',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'foobarb',
+      \           'key_input'   : "jv\<M-h>y",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern1']}, 'post' : {}
+      \           },
+      \
+      \ "231"  : {'caption'     : 'special pattern 1',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'foobar',
+      \           'key_input'   : "jy\<M-h>",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern1']}, 'post' : {}
+      \           },
+      \
+      \ "232"  : {'caption'     : 'special pattern 1',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'afoobar',
+      \           'key_input'   : ":i\<CR>foobar\<Left>\<Left>\<Left>\<M-h>a\<CR>.\<CR>0y$",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern1']}, 'post' : {}
+      \           },
+      \
+      \ "233"  : {'caption'     : 'special pattern 1',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : '<br>',
+      \           'key_input'   : "2j\<M-h>yy",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern1']}, 'post' : {}
+      \           },
+      \
+      \ "234"  : {'caption'     : 'special pattern 1',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : '<br>',
+      \           'key_input'   : "2ji\<M-h>\<Esc>yy",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern1']}, 'post' : {}
+      \           },
+      \
+      \ "235"  : {'caption'     : 'special pattern 1',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : '<br>b',
+      \           'key_input'   : "2jv\<M-h>y",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern1']}, 'post' : {}
+      \           },
+      \
+      \ "236"  : {'caption'     : 'special pattern 1',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : '<br>',
+      \           'key_input'   : "2jy\<M-h>",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern1']}, 'post' : {}
+      \           },
+      \
+      \ "237"  : {'caption'     : 'special pattern 2',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'foobar',
+      \           'key_input'   : "j\<M-h>y$",
       \           'breaking'    : 1,
       \           'abort'       : 0,
       \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern2']}, 'post' : {}
       \           },
       \
-      \ "230"  : {'caption'     : 'special pattern 3',
-      \           'result'      : 'col(".")',
-      \           'expectation' : '6',
-      \           'key_input'   : "j2l\<M-h>",
+      \ "238"  : {'caption'     : 'special pattern 2',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'foobar',
+      \           'key_input'   : "ji\<M-h>\<Esc>y$",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern2']}, 'post' : {}
+      \           },
+      \
+      \ "239"  : {'caption'     : 'special pattern 2',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'foobarb',
+      \           'key_input'   : "jv\<M-h>y",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern2']}, 'post' : {}
+      \           },
+      \
+      \ "240"  : {'caption'     : 'special pattern 2',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'foobar',
+      \           'key_input'   : "jy\<M-h>",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern2']}, 'post' : {}
+      \           },
+      \
+      \ "241"  : {'caption'     : 'special pattern 2',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'afoobar',
+      \           'key_input'   : ":i\<CR>foobar\<Left>\<Left>\<Left>\<M-h>a\<CR>.\<CR>0y$",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern2']}, 'post' : {}
+      \           },
+      \
+      \ "242"  : {'caption'     : 'special pattern 2',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : '<br>',
+      \           'key_input'   : "2j\<M-h>yy",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern2']}, 'post' : {}
+      \           },
+      \
+      \ "243"  : {'caption'     : 'special pattern 2',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : '<br>',
+      \           'key_input'   : "2ji\<M-h>\<Esc>yy",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern2']}, 'post' : {}
+      \           },
+      \
+      \ "244"  : {'caption'     : 'special pattern 2',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : '<br>b',
+      \           'key_input'   : "2jv\<M-h>y",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern2']}, 'post' : {}
+      \           },
+      \
+      \ "245"  : {'caption'     : 'special pattern 2',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : '<br>',
+      \           'key_input'   : "2jy\<M-h>",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern2']}, 'post' : {}
+      \           },
+      \
+      \ "246"  : {'caption'     : 'special pattern 3',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'fooba',
+      \           'key_input'   : "j\<M-h>y0",
       \           'breaking'    : 1,
       \           'abort'       : 0,
       \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern3']}, 'post' : {}
       \           },
       \
-      \ "231"  : {'caption'     : 'special pattern 4',
-      \           'result'      : 'col(".")',
-      \           'expectation' : '6',
-      \           'key_input'   : "j2l\<M-h>",
+      \ "247"  : {'caption'     : 'special pattern 3',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'fooba',
+      \           'key_input'   : "ji\<M-h>\<Esc>y0",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern3']}, 'post' : {}
+      \           },
+      \
+      \ "248"  : {'caption'     : 'special pattern 3',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'rb',
+      \           'key_input'   : "jv\<M-h>y",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern3']}, 'post' : {}
+      \           },
+      \
+      \ "249"  : {'caption'     : 'special pattern 3',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'r',
+      \           'key_input'   : "jy\<M-h>",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern3']}, 'post' : {}
+      \           },
+      \
+      \ "250"  : {'caption'     : 'special pattern 3',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'fooabar',
+      \           'key_input'   : ":i\<CR>foobar\<Left>\<Left>\<Left>\<M-h>a\<CR>.\<CR>0y$",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern3']}, 'post' : {}
+      \           },
+      \
+      \ "251"  : {'caption'     : 'special pattern 3',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : '<br>',
+      \           'key_input'   : "2j\<M-h>yy",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern3']}, 'post' : {}
+      \           },
+      \
+      \ "252"  : {'caption'     : 'special pattern 3',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : '<br>',
+      \           'key_input'   : "2ji\<M-h>\<Esc>yy",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern3']}, 'post' : {}
+      \           },
+      \
+      \ "253"  : {'caption'     : 'special pattern 3',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : '<br>b',
+      \           'key_input'   : "2jv\<M-h>y",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern3']}, 'post' : {}
+      \           },
+      \
+      \ "254"  : {'caption'     : 'special pattern 3',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : '<br>',
+      \           'key_input'   : "2jy\<M-h>",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern3']}, 'post' : {}
+      \           },
+      \
+      \ "255"  : {'caption'     : 'special pattern 4',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'fooba',
+      \           'key_input'   : "j\<M-h>y0",
       \           'breaking'    : 1,
       \           'abort'       : 0,
       \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern4']}, 'post' : {}
+      \           },
+      \
+      \ "256"  : {'caption'     : 'special pattern 4',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'fooba',
+      \           'key_input'   : "ji\<M-h>\<Esc>y0",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern4']}, 'post' : {}
+      \           },
+      \
+      \ "257"  : {'caption'     : 'special pattern 4',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'b',
+      \           'key_input'   : "jv\<M-h>y",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern4']}, 'post' : {}
+      \           },
+      \
+      \ "258"  : {'caption'     : 'special pattern 4',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'r',
+      \           'key_input'   : "jy\<M-h>",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern4']}, 'post' : {}
+      \           },
+      \
+      \ "259"  : {'caption'     : 'special pattern 4',
+      \           'result'      : 'substitute(@*, ''\n'', "", "g")',
+      \           'expectation' : 'fooabar',
+      \           'key_input'   : ":i\<CR>foobar\<Left>\<Left>\<Left>\<M-h>a\<CR>.\<CR>0y$",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern4']}, 'post' : {}
+      \           },
+      \
+      \ "260"  : {'caption'     : 'special pattern 4',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : '<br>',
+      \           'key_input'   : "2j\<M-h>yy",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern4']}, 'post' : {}
+      \           },
+      \
+      \ "261"  : {'caption'     : 'special pattern 4',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : '<br>',
+      \           'key_input'   : "2ji\<M-h>\<Esc>yy",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern4']}, 'post' : {}
+      \           },
+      \
+      \ "262"  : {'caption'     : 'special pattern 4',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : '<br>b',
+      \           'key_input'   : "2jv\<M-h>y",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern4']}, 'post' : {}
+      \           },
+      \
+      \ "263"  : {'caption'     : 'special pattern 4',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : '<br>',
+      \           'key_input'   : "2jy\<M-h>",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre' : {'commands' : [':let g:patternjump_patterns=g:special_pattern4']}, 'post' : {}
+      \           },
+      \
+      \ "264"  : {'caption'     : 'empty line',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'bar',
+      \           'key_input'   : "2j\<M-h>y$",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:elementary_pattern1',
+      \                                   'let g:patternjump_wrap_line=1',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "265"  : {'caption'     : 'empty line',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'obar',
+      \           'key_input'   : "2ji\<M-h>\<Esc>y$",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:elementary_pattern1',
+      \                                   'let g:patternjump_wrap_line=1',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "266"  : {'caption'     : 'empty line',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'bar<br><br>b',
+      \           'key_input'   : "2jv\<M-h>y",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:elementary_pattern1',
+      \                                   'let g:patternjump_swap_head_tail=0',
+      \                                   'let g:patternjump_wrap_line=1',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "267"  : {'caption'     : 'empty line',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'bar<br>',
+      \           'key_input'   : "2jy\<M-h>",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:elementary_pattern1',
+      \                                   'let g:patternjump_wrap_line=1',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "268"  : {'caption'     : 'empty line',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'r',
+      \           'key_input'   : "2j\<M-h>y$",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:elementary_pattern2',
+      \                                   'let g:patternjump_wrap_line=1',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "269"  : {'caption'     : 'empty line',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'r',
+      \           'key_input'   : "2ji\<M-h>\<Esc>y$",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:elementary_pattern2',
+      \                                   'let g:patternjump_wrap_line=1',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "270"  : {'caption'     : 'empty line',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'r<br><br>b',
+      \           'key_input'   : "2jv\<M-h>y",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:elementary_pattern2',
+      \                                   'let g:patternjump_swap_head_tail=0',
+      \                                   'let g:patternjump_wrap_line=1',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "271"  : {'caption'     : 'empty line',
+      \           'result'      : 'substitute(@*, ''\n'', "<br>", "g")',
+      \           'expectation' : 'r<br>',
+      \           'key_input'   : "2jy\<M-h>",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:elementary_pattern2',
+      \                                   'let g:patternjump_wrap_line=1',
+      \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "post" : {'breaking' : 1},
+      \ }
+
+let test_info.5 = {
+      \ "pre" : { 'breaking' : 2, 'commands' : ['PatternjumpCachingOff',
+      \                                         'let g:patternjump_wrap_line = 0',
+      \                                         'let g:patternjump_ignore_case = 0',
+      \                                         'let g:patternjump_highlight = 0',
+      \                                         'let g:patternjump_debug_mode = 0',
+      \                                         'set ft='
+      \                                         ]
+      \         },
+      \
+      \ "1"   : { 'caption'     : 'asterisk key',
+      \           'result'      : 'col(".")',
+      \           'expectation' : '3',
+      \           'key_input'   : "\<M-l>",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : ['let g:patternjump_patterns = g:filetype_option']},
+      \           'post' : {}
+      \           },
+      \
+      \ "2"   : { 'caption'     : 'asterisk key',
+      \           'result'      : 'col(".")',
+      \           'expectation' : '7',
+      \           'key_input'   : "\<M-l>\<M-l>",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : ['let g:patternjump_patterns = g:filetype_option']},
+      \           'post' : {}
+      \           },
+      \
+      \ "3"   : { 'caption'     : 'asterisk key',
+      \           'result'      : 'col(".")',
+      \           'expectation' : '7',
+      \           'key_input'   : "\<M-l>\<M-l>\<M-l>",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : ['let g:patternjump_patterns = g:filetype_option']},
+      \           'post' : {}
+      \           },
+      \
+      \ "4"   : { 'caption'     : 'filetype',
+      \           'result'      : 'col(".")',
+      \           'expectation' : '11',
+      \           'key_input'   : "\<M-l>\<M-l>\<M-l>",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : ['let g:patternjump_patterns = g:filetype_option', 'set ft=baz']},
+      \           'post' : {'commands' : ['set ft=']}
+      \           },
+      \
+      \ "post" : {'breaking' : 1},
+      \ }
+
+let test_info.6 = {
+      \ "pre" : { 'breaking' : 2, 'commands' : ['PatternjumpCachingOff',
+      \                                         'let g:patternjump_wrap_line = 0',
+      \                                         'let g:patternjump_ignore_case = 0',
+      \                                         'let g:patternjump_highlight = 0',
+      \                                         'let g:patternjump_debug_mode = 0',
+      \                                         'set ft='
+      \                                         ]
+      \         },
+      \
+      \ "1"   : { 'caption'     : 'forward direction',
+      \           'result'      : 'col(".")',
+      \           'expectation' : '3',
+      \           'key_input'   : "\<M-l>",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : ['let g:patternjump_patterns = g:direction_option']},
+      \           'post' : {}
+      \           },
+      \
+      \ "2"   : { 'caption'     : 'forward direction',
+      \           'result'      : 'col(".")',
+      \           'expectation' : '13',
+      \           'key_input'   : "\<M-l>\<M-l>",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : ['let g:patternjump_patterns = g:direction_option']},
+      \           'post' : {}
+      \           },
+      \
+      \ "3"   : { 'caption'     : 'backward direction',
+      \           'result'      : 'col(".")',
+      \           'expectation' : '7',
+      \           'key_input'   : "$\<M-h>",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : ['let g:patternjump_patterns = g:direction_option']},
+      \           'post' : {}
+      \           },
+      \
+      \ "4"   : { 'caption'     : 'backward direction',
+      \           'result'      : 'col(".")',
+      \           'expectation' : '1',
+      \           'key_input'   : "$\<M-h>\<M-h>",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : ['let g:patternjump_patterns = g:direction_option']},
+      \           'post' : {}
+      \           },
+      \
+      \ "post" : {'breaking' : 1},
+      \ }
+
+let test_info.7 = {
+      \ "pre" : { 'breaking' : 2, 'commands' : ['PatternjumpCachingOff',
+      \                                         'let g:patternjump_wrap_line = 0',
+      \                                         'let g:patternjump_ignore_case = 0',
+      \                                         'let g:patternjump_highlight = 0',
+      \                                         'let g:patternjump_debug_mode = 0',
+      \                                         'set ft='
+      \                                         ]
+      \         },
+      \
+      \ "1"   : { 'caption'     : 'functional use',
+      \           'result'      : 'col(".")',
+      \           'expectation' : '3',
+      \           'key_input'   : ":call patternjump#forward('n', g:elementary_pattern1)\<C-j>",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {},
+      \           'post' : {}
+      \           },
+      \
+      \ "2"   : { 'caption'     : 'functional use',
+      \           'result'      : 'col(".")',
+      \           'expectation' : '7',
+      \           'key_input'   : ":1\<C-u>call patternjump#forward('n', g:elementary_pattern1, 2)\<C-j>",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {},
+      \           'post' : {}
+      \           },
+      \
+      \ "3"   : { 'caption'     : 'functional use',
+      \           'result'      : 'col(".")',
+      \           'expectation' : '11',
+      \           'key_input'   : ":1\<C-u>call patternjump#forward('n', g:elementary_pattern1, 3)\<C-j>",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {},
+      \           'post' : {}
+      \           },
+      \
+      \ "4"   : { 'caption'     : 'functional use',
+      \           'result'      : 'col(".")',
+      \           'expectation' : '3',
+      \           'key_input'   : ":call patternjump#forward('n', [['foo', 'bar', 'baz'], []])\<C-j>",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {},
+      \           'post' : {}
+      \           },
+      \
+      \ "5"   : { 'caption'     : 'functional use',
+      \           'result'      : 'col(".")',
+      \           'expectation' : '7',
+      \           'key_input'   : ":1\<C-u>call patternjump#forward('n', [['foo', 'bar', 'baz'], []], 2)\<C-j>",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {},
+      \           'post' : {}
+      \           },
+      \
+      \ "6"   : { 'caption'     : 'functional use',
+      \           'result'      : 'col(".")',
+      \           'expectation' : '11',
+      \           'key_input'   : ":1\<C-u>call patternjump#forward('n', [['foo', 'bar', 'baz'], []], 3)\<C-j>",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {},
+      \           'post' : {}
+      \           },
+      \
+      \ "7"   : { 'caption'     : 'functional use',
+      \           'result'      : 'col(".")',
+      \           'expectation' : '5',
+      \           'key_input'   : ":call patternjump#forward('n', [[], ['foo', 'bar', 'baz']])\<C-j>",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {},
+      \           'post' : {}
+      \           },
+      \
+      \ "8"   : { 'caption'     : 'functional use',
+      \           'result'      : 'col(".")',
+      \           'expectation' : '9',
+      \           'key_input'   : ":1\<C-u>call patternjump#forward('n', [[], ['foo', 'bar', 'baz']], 2)\<C-j>",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {},
+      \           'post' : {}
+      \           },
+      \
+      \ "9"   : { 'caption'     : 'functional use',
+      \           'result'      : 'col(".")',
+      \           'expectation' : '13',
+      \           'key_input'   : ":1\<C-u>call patternjump#forward('n', [[], ['foo', 'bar', 'baz']], 3)\<C-j>",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {},
+      \           'post' : {}
+      \           },
+      \
+      \ "10"  : { 'caption'     : 'functional use',
+      \           'result'      : 'col(".")',
+      \           'expectation' : '3',
+      \           'key_input'   : ":call patternjump#forward('n', [[['foo', 'bar', 'baz'], []], [[], []]])\<C-j>",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {},
+      \           'post' : {}
+      \           },
+      \
+      \ "11"  : { 'caption'     : 'functional use',
+      \           'result'      : 'col(".")',
+      \           'expectation' : '7',
+      \           'key_input'   : ":1\<C-u>call patternjump#forward('n', [[['foo', 'bar', 'baz'], []], [[], []]], 2)\<C-j>",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {},
+      \           'post' : {}
+      \           },
+      \
+      \ "12"  : { 'caption'     : 'functional use',
+      \           'result'      : 'col(".")',
+      \           'expectation' : '11',
+      \           'key_input'   : ":1\<C-u>call patternjump#forward('n', [[['foo', 'bar', 'baz'], []], [[], []]], 3)\<C-j>",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {},
+      \           'post' : {}
+      \           },
+      \
+      \ "13"  : { 'caption'     : 'functional use',
+      \           'result'      : 'col(".")',
+      \           'expectation' : '5',
+      \           'key_input'   : ":call patternjump#forward('n', [[[], []], [['foo', 'bar', 'baz'], []]])\<C-j>",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {},
+      \           'post' : {}
+      \           },
+      \
+      \ "14"   : { 'caption'     : 'functional use',
+      \           'result'      : 'col(".")',
+      \           'expectation' : '9',
+      \           'key_input'   : ":1\<C-u>call patternjump#forward('n', [[[], []], [['foo', 'bar', 'baz'], []]], 2)\<C-j>",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {},
+      \           'post' : {}
+      \           },
+      \
+      \ "15"   : { 'caption'     : 'functional use',
+      \           'result'      : 'col(".")',
+      \           'expectation' : '13',
+      \           'key_input'   : ":1\<C-u>call patternjump#forward('n', [[[], []], [['foo', 'bar', 'baz'], []]], 3)\<C-j>",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {},
+      \           'post' : {}
+      \           },
+      \
+      \ "16"  : { 'caption'     : 'functional use',
+      \           'result'      : 'col(".")',
+      \           'expectation' : '1',
+      \           'key_input'   : ":call patternjump#forward('n', [['foo', 'bar', 'baz'], []], 4, {'move_afap' : 0})\<C-j>",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {},
+      \           'post' : {}
+      \           },
+      \
+      \ "17"  : { 'caption'     : 'functional use',
+      \           'result'      : 'col(".")',
+      \           'expectation' : '11',
+      \           'key_input'   : ":call patternjump#forward('n', [['foo', 'bar', 'baz'], []], 4, {'move_afap' : 1})\<C-j>",
+      \           'breaking'    : 1,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : ['let g:patternjump_move_afap = 0']},
+      \           'post' : {}
       \           },
       \
       \ "post" : {'breaking' : 1},
@@ -11097,7 +12445,7 @@ function! s:test_main_func(test_info)    "{{{
   let quit_info = { 'flag' : 0,  'address' : [], 'failed' : [], 'position' : ''}
   let failed = []
 
-  while n_loop < 1000
+  while n_loop < 2000
     let address = {'address' : current_address}
     call extend(dict, address, "force")
 

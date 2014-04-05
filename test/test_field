@@ -914,6 +914,46 @@ foobar
 foobar
 
 
+" 1.232 empty line
+foobar
+
+baz
+
+" 1.233 empty line
+foobar
+
+baz
+
+" 1.234 empty line
+foobar
+
+baz
+
+" 1.235 empty line
+foobar
+
+baz
+
+" 1.236 empty line
+foobar
+
+baz
+
+" 1.237 empty line
+foobar
+
+baz
+
+" 1.238 empty line
+foobar
+
+baz
+
+" 1.239 empty line
+foobar
+
+baz
+
 
 
 
@@ -1831,11 +1871,51 @@ foobar
 foobar
 
 
+" 2.232 empty line
+foobar
+
+baz
+
+" 2.233 empty line
+foobar
+
+baz
+
+" 2.234 empty line
+foobar
+
+baz
+
+" 2.235 empty line
+foobar
+
+baz
+
+" 2.236 empty line
+foobar
+
+baz
+
+" 2.237 empty line
+foobar
+
+baz
+
+" 2.238 empty line
+foobar
+
+baz
+
+" 2.239 empty line
+foobar
+
+baz
+
 
 
 
 " Test 3
-" forward
+" forward (wrap line)
 "-----------------------
 " 3.1 normal mode
   foo bar baz
@@ -2734,25 +2814,205 @@ foo bar
 
 " 3.228 special pattern 1
 foobar
+baz
+
+" 3.229 special pattern 1
+foobar
+baz
+
+" 3.230 special pattern 1
+foobar
+baz
+
+" 3.231 special pattern 1
+foobar
+baz
+
+" 3.232 special pattern 1
+
+
+" 3.233 special pattern 1
 foobar
 
-" 3.229 special pattern 2
-foobar
+baz
+
+" 3.234 special pattern 1
 foobar
 
-" 3.230 special pattern 3
-foobar
+baz
+
+" 3.235 special pattern 1
 foobar
 
-" 3.231 special pattern 4
+baz
+
+" 3.236 special pattern 1
 foobar
+
+baz
+
+" 3.237 special pattern 2
 foobar
+baz
+
+" 3.238 special pattern 2
+foobar
+baz
+
+" 3.239 special pattern 2
+foobar
+baz
+
+" 3.240 special pattern 2
+foobar
+baz
+
+" 3.241 special pattern 2
+
+
+" 3.242 special pattern 2
+foobar
+
+baz
+
+" 3.243 special pattern 2
+foobar
+
+baz
+
+" 3.244 special pattern 2
+foobar
+
+baz
+
+" 3.245 special pattern 2
+foobar
+
+baz
+
+" 3.246 special pattern 3
+foobar
+baz
+
+" 3.247 special pattern 3
+foobar
+baz
+
+" 3.248 special pattern 3
+foobar
+baz
+
+" 3.249 special pattern 3
+foobar
+baz
+
+" 3.250 special pattern 3
+
+
+" 3.251 special pattern 3
+foobar
+
+baz
+
+" 3.252 special pattern 3
+foobar
+
+baz
+
+" 3.253 special pattern 3
+foobar
+
+baz
+
+" 3.254 special pattern 3
+foobar
+
+baz
+
+" 3.255 special pattern 4
+foobar
+baz
+
+" 3.256 special pattern 4
+foobar
+baz
+
+" 3.257 special pattern 4
+foobar
+baz
+
+" 3.258 special pattern 4
+foobar
+baz
+
+" 3.259 special pattern 4
+
+
+" 3.260 special pattern 4
+foobar
+
+baz
+
+" 3.261 special pattern 4
+foobar
+
+baz
+
+" 3.262 special pattern 4
+foobar
+
+baz
+
+" 3.263 special pattern 4
+foobar
+
+baz
+
+" 3.264 empty line
+foobar
+
+baz
+
+" 3.265 empty line
+foobar
+
+baz
+
+" 3.266 empty line
+foobar
+
+baz
+
+" 3.267 empty line
+foobar
+
+baz
+
+" 3.268 empty line
+foobar
+
+baz
+
+" 3.269 empty line
+foobar
+
+baz
+
+" 3.270 empty line
+foobar
+
+baz
+
+" 3.271 empty line
+foobar
+
+baz
 
 
 
 
 " Test 4
-" backward
+" backward (wrap line)
 "-----------------------
 " 4.1 normal mode
 foo bar baz  
@@ -3651,21 +3911,315 @@ foo bar baz
 
 " 4.228 special pattern 1
 foobar
+baz
+
+" 4.229 special pattern 1
+foobar
+baz
+
+" 4.230 special pattern 1
+foobar
+baz
+
+" 4.231 special pattern 1
+foobar
+baz
+
+" 4.232 special pattern 1
+
+
+" 4.233 special pattern 1
 foobar
 
-" 4.229 special pattern 2
-foobar
+baz
+
+" 4.234 special pattern 1
 foobar
 
-" 4.230 special pattern 3
-foobar
+baz
+
+" 4.235 special pattern 1
 foobar
 
-" 4.231 special pattern 4
-foobar
+baz
+
+" 4.236 special pattern 1
 foobar
 
+baz
 
-" vim:set foldcolumn=2:
-" vim:set foldmethod=marker:
-" vim:set commentstring="%s:
+" 4.237 special pattern 2
+foobar
+baz
+
+" 4.238 special pattern 2
+foobar
+baz
+
+" 4.239 special pattern 2
+foobar
+baz
+
+" 4.240 special pattern 2
+foobar
+baz
+
+" 4.241 special pattern 2
+
+
+" 4.242 special pattern 2
+foobar
+
+baz
+
+" 4.243 special pattern 2
+foobar
+
+baz
+
+" 4.244 special pattern 2
+foobar
+
+baz
+
+" 4.245 special pattern 2
+foobar
+
+baz
+
+" 4.246 special pattern 3
+foobar
+baz
+
+" 4.247 special pattern 3
+foobar
+baz
+
+" 4.248 special pattern 3
+foobar
+baz
+
+" 4.249 special pattern 3
+foobar
+baz
+
+" 4.250 special pattern 3
+
+
+" 4.251 special pattern 3
+foobar
+
+baz
+
+" 4.252 special pattern 3
+foobar
+
+baz
+
+" 4.253 special pattern 3
+foobar
+
+baz
+
+" 4.254 special pattern 3
+foobar
+
+baz
+
+" 4.255 special pattern 4
+foobar
+baz
+
+" 4.256 special pattern 4
+foobar
+baz
+
+" 4.257 special pattern 4
+foobar
+baz
+
+" 4.258 special pattern 4
+foobar
+baz
+
+" 4.259 special pattern 4
+
+
+" 4.260 special pattern 4
+foobar
+
+baz
+
+" 4.261 special pattern 4
+foobar
+
+baz
+
+" 4.262 special pattern 4
+foobar
+
+baz
+
+" 4.263 special pattern 4
+foobar
+
+baz
+
+" 4.264 empty line
+foobar
+
+baz
+
+" 4.265 empty line
+foobar
+
+baz
+
+" 4.266 empty line
+foobar
+
+baz
+
+" 4.267 empty line
+foobar
+
+baz
+
+" 4.268 empty line
+foobar
+
+baz
+
+" 4.269 empty line
+foobar
+
+baz
+
+" 4.270 empty line
+foobar
+
+baz
+
+" 4.271 empty line
+foobar
+
+baz
+
+
+
+
+" Test 5
+" Filetype, include
+"-----------------------
+" 5.1 asterisk key
+  foo bar baz
+
+
+" 5.2 asterisk key
+  foo bar baz
+
+
+" 5.3 asterisk key
+  foo bar baz
+
+
+" 5.4 filetype
+  foo bar baz
+
+
+
+
+
+" Test 6
+" direction assignment
+"-----------------------
+" 6.1 forward direction
+  foo bar baz
+
+
+" 6.2 forward direction
+  foo bar baz
+
+
+" 6.3 backward direction
+  foo bar baz
+
+
+" 6.4 backward direction
+  foo bar baz
+
+
+
+
+
+" Test 7
+" functional use
+"-----------------------
+" 7.1 functional use
+  foo bar baz
+
+
+" 7.2 functional use
+  foo bar baz
+
+
+" 7.3 functional use
+  foo bar baz
+
+
+" 7.4 functional use
+  foo bar baz
+
+
+" 7.5 functional use
+  foo bar baz
+
+
+" 7.6 functional use
+  foo bar baz
+
+
+" 7.7 functional use
+  foo bar baz
+
+
+" 7.8 functional use
+  foo bar baz
+
+
+" 7.9 functional use
+  foo bar baz
+
+
+" 7.10 functional use
+  foo bar baz
+
+
+" 7.11 functional use
+  foo bar baz
+
+
+" 7.12 functional use
+  foo bar baz
+
+
+" 7.13 functional use
+  foo bar baz
+
+
+" 7.14 functional use
+  foo bar baz
+
+
+" 7.15 functional use
+  foo bar baz
+
+
+" 7.16 functional use
+  foo bar baz
+
+
+" 7.17 functional use
+  foo bar baz
+
+
