@@ -116,6 +116,10 @@ let g:direction_option = {
     \   },
     \ }
 
+let g:foo = {
+    \ '_' : {'tail' : ['foo', '$']},
+    \ }
+
 " Test information"{{{
 " Test 1
 let test_info         = {}
@@ -2839,6 +2843,18 @@ let test_info.1 = {
       \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:elementary_pattern2',
       \                                   'let g:patternjump_wrap_line=0',
       \                                   'let @* = "nul"']},
+      \           'post' : {}
+      \           },
+      \
+      \ "240"  : {'caption'     : 'pattern swapping',
+      \           'result'      : 'col(".")',
+      \           'expectation' : '11',
+      \           'key_input'   : "7lv3h\<M-l>",
+      \           'breaking'    : 2,
+      \           'abort'       : 0,
+      \           'pre'  : {'commands' : [':let g:patternjump_patterns=g:foo',
+      \                                   'let g:patternjump_wrap_line=0',
+      \                                   'let g:patternjump_swap_head_tail = 1']},
       \           'post' : {}
       \           },
       \

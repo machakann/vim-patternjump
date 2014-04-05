@@ -178,11 +178,11 @@ function! patternjump#forward(mode, ...) "{{{
   let filtered   = 0
 
   while 1
-    let candidates += s:search_forward(a:mode, l:count, string, marker, head_pattern_list, tail_pattern_list, (opt_debug_mode || opt_highlight), swapped)
+    let candidates += s:search_forward(a:mode, l:count, string, marker, head_pattern_list, tail_pattern_list, (opt_debug_mode || opt_highlight || opt_swap_head_tail), swapped)
 
     " remove unnecessary matched_patterns and candidates
     if (filtered == 0) && (swapped == 0)
-      let filter  = '(v:val[3] == 1) && (((v:val[0][0] > counter_edge[0]) || (v:val[0][0] == counter_edge[0]) && (v:val[0][1] > counter_edge[1])))'
+      let filter  = '((v:val[3] == 1) && (((v:val[0][0] > counter_edge[0]) || (v:val[0][0] == counter_edge[0]) && (v:val[0][1] > counter_edge[1]))))'
       let filter .= ' || ((v:val[3] == 0) && ((v:val[0][0] < counter_edge[0]) || ((v:val[0][0] == counter_edge[0]) && (v:val[0][1] < counter_edge[1]))))'
       let filter .= ' ? [] : v:val'
       call filter(map(candidates, filter), 'v:val != []')
@@ -556,7 +556,7 @@ function! patternjump#backward(mode, ...) "{{{
 
     " remove unnecessary matched_patterns and candidates
     if (filtered == 0) && (swapped == 1)
-      let filter  = '(v:val[3] == 1) && (((v:val[0][0] > counter_edge[0]) || (v:val[0][0] == counter_edge[0]) && (v:val[0][1] > counter_edge[1])))'
+      let filter  = '((v:val[3] == 1) && (((v:val[0][0] > counter_edge[0]) || (v:val[0][0] == counter_edge[0]) && (v:val[0][1] > counter_edge[1]))))'
       let filter .= ' || ((v:val[3] == 0) && ((v:val[0][0] < counter_edge[0]) || ((v:val[0][0] == counter_edge[0]) && (v:val[0][1] < counter_edge[1]))))'
       let filter .= ' ? [] : v:val'
       call filter(map(candidates, filter), 'v:val != []')
