@@ -31,7 +31,7 @@ let foo = "bar"                         '#' represents cursor position
 The default mappings are assigned to `<M-l>` and `<M-h>`. `<M-l>` searches for candidates in forward direction and `<M-h>` searches for candidates in backward direction.
 
 #Normal mode
-`^\s*\zs\S`, `\<\h\k*\>`, `.$` belong to head-patterns in default. The first one is the first character of a line except for spaces, it is the equivalent to `^` command. `\<\h\k*\>` matches with a word. The last one is the last character of a line, but this pattern ignores the empty line. If the pattern `$` is used, patternjump still stops on empty lines.
+`^\s*\zs\S`, `\<\h\k*\>`, `.$` belong to head-patterns in default. The first one matches with the first character of a line except for spaces, it is the equivalent to `^` command. `\<\h\k*\>` matches with a word. The last one is the last character of a line, but this pattern ignores the empty line. If the pattern `$` is used, patternjump stops cursor even on empty lines.
 
 ![patternjump-normal](http://kura3.photozou.jp/pub/986/3080986/photo/201082159_org.v1396763315.gif)
 
