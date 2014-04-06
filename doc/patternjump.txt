@@ -459,8 +459,8 @@ g:patternjump_wrap_line				*g:patternjump_wrap_line*
 
 g:patternjump_move_afap				*g:patternjump_move_afap*
 	This option controls the behavior when {count} is larger than the
-	number of candidates. If the value is 1, patternjump moves cursor as
-	far as possible. If the value is 0, patternjump does not move cursor.
+	number of candidates. If the value is 1, patternjump moves cursor As
+	Far As Possible. If the value is 0, patternjump does not move cursor.
 	For example, assume that cursor is on the first character of following
 	line, and |g:patternjump_patterns| only has the tail-pattern "foo".
 >
