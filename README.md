@@ -64,8 +64,6 @@ let g:patternjump_swap_head_tail = 0 (default)
 let foo = "bar"                         '#' represents cursor position
 ```
 
-![patternjump-visual-noswap](http://kura2.photozou.jp/pub/986/3080986/photo/201082323_org.v1396763410.gif)
-
 ---
 
 
@@ -76,9 +74,6 @@ let g:patternjump_swap_head_tail = 1
     #<---       selected area
 let foo = "bar"                         '#' represents cursor position
 ```
-
-![patternjump-visual-swap](http://kura2.photozou.jp/pub/986/3080986/photo/201082341_org.v1396763410.gif)
-
 
 ---
 
