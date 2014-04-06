@@ -54,16 +54,25 @@ let foo = "bar"                         '#' represents cursor position
 ```
 If the keymapping which searchs candidates for backward direction is used:
 
-`let g:patternjump_swap_head_tail = 0` (default)
+---
+
 ```vim
+let g:patternjump_swap_head_tail = 0 (default)
+
+
       #<-       selected area
 let foo = "bar"                         '#' represents cursor position
 ```
 
 ![patternjump-visual-noswap](http://kura2.photozou.jp/pub/986/3080986/photo/201082323_org.v1396763410.gif)
 
-`let g:patternjump_swap_head_tail = 1`
+---
+
+
 ```vim
+let g:patternjump_swap_head_tail = 1
+
+
     #<---       selected area
 let foo = "bar"                         '#' represents cursor position
 ```
@@ -71,6 +80,7 @@ let foo = "bar"                         '#' represents cursor position
 ![patternjump-visual-swap](http://kura2.photozou.jp/pub/986/3080986/photo/201082341_org.v1396763410.gif)
 
 
+---
 
 #Operator-pending mode
 Patternjump is also valid in operator-pending mode. You can define your motions by using regular expression. When you define your motions, [exclusive](http://vimdoc.sourceforge.net/htmldoc/motion.html#exclusive) or [inclusive](http://vimdoc.sourceforge.net/htmldoc/motion.html#inclusive) motion can be chosen. `\<\h\k*\>` is used as tail-pattern in the forward directed mapping and is used as head-pattern in the backward directed mapping in default.
