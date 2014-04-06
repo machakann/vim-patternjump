@@ -20,7 +20,7 @@ let foo = "bar"                         '#' represents cursor position
 ------------>#  tail-pattern
 ```
 
-I guess you have found that the pattern `bar` seems like not useful. Alternatively, a pattern `\<\h\k\+\>` is included in default patterns. This pattern matches with a independent word determined by the option 'iskeyword' in a source code.  Therefore cursor will stop at `let`, `foo`, `bar`. I think they are the very what we want to correct when we review a source code in many cases.
+I guess you have found that the pattern `bar` seems like not useful. Alternatively, a pattern `\<\h\k*\>` is included in default patterns. This pattern matches with a independent word determined by the option 'iskeyword' in a source code.  Therefore cursor will stop at `let`, `foo`, `bar`. I think they are the very what we want to correct when we review a source code in many cases.
 
 ```vim
 #   #      #    head-pattern
@@ -28,35 +28,89 @@ let foo = "bar"                         '#' represents cursor position
   #   #      #  tail-pattern
 ```
 
-Additionally, these patterns can be switched according to modes. In the default patterns, `\<\h\k\+\>` is belongs to head-patterns in normal mode, meanwhile it belongs to tail-patterns in insert mode. Because text-objects and {motion} gives us a excellent environment for editing in normal mode, if you want to cut a word and substitute to a correct word, press `ciw` or just `cw` in this case. On the other hand, we can not use text-objects in insert mode, however we can do some easy work also in insert mode. If you want to delete a word in front of cursor, you can use `<C-w>`. That is why the reason I defined the default patterns like this.
+The default mappings are assigned to `<M-l>` and `<M-h>`. `<M-l>` searches for candidates in forward direction and `<M-h>` searches for candidates in backward direction.
 
-#customization
+#Normal mode
+`^\s*\zs\S`, `\<\h\k*\>`, `.$` belong to head-patterns in default. The first one is the first character of a line except for spaces, it is the equivalent to `^` command. `\<\h\k*\>` matches with a word. The last one is the last character of a line, but this pattern ignores the empty line. If the pattern `$` is used, patternjump still stops on empty lines.
+
+![patternjump-normal](http://kura3.photozou.jp/pub/986/3080986/photo/201082159_org.v1396763315.gif)
+
+
+
+#Insert mode
+`^\s*\zs\S`, `,`, `)`, `]`, `}` belong to head-patterns and `\<\h\k*\>`, `.$` belong to tail-patterns. In contrast to normal mode setting, `\<\h\k*\>` is a tail-pattern in insert mode. Because `i_CTRL w` is useful to delete a word in this case.
+
+![patternjump-insert](http://kura2.photozou.jp/pub/986/3080986/photo/201082310_org.v1396763410.gif)
+
+
+
+#Visual mode
+`^\s*\zs\S`, `\<\h\k*\>`, `.$` belong to tail-patterns in default. The first and third patterns matches with a character, thus they work in same way as head-patterns in normal mode. If you set `g:patternjump_swap_head_tail` as 1, head- and tail-patterns are switched each other when the cursor is placed closer to the file head than the other edge of selection area.
+
+Initial state
+```vim
+        -->#    selected area
+let foo = "bar"                         '#' represents cursor position
+```
+If the keymapping which searchs candidates for backward direction is used:
+
+`let g:patternjump_swap_head_tail = 0` (default)
+```vim
+      #<-       selected area
+let foo = "bar"                         '#' represents cursor position
+```
+
+![patternjump-visual-noswap](http://kura2.photozou.jp/pub/986/3080986/photo/201082323_org.v1396763410.gif)
+
+`let g:patternjump_swap_head_tail = 1`
+```vim
+    #<---       selected area
+let foo = "bar"                         '#' represents cursor position
+```
+
+![patternjump-visual-swap](http://kura2.photozou.jp/pub/986/3080986/photo/201082341_org.v1396763410.gif)
+
+
+
+#Operator-pending mode
+Patternjump is also valid in operator-pending mode. You can define your motions by using regular expression. When you define your motions, [exclusive](http://vimdoc.sourceforge.net/htmldoc/motion.html#exclusive) or [inclusive](http://vimdoc.sourceforge.net/htmldoc/motion.html#inclusive) motion can be chosen. `\<\h\k*\>` is used as tail-pattern in the forward directed mapping and is used as head-pattern in the backward directed mapping in default.
+
+
+
+#Command-line mode
+Patternjump can be used also in command-line mode. `^`, ` `, `/`, `[A-Z]`, `,`, `)`, `]`, `}`, `$` belong to head-patterns in default.
+
+![patternjump-command-line](http://kura3.photozou.jp/pub/986/3080986/photo/201082357_org.v1396763410.gif)
+
+
+
+#Customization
 The patterns can be defined to use a dictionary like this:
 
 ```vim
-let g:patternjump_patterns = {
-    \ '_' : {
-    \   'ci' : {
-    \     'head' : [',', ')', ']', '}', '$'],
-    \     'tail' : ['\<\h\k\+\>'],
-    \     },
-    \   'n' : {
-    \     'head' : ['\<\h\k\+\>', '$'],
-    \     },
-    \   'x' : {
-    \     'tail' : ['\<\h\k\+\>', '$'],
-    \     },
-    \   'o' : {
-    \     'tail' : ['\<\h\k\+\>.'],
-    \     },
-    \   },
-    \ 'vim' : {
-    \   'include' : '_',
-    \   'n'     : {
-    \     'head' : ['\<[abglstvw]:\k\+'],
-    \     },
-    \   },
-    \ }
+let s:patternjump_patterns = {
+      \ '_' : {
+      \   'i' : {
+      \     'head' : ['^\s*\zs\S', ',', ')', ']', '}'],
+      \     'tail' : ['\<\h\k*\>', '.$'],
+      \     },
+      \   'n' : {
+      \     'head' : ['^\s*\zs\S', '\<\h\k*\>', '.$'],
+      \     },
+      \   'x' : {
+      \     'tail' : ['^\s*\zs\S', '\<\h\k*\>', '.$'],
+      \     },
+      \   'o' : {
+      \     'forward'  : {'tail_inclusive' : ['\<\h\k*\>']},
+      \     'backward' : {'head_inclusive' : ['\<\h\k*\>']},
+      \     },
+      \   },
+      \ '*' : {
+      \   'c' : {
+      \     'head' : ['^', ' ', '/', '[A-Z]', ',', ')', ']', '}', '$'],
+      \     },
+      \   },
+      \ }
 ```
 
-This example is the default patterns which is used in the case any patterns assignment does not exist. You can use independent patterns in different filetypes, modes (normal/visual/operator-pending/insert/command-line), direction (forward/backward). If you are interested in the customization of patterns, please refer doc/patternjump.txt. You would find detailed information about the customization of patterns.
+This example is the default patterns which is used in the case any pattern assignment does not exist. If you are interested in the customization of patterns, please refer doc/patternjump.txt. You can use independent patterns in different filetypes, modes (normal/visual/operator-pending/insert/command-line), direction (forward/backward). You would find detailed information about the customization of patterns.
