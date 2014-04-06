@@ -52,7 +52,7 @@ Initial state
         -->#    selected area
 let foo = "bar"                         '#' represents cursor position
 ```
-If the keymapping which searchs candidates for backward direction is used:
+If the keymapping which searches candidates for backward direction is used:
 
 ---
 
