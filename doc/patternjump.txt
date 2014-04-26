@@ -1,4 +1,4 @@
-*patternjump.txt*	Last change:05-Apr-2014.
+*patternjump.txt*	Last change:26-Apr-2014.
 
 Move cursor as you like.
 
@@ -592,7 +592,7 @@ configuration variables removing first "g:patternjump_". Thus you can use
 "ignore_case", "caching", "cache_name", "wrap_line", "highlight",
 "debug_mode", "swap_head_tail", "wrap_line".
 >
-	nmap <silent> <M-l> :<C-u>call patternjump#forward(
+	nnoremap <silent> <M-l> :<C-u>call patternjump#forward(
 		\				'n',
 		\				g:patternjump_patterns,
 		\				0,
@@ -601,7 +601,7 @@ configuration variables removing first "g:patternjump_". Thus you can use
 This mapping always highlight candidates.
 If you want to use with |imap|, use like this:
 >
-	imap <silent> <M-l> <C-r>=patternjump#forward(
+	inoremap <silent> <M-l> <C-r>=patternjump#forward(
 		\				'i',
 		\				g:patternjump_patterns,
 		\				0,
@@ -611,7 +611,7 @@ If you want to use with |cmap|, you should not use <silent>. Otherwise
 command-line would be not updated appropriately and you will see that it seems
 like not moving cursor.
 >
-	cmap <M-l> <C-r>=patternjump#forward(
+	cnoremap <M-l> <C-r>=patternjump#forward(
 		\				'c',
 		\				g:patternjump_patterns,
 		\				0)<CR>
@@ -658,7 +658,7 @@ NOTE: If you want to use the mapping other than the default with caching
       additional keymapping which searchs parentheses. Define the latter
       keymapping as following.
 >
-	nmap <silent> <M-p> :<C-u>call patternjump#forward(
+	nnoremap <silent> <M-p> :<C-u>call patternjump#forward(
 		\		'n',
 		\		{'_' : ['(', '[', '{', ')', ']', '}']},
 		\		0,
@@ -666,16 +666,16 @@ NOTE: If you want to use the mapping other than the default with caching
 		\		'cashing'    : 1,
 		\		'cache_name' : 'b:patternjump_cache_alt'
 		\		}
-		\	)
+		\	)<CR>
 <
       Or, in this case the pattern set is very simple, so following
       description would be better.
 >
-	nmap <silent> <M-p> :<C-u>call patternjump#forward(
+	nnoremap <silent> <M-p> :<C-u>call patternjump#forward(
 		\		'n',
-		\		[['(', '[', '{', ')', ']', '}'], []]
+		\		[['(', '[', '{', ')', ']', '}'], []],
 		\		0
-		\	)
+		\	)<CR>
 <
       This keymapping does not use cache but it works as fast as the one using
       cache. In the case the patterns are simple enough, you could choose this
