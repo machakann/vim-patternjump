@@ -643,7 +643,7 @@ function! s:search_backward(mode, string, marker, head_pattern_list, tail_patter
   if type(get(a:head_pattern_list, 0, [])) == s:type_list
     let head_pattern_list = get(a:head_pattern_list, 0, [])
   elseif type(get(a:head_pattern_list, 0, [])) == s:type_str
-    let head_pattern_list = [a:head_pattern_list[0]]
+    let head_pattern_list = a:head_pattern_list
   else
     let head_pattern_list = []
   endif
@@ -651,7 +651,7 @@ function! s:search_backward(mode, string, marker, head_pattern_list, tail_patter
   if type(get(a:tail_pattern_list, 0, [])) == s:type_list
     let tail_pattern_list = get(a:tail_pattern_list, 0, [])
   elseif type(get(a:tail_pattern_list, 0, [])) == s:type_str
-    let tail_pattern_list = [a:tail_pattern_list[0]]
+    let tail_pattern_list = a:tail_pattern_list
   else
     let tail_pattern_list = []
   endif
