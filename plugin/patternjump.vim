@@ -1,5 +1,5 @@
-﻿" Vim global plugin for moving cursor by assigned patterns
-" Last Change: 08-Mar-2014.
+" Vim global plugin for moving cursor by assigned patterns
+" Last Change: 28-Jun-2014.
 " Maintainer : Masaaki Nakamura <mckn@outlook.com>
 
 " License    : NYSL
@@ -183,7 +183,7 @@ inoremap <silent> <Plug>(patternjump-backward) <C-r>=patternjump#backward('i')<C
 cnoremap          <Plug>(patternjump-backward) <C-r>=patternjump#backward('c')<CR>
 
 """ default keymappings
-" If g:verticalmove_no_default_key_mappings has been defined, then quit
+" If g:patternjump_no_default_key_mappings has been defined, then quit
 " immediately.
 if exists('g:patternjump_no_default_key_mappings') | finish | endif
 
