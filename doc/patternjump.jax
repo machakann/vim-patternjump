@@ -1,4 +1,4 @@
-﻿*patternjump.jax*	日本語版ヘルプ		Last change:01-Aug-2014.
+﻿*patternjump.jax*	日本語版ヘルプ		Last change:27-Feb-2015.
 
 カーソル移動をお望みのままに！
 
@@ -6,6 +6,10 @@
 ライセンス : NYSL license
           Japanese <http://www.kmonos.net/nysl/>
           English (Unofficial) <http://www.kmonos.net/nysl/index.en.html>
+
+必須要件:	Vim 7.3.816 or higher
+		|+reltime| feature (optional)
+		|+float| feature (optional)
 
 ==============================================================================
 CONTENTS					*patternjump-contents*
@@ -184,7 +188,8 @@ CONFIGURATION					*patternjump-configuration*
 指定した場合、 patternjump の提供するキーマッピングは |exclusive| なカーソル移
 動となります。 |inclusive| なカーソル移動を使いたい場合は "head_inclusive" や
 "tail_inclusive" を使ってください。これらはオペレータ待機モードでのみ有効です
-。
+。もし、 |exclusive| 及び |inclusive| なパターンの両方に同じ位置がマッチした場
+合は |inclusive| なカーソル移動となります。
 
 vimscript のパターン指定を見てみるとモード指定のキーのほかに特別なキー
 "include" があるのが見られますね。これは vimscript 編集時に汎用のパターン '_'
@@ -381,52 +386,36 @@ head-/tail- の指定~
 な場合、 b: スコープが最優先され、次に w: 、次いで t: 、最後が g: スコープにな
 ります。
 
-g:patternjump_ignore_case			*g:patternjump_ignore_case*
+g:patternjump_ignorecase			*g:patternjump_ignorecase*
 	値が1の場合大文字小文字を無視します。値が0の場合大文字小文字を区別しま
 	す。デフォルト値は0です。
 
 g:patternjump_caching				*g:patternjump_caching*
 	値に1が指定された場合、 patternjump はバッファにキャッシュを生成し、二
-	回目以降の動作が高速になります。キャッシュはデフォルトでは
-	"b:patternjump_cache" という名前で生成されます。名前を変更したければ、
-	|g:patternjump_cach_name| の項をご覧ください。これは前方検索と後方検索
-	それぞれのためのキャッシュを収めた辞書をまとめた二要素のリストです。そ
-	れぞれの辞書には |g:patternjump_patterns| を解釈して生成したリストが収
-	められています。
-	この機能は動作をより軽快にしますが、 |g:patternjump_patterns| の変更が
-	キャッシュを作り直すまで反映されなくなります。設定したパターンに十分満
-	足したらキャッシュ機能を使うとよいでしょう。デフォルト値は0でオフにな
-	っています。
+	回目以降の動作が高速になります。この機能は動作をより軽快にしますが、
+	|g:patternjump_patterns| の変更がキャッシュを作り直すまで反映されなく
+	なります。設定したパターンに十分満足したらキャッシュ機能を使うとよいで
+	しょう。デフォルト値は0でオフになっています。
 	このキャッシュに関する状況はいくつかのコマンドによってうまく変更するこ
 	とができます。編集中に変更したくなったらコマンドを使うのがよいでしょう
 	。|:PatternjumpCachingOn| 、 |:PatternjumpCachingOff|、
 	|:PatternjumpCachingToggle| が使用できます。あるいはただ現在のキャッシ
 	ュを削除したければ|:PatternjumpDeleteCache| を使うとよいでしょう。
-	NOTE: 前方検索を、あるいは後方検索マッピングを複数定義したい場合、キャ
-	      ッシュ機能はうまく働かない恐れがあります。これはほかのオプション
-	      を適切に設定することで回避できます。詳しくは
-	      |g:patternjump-functions| の項の NOTE を参照してください。
 
-g:patternjump_cache_name			*g:patternjump_cache_name*
-	この変数を使用するとキャッシュを保存する変数の名前が指定できます。変数
-	にはバッファローカル "b:" 、ウィンドウローカル "w:" 、タブページローカ
-	ル "t:" 、グローバル "g:" スコープが使用できます。もしそれ以外のスコー
-	プが使用されていたり、指定されていなかった場合は自動的にバッファローカ
-	ルスコープが使用されます。これはキャッシュがファイルタイプの情報を含ま
-	ないので、バッファローカルスコープの使用が推奨されるためです。デフォル
-	ト値は "b:patternjump_cache" です。
-	NOTE: 'b:patternjump' という名前は使わないようにしてください。この名前
-	      はプラグインによって使われていますので、上書きすると問題が発生し
-	      ます。
+g:patternjump_timeout				*g:patternjump_timeout*
+	移動先の検索に時間がかかった場合に、指定された数値のミリ秒単位で検索を
+	切り上げます。Vimがハングアップするのを防ぐために適切な正の数値を指定
+	してください。もしゼロ以下の数値が指定されていると、たとえ時間がかかっ
+	たとしても検索を切り上げません。デフォルト値は 1000 です。
+	NOTE: このオプションは |+reltime|, |+float| 機能が有効なVimを必要とし
+	　　　ます。
 
 g:patternjump_highlight				*g:patternjump_highlight*
 	値が1の場合、すべての移動先候補を |hl-IncSearch| を使ってハイライトし
 	ます。0の場合はハイライトしません。デフォルト値は0です。
 	NOTE: カーソルが移動したタイミングでハイライトは消去されます。
 	NOTE: この機能はノーマル、挿入、ビジュアルモードでのみ有効です。
-	NOTE: この機能はできるだけ多くの移動先をすべて列挙するために{count}の
-	　　　関係上スキップできる候補もすべて検索します。さらにハイライトも行
-	　　　うために少しだけ動作が遅くなるかもしれません。
+	NOTE: ハイライトのために少しだけ動作が遅くなるかもしれません。
 
 g:patternjump_debug_mode			*g:patternjump_debug_mode*
 	値が1の場合、カーソルを動かさず、すべての移動先候補を |hl-IncSearch|
@@ -440,59 +429,7 @@ g:patternjump_debug_mode			*g:patternjump_debug_mode*
 	|PatternjumpDebugModeToggle|.
 	デフォルト値は0です。
 	NOTE: カーソルが移動したタイミングでハイライトは消去されます。
-	NOTE: この機能はできるだけ多くの移動先をすべて列挙するために{count}の
-	　　　関係上スキップできる候補もすべて検索します。さらにハイライトも行
-	　　　うために少しだけ動作が遅くなるかもしれません。
-
-g:patternjump_swap_head_tail			*g:patternjump_swap_head_tail*
-	このオプションはビジュアルモードでのカーソルの挙動を、選択範囲の二つの
-	端点の関係によって変化させます。値が1の場合、カーソルがもう一つの端よ
-	りもファイルの先頭に近い側へ来た時に head-patterns と tail-patternsを
-	切り替えます。例えば、次のような行と tail-pattern の '\<\h\k*\>' につ
-	いて考えましょう。カーソルが 'b' の上にあり、もう一つの端が '=' だとし
-	ます。
->
-	        -->#    選択領域
-	let foo = "bar"                               '#' はカーソル位置を表す
-<
-	もしここで後方検索のキーマッピングを使えば、通常カーソルは二つ目の 'o'
-	の上へ動くでしょう。
->
-	      #<-       選択領域
-	let foo = "bar"                               '#' はカーソル位置を表す
-<
-	しかし、このオプションを有効にしていると tail-pattern は head-pattern
-	へ切り替えられるので、カーソルは 'f' の上へ動くようになります。
->
-	    #<---       選択領域
-	let foo = "bar"                               '#' はカーソル位置を表す
-<
-g:patternjump_wrap_line				*g:patternjump_wrap_line*
-	もし値が1なら patternjump のキーマッピングは行を超えて移動します。0な
-	らしません。デフォルト値は1です。
-
-g:patternjump_move_afap				*g:patternjump_move_afap*
-	このオプションは、移動先候補の数よりも多い {count} が与えられた時の挙
-	動を制御します。もし値が1なら patternjump はカーソルをできるだけ動かし
-	ます（As Far As Possible）。もし値が0なら patternjump はカーソルを動か
-	しません。例えば、次の行の最初の文字の上にカーソルがあり、
-	|g:patternjump_patterns| はtail_pattern の "foo" だけを持つとします。
->
-	----------------->#
-	foo foo foo foo foo                                  {count} が5の場合
-	--- end of file ---
-<
-	五つの "foo" があるので、 {count} に5が与えられた場合、前方検索のキー
-	マッピングは最後の "foo" の末尾へカーソルを動かすでしょう。しかし、
-	{count}に6が与えられた場合、六つ目の移動先候補は存在しません。この時、
-	このオプションの値が1なら、カーソルを {count} に5が与えられた場合と同
-	じ場所まで動かします。これに対し、このオプションの値が0ならカーソルを
-	動かしません。デフォルト値は1です。
->
-	-----------------># : g:patternjump_move_afap == 1
-	foo foo foo foo foo                                  {count} が6の場合
-	#                   : g:patternjump_move_afap == 0
-<
+	NOTE: ハイライトのために少しだけ動作が遅くなるかもしれません。
 
 
 ==============================================================================
@@ -557,9 +494,9 @@ COMMANDS					*patternjump-commands*
 	キャッシュ機能のオン・オフを切り替えます。
 
 :PatternjumpDeleteCache				*:PatternjumpDeleteCache*
-	このコマンドを使用すると |g:patternjump_cache_name| に指定されているキ
-	ャッシュを破棄します。キャッシュ機能の停止はなされないので、次回のキー
-	イベント発生時に新しいキャッシュが生成されるでしょう。
+	このコマンドを使用すると現在のバッファのキャッシュを破棄します。キャッ
+	シュ機能の停止はなされないので、キャッシュ機能をオフにしない限り次回の
+	キーイベント発生時に新しいキャッシュが生成されるでしょう。
 
 :PatternjumpDebugModeOn				*:PatternjumpDebugModeOn*
 	このコマンドを使用すると、デバッグモードに入ります。詳しくは
@@ -593,10 +530,17 @@ xxx と書いてある部分は forward もしくは backward です。
 を無視し、引数に指定されたパターンを使用します。あるいはより簡単に次のようなパ
 ターンのリストを渡すこともできます。
 >
-	[['head-patterns'], ['tail-patterns']]
+	[
+		[['head-patterns'], ['tail-patterns']],
+		[['head-inc-patterns'], ['tail-inc-patterns']]
+	]
 <
 もしあなたの望むパターンが十分にシンプルならこの記法で十分でしょう。またこの記
-法だとキャッシュ使用時と同等の速度で動作します。
+法だとキャッシュ使用時と同等の速度で動作します。オペレータ待機モードでは
+'head-patterns' と 'tail-patterns' は |exclusive| なカーソル移動に、
+'head-inc-pattern' と 'tail-inc-pattern' は |inclusive| なカーソル移動に使われ
+ます。それ以外のモードでは単に 'head-patterns' と 'tail-patterns' のみが使われ
+ます。
 
 三つめの引数 "count" には数字が使えます。もし正の数が指定された場合、関数は常
 に {count} 指定を無視し、引数に与えられた数字を使います。もしゼロおよび負数が
@@ -604,9 +548,8 @@ xxx と書いてある部分は forward もしくは backward です。
 
 四つ目の引数 "options_dict" にはオプションの使用を強制するための辞書が与えられ
 ます。キーの名前は |patternjump-configuration| にある挙動制御用の変数名から
-"g:patternjump_" を取り除いたものが使用されます。つまり、 "ignore_case" 、
-"caching" 、 "cache_name" 、 "highlight" 、 "debug_mode" 、 "swap_head_tail"
-、 "wrap_line" が使用できます。
+"g:patternjump_" を取り除いたものが使用されます。つまり、 "ignorecase" 、
+"caching" 、 "timeout" 、 "highlight" 、 "debug_mode" 、が使用できます。
 >
 	nnoremap <silent> <M-f> :<C-u>call patternjump#forward(
 		\				'n',
@@ -638,13 +581,10 @@ xxx と書いてある部分は forward もしくは backward です。
 加えて、特別なキー "raw" も使用できます。値が1の時、関数はカーソルを動かしませ
 ん。2の時は動かします。さらに値に1か2が指定されている場合、関数は二つの情報を
 収めた辞書を返します。一つ目は"destination" キーに与えられた情報で、移動先の行
-と桁の番号が収められたリスト、マッチしたパターン、"head" か "tail" か、
-|g:patternjump_swap_head_tail| オプションによって入れ替えが発生したかどうかの
-情報を含んだリストです。最後の値は |g:patternjump_swap_head_tail| に関
-係があり、このオプションが有効でない場合常に-1が返ります。このオプションが有効
-でパターンの入れ替えが起こった場合1が、入れ替えられていない場合0が返ります。
-二つ目は"candidates" キーに与えられた情報で、挙げられたすべての候補に関して
-"destination" キーと同種の情報を収めたリストのリストになります。
+と桁の番号が収められたリスト、マッチしたパターン、"head" か "tail" かの情報を
+含んだリストです。二つ目は"candidates" キーに与えられた情報で、挙げられたすべ
+ての候補に関して"destination" キーと同種の情報を収めたリストのリストになりま
+す。
 >
 	let output = patternjump#forward(
 		\			'n',
@@ -653,46 +593,13 @@ xxx と書いてある部分は forward もしくは backward です。
 		\			{'raw' : 1})
 
 	" 移動先の桁番号
-	" 例 [[1, 5], '\<\h\k*\>', 'head', -1]
+	" 例 [[1, 5], '\<\h\k*\>', 'head']
 	echo output.column
 
 	" 移動先候補の情報
-	" 例 [[[1, 5], '\<\h\k*\>', 'head', -1], [[1, 10], '$', 'tail', -1]]
+	" 例 [[[1, 5], '\<\h\k*\>', 'head'], [[1, 10], '$', 'tail']]
 	echo output.candidates
 <
-
-NOTE: デフォルト以外のキーマッピングを定義してキャッシュ機能を使いたい場合、
-      |g:patternjump_cach_name| を使ってキャッシュの名前を適切に管理するように
-      してください。もし何も設定しなければ、デフォルトのキーマッピングと追加し
-      たキーマッピングは同じ変数 "b:patternjump_cache" を使おうとするのでどち
-      らか一方は望む動作をしないでしょう。これを避けるために別のキャッシュ名を
-      片方に指定してください。
-
-      例えば、デフォルトのほかに最寄りの括弧を探すキーマッピングを探すキーマッ
-      ピングを定義したいとします。その場合、後者をこのように定義します。
->
-	nnoremap <silent> <M-p> :<C-u>call patternjump#forward(
-		\		'n',
-		\		{'_' : ['(', '[', '{', ')', ']', '}']},
-		\		0,
-		\		{
-		\		'cashing'    : 1,
-		\		'cache_name' : 'b:patternjump_cache_alt'
-		\		}
-		\	)<CR>
-<
-      あるいは、この場合パターンはとても単純であるため、次の記述でも十分でしょ
-      う。
->
-	nnoremap <silent> <M-p> :<C-u>call patternjump#forward(
-		\		'n',
-		\		[['(', '[', '{', ')', ']', '}'], []],
-		\		0
-		\	)<CR>
-<
-      このキーマッピングはキャッシュを使用しませんが、キャッシュを使用した場合
-      と同等の速度で動作します。パターンがシンプルな場合はこちらを選ぶとよいで
-      しょう。
 
 
 ==============================================================================

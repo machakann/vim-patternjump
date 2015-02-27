@@ -1,2 +1,2 @@
 cd /d %~dp0
-start gvim -c "source test_engine.vim"
+start gvim -u NONE -c "source test_engine.vim"

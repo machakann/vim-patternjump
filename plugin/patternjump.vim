@@ -1,11 +1,11 @@
 " Vim global plugin for moving cursor by assigned patterns
-" Last Change: 28-Jun-2014.
-
+" Last Change: 26-Feb-2015.
+" Maintainer : Masaaki Nakamura <mckn@outlook.jp>
 " License    : NYSL
 "              Japanese <http://www.kmonos.net/nysl/>
 "              English (Unofficial) <http://www.kmonos.net/nysl/index.en.html>
 
-if exists("g:loaded_patternjump")
+if exists('g:loaded_patternjump')
   finish
 endif
 let g:loaded_patternjump = 1
@@ -162,8 +162,9 @@ function! s:caching_toggle()  "{{{
 endfunction
 "}}}
 function! s:delete_cache()  "{{{
-  let opt_cache_name = patternjump#user_conf('cache_name', {}, 'b:patternjump_cache')
-  execute 'unlet! ' . opt_cache_name
+  if exists('b:patternjump')
+    let b:patternjump.cache = {}
+  endif
 endfunction
 "}}}
 

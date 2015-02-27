@@ -1,4 +1,4 @@
-*patternjump.txt*	Last change:01-Aug-2014.
+*patternjump.txt*	Last change:27-Feb-2015.
 
 Move cursor as you like.
 
@@ -6,6 +6,10 @@ Author  : machakann <mckn@outlook.jp>
 License : NYSL license
           Japanese <http://www.kmonos.net/nysl/>
           English (Unofficial) <http://www.kmonos.net/nysl/index.en.html>
+
+Requirement:	Vim 7.3.816 or higher
+		|+reltime| feature (optional)
+		|+float| feature (optional)
 
 ==============================================================================
 CONTENTS					*patternjump-contents*
@@ -22,10 +26,10 @@ INTRODUCTION					*patternjump-introduction*
 Patternjump gives you a effective way to move cursor in various modes. The
 rules to move cursor can be easily optimized by using regular expression. In
 this help those rules defined by regular expression are called patterns.
-Please note it. Numbers of patterns can be registered and cursor would be
-moved to the closest candidate in them. This plugin serves two keymappings.
-One searches candidates for forward direction, and the other searches them for
-backward direction.
+Numbers of patterns can be registered and cursor would be moved to the closest
+candidate in them. This plugin serves two keymappings.  One searches
+candidates for forward direction, and the other searches them for backward
+direction.
 
 At first you need to prepare patterns and then you can use these keymappings.
 But, OK, don't afraid about the preparation, if there is no pattern which you
@@ -69,7 +73,7 @@ you want to cut a word and substitute to a correct word, press |c||iw| or just
 insert mode, however we can do some easy work also in insert mode. If you want
 to delete a word in front of cursor, you can use |i_CTRL-w|. That is why the
 reason I defined the default patterns like this. If you are interested in the
-customization of patterns, please refer |patternjump-configuration|.
+customization of patterns, please see |patternjump-configuration|.
 
 ==============================================================================
 CONFIGURATION					*patternjump-configuration*
@@ -181,7 +185,8 @@ As you can see in the default patterns, only the operator-pending mode can
 have unique assignments like "head-inclusive" and "tail_inclusive". "head" and
 "tail" patterns in operator-pending mode works as |exclusive| motion. So if
 you want to make it |inclusive| motion, please use "head-inclusive" and
-"tail_inclusive".
+"tail_inclusive". If |exclusive| and |inclusive| pattern mathes same position
+at the same time, the cursor will move inclusively.
 
 If you see the filetype specific patterns for vim, you would find a special
 key named "include" and it has a value '_'. This means that the patterns in
@@ -368,39 +373,26 @@ use same variable name with different scopes, buffer local b:, window local
 w:, tab page local t:, global g:. If same variable name is defined in
 different scopes, b: is prior to w:, w: is prior to t:, t: is prior to g:.
 
-g:patternjump_ignore_case			*g:patternjump_ignore_case*
+g:patternjump_ignorecase			*g:patternjump_ignorecase*
 	If the value is 1, ignore case in search candidates of destination. If
 	the value is 0, do not ignore case. Default value is 0.
 
 g:patternjump_caching				*g:patternjump_caching*
-	If the value is 1, patternjump makes caches for current buffer named
-	"b:patternjump_cache" in default. If you want to change the name,
-	please check |g:patternjump_cach_name|. This cache is actually a list
-	which has two dictionaries for forward and backward keymappings. Each
-	dictionary includes lists which has already rendered from
-	|g:patternjump_patterns|.
+	If the value is 1, patternjump makes caches for the current buffer.
 	This makes patternjump faster, but the change of
 	|g:patternjump_patterns| do not apply until cache is refreshed. If you
 	felt your patterns has matured enough, then use this option.
-	If you want to change the situation about caching, you can use
+	If you want to change the situation on caching, you can use
 	commands, |:PatternjumpCachingOn|, |:PatternjumpCachingOff|,
 	|:PatternjumpCachingToggle|. If you want to just clear the current
 	cache, then use |:PatternjumpDeleteCache|.
-	NOTE: In the case you want to use more than one keymapping for either
-	      forward or backward function, caching feature might not works
-	      correctly. This problem can be avoided by using other options.
-	      Please check NOTE on |patternjump-functions|.
 
-g:patternjump_cache_name			*g:patternjump_cache_name*
-	This option allows you to change the variable name of cache. You can
-	use buffer local "b:", window local "w:", tabpage local "t:", global
-	"g:" scope for the name. If the scope assginment is improper or not
-	assigned, buffer local scope is used automatically. Because buffer
-	local scope is strongly recommended to use, since the cache does not
-	have an information about filetype. Default value is
-	"b:patternjump_cache".
-	NOTE: Please do not use the name 'b:patternjump', this name is used
-	      internally. If you re-write it, it might cause problem.
+g:patternjump_timeout				*g:patternjump_timeout*
+	The time to stop searching for candidates in milli seconds. To prevent
+	hanging up your pc, set preferable positive value. If zero or negative
+	value is asigned, this plugin does not time out and continue to search
+	even if it would take much time. Default value is 1000.
+	NOTE: This option needs |+reltime| and |+float|.
 
 g:patternjump_highlight				*g:patternjump_highlight*
 	If the value is 1, all the matched candidates are highlighted by
@@ -408,14 +400,13 @@ g:patternjump_highlight				*g:patternjump_highlight*
 	off. Default value is 0.
 	NOTE: The highlighting will be removed when cursor is moved next time.
 	NOTE: This feature is valid only in normal, insert, visual mode.
-	NOTE: This option might make this plugin slightly slower since it try
-	      to collect all the candidates as possible and highlight numbers
-	      of positions.
+	NOTE: This option might make this plugin slightly slower for
+	      highlighting.
 
 g:patternjump_debug_mode			*g:patternjump_debug_mode*
 	If the value is 1, do not move cursor, all the matched candidates are
-	highlighted by using |hl-IncSearch|, and, echo matched columns,
-	matched patterns, and, head or tail. You can check them with
+	highlighted by using |hl-IncSearch|, and, echo matched lines and
+	columns, matched patterns, and, head or tail. You can check them with
 	|:message| command. This option would be useful when you found your
 	patterns stopping cursor at unwanted position. You can use this option
 	to search which pattern cause the problem. Or you can use the commands
@@ -423,62 +414,8 @@ g:patternjump_debug_mode			*g:patternjump_debug_mode*
 	|PatternjumpDebugModeToggle|.
 	Default value is 0.
 	NOTE: The highlighting will be removed when cursor is moved next time.
-	NOTE: This option might make this plugin slightly slower since it try
-	      to collect all the candidates as possible and highlight numbers
-	      of positions.
-
-g:patternjump_swap_head_tail			*g:patternjump_swap_head_tail*
-	This option changes the behavior in the visual mode depending on the
-	relationship of two edges of selection. When the cursor comes closer
-	to the file head than the other edge, the head-patterns and
-	tail-patterns are switched if the value is 1.
-	For example, thinking about the following line with the tail-pattern
-	'\<\h\k+\>'. Assume that the cursor is on 'b' and the other edge of
-	selection is on '='.
->
-	        -->#    selected area
-	let foo = "bar"                         '#' represents cursor position
-<
-	If the keymapping which searchs candidates for backward direction is
-	used, the cursor would be moved to the second 'o' usually.
->
-	      #<-       selected area
-	let foo = "bar"                         '#' represents cursor position
-<
-	However if this option is valid, tail-patterns are switched to
-	head-patterns. Thus the cursor are moved to 'f'.
->
-	    #<---       selected area
-	let foo = "bar"                         '#' represents cursor position
-<
-
-g:patternjump_wrap_line				*g:patternjump_wrap_line*
-	If the value is 1, patternjump keymappings can move cursor to the
-	vicinal lines. If the value is 0, cursor would stay in the current
-	line. Default value is 1.
-
-g:patternjump_move_afap				*g:patternjump_move_afap*
-	This option controls the behavior when {count} is larger than the
-	number of candidates. If the value is 1, patternjump moves cursor As
-	Far As Possible. If the value is 0, patternjump does not move cursor.
-	For example, assume that cursor is on the first character of following
-	line, and |g:patternjump_patterns| only has the tail-pattern "foo".
->
-	----------------->#
-	foo foo foo foo foo                          5 is given for {count}
-	--- end of file ---
-<
-	There are five "foo". Thus when 5 is given for {count}, the forward
-	directed keymapping moves cursor to the end of the last "foo". But if
-	6 is given for {count}, there is no sixth matched position. In that
-	situation patternjump moves cursor to the same place as 5 is given for
-	{count} if the value is 1, while it does not moves cursor if the value
-	is 0. Default value is 1.
->
-	-----------------># : g:patternjump_move_afap == 1
-	foo foo foo foo foo                          6 is given for {count}
-	#                   : g:patternjump_move_afap == 0
-<
+	NOTE: This option might make this plugin slightly slower for
+	      highlighting.
 
 
 ==============================================================================
@@ -530,7 +467,7 @@ COMMANDS					*patternjump-commands*
 
 :PatternjumpCachingOn				*:PatternjumpCachingOn*
 	If you use this command, patternjump start to use caching feature.
-	Please refer also |g:patternjump_caching|.
+	Please see also |g:patternjump_caching|.
 	NOTE: The cache is not made immediately, it will be generated when you
 	      type a keymapping next time.
 
@@ -540,21 +477,20 @@ COMMANDS					*patternjump-commands*
 :PatternjumpCachingToggle			*:PatternjumpCachingToggle*
 	This command toggles the situation of caching feature.
 
-PatternjumpDeleteCache				*:PatternjumpDeleteCache*
-	This command deletes the cache which is assigned by
-	|g:patternjump_cach_name|. If caching is still turned on, then new
-	cache would be generated next time.
+:PatternjumpDeleteCache				*:PatternjumpDeleteCache*
+	This command deletes the cache for the current buffer. If caching is
+	still turned on, then a new cache would be generated next time.
 
 :PatternjumpDebugModeOn				*:PatternjumpDebugModeOn*
-	This command starts the debug mode. Please refer
+	This command starts the debug mode. Please see
 	|g:patternjump_debug_mode|.
 
 :PatternjumpDebugModeOff			*:PatternjumpDebugModeOff*
-	This command stops the debug mode. Please refer
+	This command stops the debug mode. Please see
 	|g:patternjump_debug_mode|.
 
 :PatternjumpDebugModeToggle			*:PatternjumpDebugModeToggle*
-	This command toggles the situation of the debug mode. Please refer
+	This command toggles the situation of the debug mode. Please see
 	|g:patternjump_debug_mode|.
 
 ==============================================================================
@@ -577,10 +513,16 @@ structure as |g:patternjump_patterns|. If this argument is assigned,
 keymappings ignore |g:patternjump_patterns| and use the assigned one. Or you
 can assign just a list like this:
 >
-	[['head-patterns'], ['tail-patterns']]
+	[
+		[['head-patterns'], ['tail-patterns']],
+		[['head-inc-patterns'], ['tail-inc-patterns']]
+	]
 <
 If the pattern which you want is simple, this description might be enough.
-This assignment works as fast as cache.
+This assignment works as fast as cache. 'head-patterns' and 'tail-patterns'
+are for |exclusive| motion, 'head-inc-pattern' and 'tail-inc-pattern' are for
+|inclusive| motion in operator-pending mode. In other modes, just
+'head-patterns' and 'tail-patterns' are used.
 
 The third argument "count" is a number. If a positive number is assigned,
 functions would always ignore {count} and use the assigned number. If zero or
@@ -589,8 +531,7 @@ a negative number are assigned, functions refer {count} as usual.
 The fourth argument "options_dict" is a dictionary which can force to use
 given values of configuration variables. The key names are the name of
 configuration variables removing first "g:patternjump_". Thus you can use
-"ignore_case", "caching", "cache_name", "wrap_line", "highlight",
-"debug_mode", "swap_head_tail", "wrap_line".
+"ignorecase", "caching", "timeout", "highlight", "debug_mode".
 >
 	nnoremap <silent> <M-l> :<C-u>call patternjump#forward(
 		\				'n',
@@ -616,20 +557,15 @@ like not moving cursor.
 		\				g:patternjump_patterns,
 		\				0)<CR>
 <
-Please refer |verticalmove-configuration|.
+Please see |patternjump-configuration| also.
 
 Besides, a special key "raw" can be also used. If the value is 1, these
 functions do not move cursor. But if the value is 2, these functions do. In
 addition to that if the value is 1 or 2 return a dictionary which has two
 information. The first one is the key "destination", the value is a list which
 has a list of line and column number of the destination, the matched pattern,
-head or tail, and the last value represents the pattern is swapped or not. The
-last value is related to |g:patternjump_swap_head_tail| option. If the
-swapping is not valid, then the value is always -1. If the swapping is valid
-and the pattern has been swapped, the last value is 1.  If the swapping is
-vaid and the pattern has not been swapped, the value is 0. The other is the
-key "candidates", the value is the list of lists which has same information as
-"destination" of candidates.
+head or tail. The other is the key "candidates", the value is the list of
+lists which has same information as "destination" of candidates.
 
 >
 	let output = patternjump#forward(
@@ -639,47 +575,13 @@ key "candidates", the value is the list of lists which has same information as
 		\			{'raw' : 1})
 
 	" the line and column number of the destination
-	" e.g. [[1, 5], '\<\h\k*\>', 'head', -1]
+	" e.g. [[1, 5], '\<\h\k*\>', 'head']
 	echo output.destination
 
 	" information of candidates
-	" e.g. [[[1, 5], '\<\h\k*\>', 'head', -1], [[1, 10], '$', 'tail', -1]]
+	" e.g. [[[1, 5], '\<\h\k*\>', 'head'], [[1, 10], '$', 'tail']]
 	echo output.candidates
 <
-
-NOTE: If you want to use the mapping other than the default with caching
-      feature, do not forget to manage names of cache by
-      |g:patternjump_cach_name|. Without any configuration, both default
-      keymapping and the other try to use same variable "g:patternjump_cache".
-      Therefore, one of them might not works as you expected. To avoid this
-      problem, you need to assign different name for one of them.
-
-      For example, assume you want to use default keymapping and the
-      additional keymapping which searchs parentheses. Define the latter
-      keymapping as following.
->
-	nnoremap <silent> <M-p> :<C-u>call patternjump#forward(
-		\		'n',
-		\		{'_' : ['(', '[', '{', ')', ']', '}']},
-		\		0,
-		\		{
-		\		'cashing'    : 1,
-		\		'cache_name' : 'b:patternjump_cache_alt'
-		\		}
-		\	)<CR>
-<
-      Or, in this case the pattern set is very simple, so following
-      description would be better.
->
-	nnoremap <silent> <M-p> :<C-u>call patternjump#forward(
-		\		'n',
-		\		[['(', '[', '{', ')', ']', '}'], []],
-		\		0
-		\	)<CR>
-<
-      This keymapping does not use cache but it works as fast as the one using
-      cache. In the case the patterns are simple enough, you could choose this
-      description.
 
 
 ==============================================================================

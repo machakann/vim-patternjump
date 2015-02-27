@@ -45,37 +45,7 @@ The default mappings are assigned to `<M-l>` and `<M-h>`. `<M-l>` searches for c
 
 
 #Visual mode
-`^\s*\zs\S`, `\<\h\k*\>`, `.$` belong to tail-patterns in default. The first and third patterns matches with a character, thus they work in same way as head-patterns in normal mode. If you set `g:patternjump_swap_head_tail` as 1, head- and tail-patterns are switched each other when the cursor is placed closer to the file head than the other edge of selection area.
-
-Initial state
-```vim
-        -->#    selected area
-let foo = "bar"                         '#' represents cursor position
-```
-If the keymapping which searches candidates for backward direction is used:
-
----
-
-```vim
-let g:patternjump_swap_head_tail = 0 (default)
-
-
-      #<-       selected area
-let foo = "bar"                         '#' represents cursor position
-```
-
----
-
-
-```vim
-let g:patternjump_swap_head_tail = 1
-
-
-    #<---       selected area
-let foo = "bar"                         '#' represents cursor position
-```
-
----
+`^\s*\zs\S`, `\<\h\k*\>`, `.$` belong to tail-patterns in default. The first and third patterns matches with a character, thus they work in same way as head-patterns in normal mode.
 
 #Operator-pending mode
 Patternjump is also valid in operator-pending mode. You can define your motions by using regular expression. When you define your motions, [exclusive](http://vimdoc.sourceforge.net/htmldoc/motion.html#exclusive) or [inclusive](http://vimdoc.sourceforge.net/htmldoc/motion.html#inclusive) motion can be chosen. `\<\h\k*\>` is used as tail-pattern in the forward directed mapping and is used as head-pattern in the backward directed mapping in default.
