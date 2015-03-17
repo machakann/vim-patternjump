@@ -260,7 +260,7 @@ function! s:gather_candidates(direction, mode, count, lists, is_inc, opt) abort 
   let is_timedout = 0
 
   " searching
-  for [pattern_list, flag, side, is_i_tail] in search_order
+  for [pattern_list, flag0, side, is_i_tail] in search_order
     let remain = map(copy(pattern_list), '[0, cur_pos]')
     while 1
       if pattern_list == []
@@ -272,7 +272,12 @@ function! s:gather_candidates(direction, mode, count, lists, is_inc, opt) abort 
         let n = remain[idx][0]
         call setpos('.', remain[idx][1])
         while n < a:count
-          let pos = searchpos(pattern, flag, stopline)
+          " NOTE: It seems searchpos() has bug in insert mode.
+          "       Because when col('.') == col([line('.'), '$']) - 1,
+          "       searchpos('$', '') does not match the last column of the
+          "       current line.
+          let flag = a:mode ==# 'i' && col('.') >= col([line('.'), '$']) - 1 ? flag0 . 'c' : flag0
+          let pos  = searchpos(pattern, flag, stopline)
           if pos == s:null_pos
             break
           endif
