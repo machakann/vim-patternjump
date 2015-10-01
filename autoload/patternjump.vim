@@ -272,7 +272,11 @@ function! s:gather_candidates(direction, mode, count, lists, is_inc, opt) abort 
         let n = remain[idx][0]
         call setpos('.', remain[idx][1])
         while n < a:count
-          let pos = searchpos(pattern, flag, stopline)
+          " NOTE: It seems searchpos() has bug in insert mode.
+          "       Because when col('.') == col([line('.'), '$']) - 1,
+          "       searchpos('$', '') does not match the last column of the
+          "       current line.
+          let pos = s:searchpos(a:mode, pattern, flag, stopline)
           if pos == s:null_pos
             break
           endif
@@ -532,6 +536,18 @@ endfunction
 "}}}
 function! s:init_storage() abort  "{{{
   let b:patternjump = {'cache': {}, 'highlight': {'state': 0, 'pos': []}}
+endfunction
+"}}}
+function! s:searchpos(mode, pattern, flag, stopline) abort  "{{{
+  if a:mode ==# 'i' && stridx(a:flag, 'b') == -1 && col('.') == col([line('.'), '$']) - 1
+    let orig_pos = getpos('.')
+    let end_pos  = [orig_pos[1], col([orig_pos[1], '$'])]
+    if searchpos(a:pattern, a:flag . 'cn', a:stopline) == end_pos
+      call setpos('.', end_pos)
+      return end_pos
+    endif
+  endif
+  return searchpos(a:pattern, a:flag, a:stopline)
 endfunction
 "}}}
 function! s:compare(i1, i2) abort "{{{
