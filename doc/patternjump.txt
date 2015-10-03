@@ -1,6 +1,5 @@
-*patternjump.txt*	Last change:27-Feb-2015.
-
-Move cursor as you like.
+*patternjump.txt*	Move cursor as you like.
+						Last change:03-Oct-2015.
 
 Author  : machakann <mckn@outlook.jp>
 License : NYSL license
